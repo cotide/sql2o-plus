@@ -255,7 +255,7 @@ try(Database db = getDatabase()){
    // 开启事务
    db.beginTransaction();
    final  String insertSql  =
-           "INSERT INTO user_info (user_Name,password,login,create_time) VALUES (?,?,?,?)";
+           "INSERT INTO user_info (user_Name,password,login,create_time) VALUES (@0,@1,@2,@3)";
    // Create
    int id =  db.getSqlRun().execute(
            insertSql,
@@ -265,7 +265,7 @@ try(Database db = getDatabase()){
            new Date()).asInt();  
    // Update
    final String updateSql  =
-           "UPDATE user_info set user_Name = ? WHERE user_id = ?";
+           "UPDATE user_info set user_Name = @0 WHERE user_id = @1";
    db.getSqlRun().execute(updateSql,"Execute Test2",id);
    // 事务提交
    db.commit();
