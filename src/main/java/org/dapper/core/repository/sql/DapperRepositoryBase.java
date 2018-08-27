@@ -1,9 +1,9 @@
-package org.dapper.core.repository;
+package org.dapper.core.repository.sql;
 
 import org.dapper.basic.collections.PageList;
 import org.dapper.basic.domain.base.BaseEntityByType;
-import org.dapper.core.exceptions.SqlBuildException;
-import org.dapper.core.repository.sql.SqlQueryBase;
+import org.dapper.core.attr.Ignore;
+import org.dapper.core.repository.IRepository;
 import org.dapper.core.unit.Sql2oUnitOfWork;
 import org.dapper.core.unit.Sql2oUtils;
 import org.dapper.core.unit.info.PocoColumn;
@@ -112,6 +112,12 @@ public class DapperRepositoryBase<TEntity  extends BaseEntityByType>
             for (String key : columns.keySet())
             {
                 PocoColumn  col = columns.get(key);
+                // 检查是否忽略字段类型
+                if (col.getField().isAnnotationPresent(Ignore.class))
+                {
+                    continue;
+                }
+                // 检查是否主键字段类型
                 if(col.isPrimaryKey()){
                     primaryKeyFild = col;
                     if(pd.getAutoIncrement())
@@ -132,8 +138,15 @@ public class DapperRepositoryBase<TEntity  extends BaseEntityByType>
         if(primaryKeyFild!=null)
         {
             try {
-                Field keyField = object.getClass().getDeclaredField(primaryKeyFild.getField().getName());
-                Object result =   UnitOfWork.DbConnection.createQuery(insertSql).withParams(args).executeUpdate().getKey(keyField.getType());
+                UnitOfWork.getOpenConnection();
+                Field keyField = object
+                        .getClass()
+                        .getDeclaredField(primaryKeyFild.getField().getName());
+                Object result = UnitOfWork.dbConnection
+                        .createQuery(insertSql)
+                        .withParams(args)
+                        .executeUpdate()
+                        .getKey(keyField.getType());
                 keyField.setAccessible(true);
                 keyField.set(object,result);
                 return object;
@@ -142,11 +155,17 @@ public class DapperRepositoryBase<TEntity  extends BaseEntityByType>
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }finally {
-                this.UnitOfWork.close();
+                UnitOfWork.close();
             }
             return null;
         }else{
-            UnitOfWork.DbConnection.createQuery(insertSql).withParams(args).executeUpdate().getKey();
+            UnitOfWork.getOpenConnection();
+            UnitOfWork
+                    .dbConnection
+                    .createQuery(insertSql)
+                    .withParams(args)
+                    .executeUpdate()
+                    .getKey();
             return null;
         }
 
@@ -164,20 +183,21 @@ public class DapperRepositoryBase<TEntity  extends BaseEntityByType>
         PocoData pocoData = PocoData.forType(object.getClass());
         TableInfo pd = pocoData.getTableInfo();
         String tableName = pd.getTableName();
-        // 主键
-        PocoColumn primaryKeyFild = null;
-
         String primaryKeyName = null;
         Object primaryKeyValue = null;
-
         Map<String, PocoColumn> columns =  pocoData.getColumns();
         List<Object> args = new ArrayList<>();
         StringBuffer sb = new StringBuffer();
         for (String key : columns.keySet())
         {
             PocoColumn  col = columns.get(key);
+            // 检查是否忽略字段类型
+            if (col.getField().isAnnotationPresent(Ignore.class))
+            {
+                continue;
+            }
+            // 检查是否主键字段类型
             if(col.isPrimaryKey()){
-                primaryKeyFild = col;
                 primaryKeyName = col.getColumnName();
                 primaryKeyValue = col.getValue(object);
                 if(pd.getAutoIncrement())
@@ -193,21 +213,16 @@ public class DapperRepositoryBase<TEntity  extends BaseEntityByType>
 
             String updateSql = String.format("UPDATE %s SET %s WHERE %s = ?",
                     tableName, sb.substring(0, sb.length() - 1), primaryKeyName);
-            Field keyField = object.getClass().getDeclaredField(primaryKeyFild.getField().getName());
             args.add(primaryKeyValue);
-            Object result =  UnitOfWork.DbConnection.createQuery(updateSql).withParams(args).executeUpdate().getKey(keyField.getType());
-            keyField.setAccessible(true);
-            keyField.set(object,result);
+            UnitOfWork.getOpenConnection();
+            UnitOfWork.dbConnection
+                    .createQuery(updateSql)
+                    .withParams(args)
+                    .executeUpdate();
             return object;
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }finally {
+        } finally {
             this.UnitOfWork.close();
         }
-        return null;
-
     }
 
 
@@ -247,10 +262,13 @@ public class DapperRepositoryBase<TEntity  extends BaseEntityByType>
         {
              String deleteSql = String.format("DELETE FROM %s WHERE %s = ?", pd.getTableName(), primaryKey);
              try {
-                 return UnitOfWork.DbConnection.createQuery(deleteSql)
-                         .withParams(primaryKeyValue)
-                         .executeUpdate()
-                         .getResult() > 0;
+                 UnitOfWork.getOpenConnection();
+                 return UnitOfWork
+                        .dbConnection
+                        .createQuery(deleteSql)
+                        .withParams(primaryKeyValue)
+                        .executeUpdate()
+                        .getResult() > 0;
              }finally {
                  this.UnitOfWork.close();
              }

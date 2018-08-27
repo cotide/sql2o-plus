@@ -6,12 +6,13 @@ import org.dapper.basic.domain.base.BaseEntityByType;
 import org.dapper.core.repository.IRepository;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.sql.SQLException;
 
 /**
  * 业务对象接口
  */
-public interface IUnitOfWork  extends Closeable {
+public interface IUnitOfWork extends Closeable {
 
 
     /**
@@ -27,16 +28,35 @@ public interface IUnitOfWork  extends Closeable {
      */
     void changeDatabase(String dbName) throws SQLException;
 
+    /**
+     * 开始事务
+     */
+    void beginTransation();
 
     /**
      * 事务提交
      */
-    void commit() throws SQLException;
+    void commit();
 
 
     /**
      * 事务回滚
      */
-    void rollback() throws SQLException;
+    void rollback();
 
+
+    /**
+     * 释放连接,如果开启事务。
+     * 请使用close(true)方法进行强制关闭
+     * @throws IOException
+     */
+    @Override
+    void close();
+
+
+    /**
+     * 释放连接
+     * @throws IOException
+     */
+    void close(Boolean isClose);
 }

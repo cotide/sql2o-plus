@@ -2,11 +2,11 @@ package org.dapper.core.repository.sql;
 
 import org.dapper.basic.collections.PageList;
 import org.dapper.core.exceptions.SqlBuildException;
-import org.dapper.core.unit.Sql2oUnitOfWork;
+import org.dapper.core.repository.sql.base.SqlBase;
+import org.dapper.core.unit.IUnitOfWork;
 import org.dapper.core.unit.info.PocoColumn;
 import org.dapper.core.unit.info.TableInfo;
 import org.dapper.basic.collections.PageQueryInfo;
-import org.sql2o.Query;
 import org.dapper.query.Sql;
 
 import java.util.ArrayList;
@@ -18,18 +18,15 @@ import java.util.stream.IntStream;
 /**
  * CRUD 仓储 实例
  */
-public class SqlQueryBase {
-
-
-    protected final  Sql2oUnitOfWork UnitOfWork;
+public class SqlQueryBase  extends SqlBase {
 
 
     /**
      * 构造函数
      * @param unitOfWork
      */
-    public SqlQueryBase(Sql2oUnitOfWork unitOfWork) {
-        UnitOfWork = unitOfWork;
+    public SqlQueryBase(IUnitOfWork unitOfWork) {
+         super(unitOfWork);
     }
 
 
@@ -154,18 +151,6 @@ public class SqlQueryBase {
 
 
     //#region Helper
-
-
-    protected Query createQuery(String sql,Object... parm )
-    {
-        UnitOfWork.getOpenConnection();
-        Query sqlBuild = UnitOfWork.DbConnection.createQuery(sql)
-                .setAutoDeriveColumnNames(false)
-                .throwOnMappingFailure(false)
-                .withParams(parm);
-
-        return sqlBuild;
-    }
 
 
 

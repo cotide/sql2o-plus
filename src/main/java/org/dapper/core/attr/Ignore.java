@@ -1,14 +1,19 @@
 package org.dapper.core.attr;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * 忽略字段
  */
-@Target({ElementType.FIELD})
+//@Target({ElementType.METHOD, ElementType.FIELD})
+////@Retention(RetentionPolicy.RUNTIME)
+
+
+@Documented
+@Inherited
 @Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD})
 public @interface Ignore {
+
+    String type() default "ignore";
 }

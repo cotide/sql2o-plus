@@ -1,10 +1,7 @@
 package org.dapper.core.unit.info;
 
 import lombok.Getter;
-import org.dapper.core.attr.Ignore;
-import org.dapper.core.attr.PrimaryKey;
-import org.dapper.core.attr.Table;
-import org.dapper.core.attr.Column;
+import org.dapper.core.attr.*;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -41,16 +38,18 @@ public class PocoData {
     public static PocoData forType(Class<?> type) {
         rl.lock();
         try {
-            if (pojoDatas.containsKey(type))
+            if (pojoDatas.containsKey(type)){
                 return pojoDatas.get(type);
+            }
         } finally {
             rl.unlock();
         }
         wl.lock();
         try {
             if (pojoDatas.containsKey(type))
-                return pojoDatas.get(type);
-
+            {
+               return pojoDatas.get(type);
+            }
             PocoData pd = new PocoData(type);
             pojoDatas.put(type, pd);
             return pd;
@@ -81,7 +80,9 @@ public class PocoData {
 
         for (Field field : fields) {
             if (field.isAnnotationPresent(Ignore.class))
+            {
                 continue;
+            }
             PocoColumn pc = new PocoColumn();
 
             if (field.isAnnotationPresent(Column.class)) {

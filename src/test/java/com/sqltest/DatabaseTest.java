@@ -77,7 +77,7 @@ public class DatabaseTest {
         domain.setPwd("123456");
         try (Connection con = sql2o.open()) {
             final String insertSql  =
-                    "INSERT INTO user_info (user_Name,password,login,creat_time) VALUES (?,?,?,?)";
+                    "INSERT INTO user_info (user_Name,password,login,create_time) VALUES (?,?,?,?)";
 
             List<Object> values = new ArrayList<>();
             values.add("Test");

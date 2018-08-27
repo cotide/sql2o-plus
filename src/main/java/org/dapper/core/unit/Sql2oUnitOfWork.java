@@ -1,7 +1,7 @@
 package org.dapper.core.unit;
 
 import org.dapper.basic.domain.base.BaseEntityByType;
-import org.dapper.core.repository.DapperRepositoryBase;
+import org.dapper.core.repository.sql.DapperRepositoryBase;
 import org.dapper.core.repository.IRepository;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
@@ -20,7 +20,12 @@ public class Sql2oUnitOfWork implements IUnitOfWork {
     /**
      * 当前连接对象
      */
-    public Connection DbConnection;
+    public Connection dbConnection;
+
+    /**
+     * 是否执行事务操作
+     */
+    public boolean isTran =false;
 
 
     /**
@@ -40,9 +45,8 @@ public class Sql2oUnitOfWork implements IUnitOfWork {
         sql2o = new Sql2o(dataSource);
         if(isTransaction)
         {
-            DbConnection = sql2o.beginTransaction();
-        }else{
-            DbConnection = sql2o.open();
+            dbConnection = sql2o.beginTransaction();
+            isTran = true;
         }
     }
 
@@ -62,34 +66,61 @@ public class Sql2oUnitOfWork implements IUnitOfWork {
     @Override
     public void changeDatabase(String dbName) throws SQLException {
         getOpenConnection();
-        DbConnection.getJdbcConnection().setCatalog(dbName);
+        dbConnection.getJdbcConnection().setCatalog(dbName);
     }
 
+    /**
+     * 开始事务
+     */
+    @Override
+    public void beginTransation() {
+        getOpenConnection();
+        dbConnection = sql2o.beginTransaction();
+        isTran = true;
+    }
 
 
     @Override
     public void commit()  {
         getOpenConnection();
-        DbConnection.commit();
+        dbConnection.commit();
     }
 
     @Override
     public void rollback()  {
         getOpenConnection();
-        DbConnection.rollback();
+        dbConnection.rollback();
     }
 
     @Override
     public void close()  {
-        if (DbConnection != null) {
-            DbConnection.close();
+        if(!isTran){
+            this.close(true);
         }
-        DbConnection = null;
+    }
+
+    /**
+     * 释放连接
+     *
+     * @param isClose
+     */
+    @Override
+    public void close(Boolean isClose) {
+
+        if(isClose)
+        {
+            if (dbConnection != null) {
+                dbConnection.close();
+                dbConnection = null;
+            }
+        }
     }
 
 
-    public  void getOpenConnection() {
-        if(DbConnection !=null) return;
-        DbConnection =sql2o.open();
+    public void getOpenConnection() {
+        if(dbConnection !=null){
+            return;
+        }
+        dbConnection = sql2o.open();
     }
 }

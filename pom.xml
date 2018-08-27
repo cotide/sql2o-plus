@@ -19,6 +19,7 @@
         <postgresql.version>9.1-901.jdbc4</postgresql.version>
         <pgjdbc-ng.version>0.3</pgjdbc-ng.version>
         <lombok.version>1.18.0</lombok.version>
+        <druid.version>1.1.10</druid.version>
     </properties>
     <dependencies>
         <dependency>
@@ -79,6 +80,14 @@
             <artifactId>junit</artifactId>
             <version>4.12</version>
             <scope>test</scope>
+        </dependency>
+        <!-- druid -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>${druid.version}</version>
+            <optional>true</optional>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
     <build>

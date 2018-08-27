@@ -7,6 +7,8 @@ import org.dapper.basic.domain.base.BaseEntityByType;
 import org.dapper.core.enums.DbType;
 import org.dapper.core.exceptions.DataAccessException;
 import org.dapper.core.repository.IRepository;
+import org.dapper.core.repository.sql.SqlExecuteBase;
+import org.dapper.core.repository.sql.SqlQueryBase;
 import org.dapper.core.unit.IUnitOfWork;
 import org.dapper.core.unit.Sql2oUnitOfWork;
 import org.dapper.core.utility.Guard;
@@ -26,7 +28,7 @@ import java.util.regex.Pattern;
  * 数据库对象
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class Database {
+public class  Database implements  AutoCloseable,Closeable {
 
     private final static Logger logger = LocalLoggerFactory.getLogger(Database.class);
 
@@ -74,14 +76,62 @@ public class Database {
         return _unitOfWork;
     }
 
+
+     /**
+     * 开始事务
+     */
+    public void beginTransaction(){
+        if(_unitOfWork==null)
+        {
+            _unitOfWork = new Sql2oUnitOfWork(
+                    instance.sql2o.getDataSource(),
+                    true);
+        }else{
+           _unitOfWork.beginTransation();
+        }
+    }
+
+
+     /**
+     * 事务提交
+     */
+     public  void commit()  {
+         _unitOfWork.commit();
+     }
+
+
+     /**
+     * 事务回滚
+     */
+    public  void rollback() {
+        _unitOfWork.rollback();
+    }
+
     /**
-     * 获取仓储对象
+     * 获取仓储
      */
     public  <TEntity extends BaseEntityByType> IRepository getRepository(Class<TEntity> returnType)
     {
         return this.getUnitOfWork().getRepository(returnType);
     }
 
+
+    /**
+     * 获取只读仓储
+     * @return
+     */
+    public SqlQueryBase getSqlQuery(){
+        return new SqlQueryBase(this.getUnitOfWork());
+    }
+
+
+    /**
+     * 获取SQL执行仓储
+     * @return
+     */
+    public SqlExecuteBase getSqlRun(){
+        return new SqlExecuteBase(this.getUnitOfWork());
+    }
 
     //#region Helper
 
@@ -113,6 +163,24 @@ public class Database {
             }
         }
         return DbType.MySql;
+    }
+
+    /**
+     * Closes this stream and releases any system resources associated
+     * with it. If the stream is already closed then invoking this
+     * method has no effect.
+     *
+     * <p> As noted in {@link AutoCloseable#close()}, cases where the
+     * close may fail require careful attention. It is strongly advised
+     * to relinquish the underlying resources and to internally
+     * <em>mark</em> the {@code Closeable} as closed, prior to throwing
+     * the {@code IOException}.
+     *
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    public void close()  {
+        _unitOfWork.close(true);
     }
 
     //#endregion

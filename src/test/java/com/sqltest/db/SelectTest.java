@@ -133,21 +133,24 @@ public class SelectTest extends BaseTest {
     @Test
     public void  pageListTest(){
 
-             Database db = getDatabase();
-            IRepository<UserInfo> userInfoRepository = db.getRepository(UserInfo.class);
-            //  getPageList(int pageIndex, int pageSize, Sql sql)
-            PageList<UserInfo> result = userInfoRepository.getPageList(1, 10, Sql.builder().select().from(UserInfo.class));
-            assert (result.getTotalCount() > 0) : "result value is error";
-            System.out.println(">>>>>>>>>> Result <<<<<<<<<<");
-            System.out.println("pageIndex:" + result.getPageIndex());
-            System.out.println("pageSize:" + result.getPageSize());
-            System.out.println("totalCount:" + result.getTotalCount());
-            System.out.println("totalPage:" + result.getTotalPage());
-            for (UserInfo item : result.getItems()) {
-                System.out.println("id:" + item.getId());
-                System.out.println("user_Name:" + item.getName());
-                System.out.println("login:" + item.getLogin());
-            }
-    }  
+        Database db = getDatabase();
+        IRepository<UserInfo> userInfoRepository = db.getRepository(UserInfo.class);
+        //  getPageList(int pageIndex, int pageSize, Sql sql)
+        PageList<UserInfo> result = userInfoRepository.getPageList(1, 10, Sql.builder().select().from(UserInfo.class));
+        assert (result.getTotalCount() > 0) : "result value is error";
+        System.out.println(">>>>>>>>>> Result <<<<<<<<<<");
+        System.out.println("pageIndex:" + result.getPageIndex());
+        System.out.println("pageSize:" + result.getPageSize());
+        System.out.println("totalCount:" + result.getTotalCount());
+        System.out.println("totalPage:" + result.getTotalPage());
+        for (UserInfo item : result.getItems()) {
+            System.out.println("id:" + item.getId());
+            System.out.println("user_Name:" + item.getName());
+            System.out.println("login:" + item.getLogin());
+        }
+    }
+
+
+
 
 }
