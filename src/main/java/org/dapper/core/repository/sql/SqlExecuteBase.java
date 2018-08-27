@@ -27,23 +27,23 @@ public class SqlExecuteBase  extends SqlBase {
 
     public ResultKey execute(String sql, Object... param)
     {
-        try {
-             UnitOfWork.getOpenConnection();
-             return new ResultKey(UnitOfWork
-                     .dbConnection
-                     .createQuery(sql)
-                     .withParams(param)
-                     .executeUpdate().getKeys());
-        }finally {
-            this.UnitOfWork.close();
-        }
+
+        return execute(new Sql(sql,param));
     }
 
 
     public  ResultKey execute(Sql sql)
     {
-       return this.execute(sql.getFinalSql(),
-                sql.getFinalArgs());
+        try {
+            UnitOfWork.getOpenConnection();
+            return new ResultKey(UnitOfWork
+                    .dbConnection
+                    .createQuery(sql.getFinalSql())
+                    .withParams(sql.getFinalArgs())
+                    .executeUpdate().getKeys());
+        }finally {
+            this.UnitOfWork.close();
+        }
     }
 
 

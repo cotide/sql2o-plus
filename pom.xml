@@ -3,12 +3,29 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>org.cotide.dapper</groupId>
     <artifactId>sql2o-plus</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <description>基于sql2o扩展</description>
-    <properties> 
+
+    <name>sql2o-plus</name>
+    <url>https://github.com/cotide/sql2o-plus</url>
+    <description>🍌基于sql2o的轻量级ORM</description>
+
+    <licenses>
+        <license>
+            <name>Apache License Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+    <scm>
+        <connection>scm:git@github.com:cotide/sql2o-plus.git</connection>
+        <developerConnection>scm:git@github.com:cotide/sql2o-plus.git</developerConnection>
+        <url>git@github.com:cotide/sql2o-plus.git</url>
+    </scm>
+
+    <properties>
         <mysql.version>8.0.11</mysql.version>
         <sql2o.version>1.6.0-RC3</sql2o.version>
         <joda-time.version>2.0</joda-time.version>
@@ -126,6 +143,27 @@
                     </instrumentation>
                     <check/>
                 </configuration>
+            </plugin>
+            <!-- javadoc -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.2</version>
+                <configuration>
+                    <charset>UTF-8</charset>
+                    <docencoding>UTF-8</docencoding>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <additionalparam>-Xdoclint:none</additionalparam>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

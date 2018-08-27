@@ -20,7 +20,7 @@ public class ExecuteTest extends BaseTest {
        try(Database db = getDatabase()){
            db.beginTransaction();
            final  String insertSql  =
-                   "INSERT INTO user_info (user_Name,password,login,create_time) VALUES (?,?,?,?)";
+                   "INSERT INTO user_info (user_Name,password,login,create_time) VALUES (@0,@1,@2,@3)";
 
            int id =  db.getSqlRun().execute(
                    insertSql,
@@ -31,7 +31,7 @@ public class ExecuteTest extends BaseTest {
            System.out.println("Object is :"+id);
            assert (id>0):"insert is error";
            final String updateSql  =
-                   "UPDATE user_info set user_Name = ? WHERE user_id = ?";
+                   "UPDATE user_info set user_Name = @0 WHERE user_id = @1";
            db.getSqlRun().execute(updateSql,"Execute Test2",id);
            db.commit();
            Sql sql = Sql.builder()
