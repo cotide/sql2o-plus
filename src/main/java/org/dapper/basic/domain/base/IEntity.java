@@ -2,7 +2,8 @@ package org.dapper.basic.domain.base;
 
 /***
  * 实体聚合根接口
+ * @author cotide
  */
-public interface IEntityByType {
+public interface IEntity {
 
 }
