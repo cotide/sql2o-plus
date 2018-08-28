@@ -1,6 +1,6 @@
 package org.dapper.core.unit;
 
-import org.dapper.basic.domain.base.BaseEntityByType;
+import org.dapper.basic.domain.base.Entity;
 import org.dapper.core.repository.sql.DapperRepositoryBase;
 import org.dapper.core.repository.IRepository;
 import org.sql2o.Connection;
@@ -52,7 +52,7 @@ public class Sql2oUnitOfWork implements IUnitOfWork {
 
 
     @Override
-    public <TEntity extends BaseEntityByType> IRepository getRepository(Class<TEntity> returnType) {
+    public <TEntity extends Entity> IRepository getRepository(Class<TEntity> returnType) {
         return new DapperRepositoryBase(returnType,this);
     }
 

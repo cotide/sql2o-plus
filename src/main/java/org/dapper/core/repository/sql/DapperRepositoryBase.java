@@ -1,7 +1,7 @@
 package org.dapper.core.repository.sql;
 
 import org.dapper.basic.collections.PageList;
-import org.dapper.basic.domain.base.BaseEntityByType;
+import org.dapper.basic.domain.base.Entity;
 import org.dapper.core.attr.Ignore;
 import org.dapper.core.repository.IRepository;
 import org.dapper.core.unit.Sql2oUnitOfWork;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class DapperRepositoryBase<TEntity  extends BaseEntityByType>
+public class DapperRepositoryBase<TEntity  extends Entity>
         extends SqlQueryBase
         implements IRepository<TEntity> {
 
@@ -98,7 +98,7 @@ public class DapperRepositoryBase<TEntity  extends BaseEntityByType>
      * @param object
      * @return 影响行数
      */
-    private  <T extends BaseEntityByType> T executeInsert(T object) {
+    private  <T extends Entity> T executeInsert(T object) {
 
             PocoData pocoData = PocoData.forType(object.getClass());
             TableInfo pd = pocoData.getTableInfo();
@@ -178,7 +178,7 @@ public class DapperRepositoryBase<TEntity  extends BaseEntityByType>
      * @param object
      * @return 影响行数
      */
-    private  <T extends BaseEntityByType> T executeUpdate(T object) {
+    private  <T extends Entity> T executeUpdate(T object) {
 
         PocoData pocoData = PocoData.forType(object.getClass());
         TableInfo pd = pocoData.getTableInfo();
@@ -232,7 +232,7 @@ public class DapperRepositoryBase<TEntity  extends BaseEntityByType>
      * @param <T>
      * @return
      */
-    private  <T extends BaseEntityByType> boolean executeDelete(T object){
+    private  <T extends Entity> boolean executeDelete(T object){
 
         if(Sql2oUtils.isNull(object))
         {

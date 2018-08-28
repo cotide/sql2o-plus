@@ -1,12 +1,12 @@
 package org.dapper.core.repository;
 
-import org.dapper.basic.domain.base.BaseEntityByType;
+import org.dapper.basic.domain.base.Entity;
 
 /**
  * 持久化 CRUD
  * @param <TEntity>
  */
-public interface IRepository<TEntity  extends BaseEntityByType > extends IReadOnlyRepository<TEntity> {
+public interface IRepository<TEntity  extends Entity> extends IReadOnlyRepository<TEntity> {
 
 
     //#region 持久化

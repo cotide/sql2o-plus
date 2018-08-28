@@ -1,7 +1,7 @@
 package org.dapper.core.repository;
 
 import org.dapper.basic.collections.PageList;
-import org.dapper.basic.domain.base.BaseEntityByType;
+import org.dapper.basic.domain.base.Entity;
 import org.dapper.query.Sql;
 
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.List;
  * ReadOnly CRUD
  * @param <TEntity>
  */
-public interface IReadOnlyRepository<TEntity extends BaseEntityByType>  {
+public interface IReadOnlyRepository<TEntity extends Entity>  {
 
     /**
      * 获取列表数据

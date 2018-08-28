@@ -1,6 +1,6 @@
 package org.dapper.query;
 
-import org.dapper.basic.domain.base.BaseEntityByType;
+import org.dapper.basic.domain.base.Entity;
 import org.dapper.core.exceptions.SqlBuildException;
 import org.dapper.core.unit.info.TableInfo;
 
@@ -99,7 +99,7 @@ public class Sql {
     }
 
 
-    public <T extends BaseEntityByType>  Sql  from(Class<T> modelClass) {
+    public <T extends Entity>  Sql  from(Class<T> modelClass) {
         String tableName  = TableInfo.fromPoco(modelClass).getTableName();
         return append(new Sql("from " +  tableName));
     }

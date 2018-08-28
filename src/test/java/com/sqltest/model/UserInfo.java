@@ -1,6 +1,6 @@
 package com.sqltest.model;
 
-import org.dapper.basic.domain.base.BaseEntityByType;
+import org.dapper.basic.domain.base.Entity;
 import org.dapper.core.attr.*;
 
 import java.util.Date;
@@ -11,7 +11,7 @@ import java.util.Date;
 @lombok.Getter
 @lombok.Setter
 @Table("user_info")
-public class UserInfo extends BaseEntityByType {
+public class UserInfo extends Entity {
 
     @PrimaryKey("user_id")
     private int id;

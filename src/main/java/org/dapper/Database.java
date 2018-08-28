@@ -3,7 +3,7 @@ package org.dapper;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.dapper.basic.domain.base.BaseEntityByType;
+import org.dapper.basic.domain.base.Entity;
 import org.dapper.core.enums.DbType;
 import org.dapper.core.exceptions.DataAccessException;
 import org.dapper.core.repository.IRepository;
@@ -12,7 +12,6 @@ import org.dapper.core.repository.sql.SqlQueryBase;
 import org.dapper.core.unit.IUnitOfWork;
 import org.dapper.core.unit.Sql2oUnitOfWork;
 import org.dapper.core.utility.Guard;
-import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 import org.sql2o.logging.LocalLoggerFactory;
 import org.sql2o.logging.Logger;
@@ -20,7 +19,6 @@ import org.sql2o.logging.Logger;
 import javax.sql.DataSource;
 import java.io.Closeable;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -110,7 +108,7 @@ public class  Database implements  AutoCloseable,Closeable {
     /**
      * 获取仓储
      */
-    public  <TEntity extends BaseEntityByType> IRepository getRepository(Class<TEntity> returnType)
+    public  <TEntity extends Entity> IRepository getRepository(Class<TEntity> returnType)
     {
         return this.getUnitOfWork().getRepository(returnType);
     }

@@ -5,7 +5,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import lombok.NonNull;
-import org.dapper.basic.domain.base.BaseEntityByType;
+import org.dapper.basic.domain.base.Entity;
 import org.dapper.basic.enums.EnumMapping;
 import  org.dapper.core.attr.Column;
 import org.dapper.core.attr.Ignore;
@@ -37,11 +37,11 @@ public class PocoColumn {
     private boolean isPrimaryKey = false;
 
 
-    public <T extends BaseEntityByType>  Object getValue(T model) {
+    public <T extends Entity>  Object getValue(T model) {
         return getValue(model,true);
     }
 
-        public <T extends BaseEntityByType>  Object getValue(T model, boolean allowNull) {
+        public <T extends Entity>  Object getValue(T model, boolean allowNull) {
 
             field.setAccessible(true);
             try {

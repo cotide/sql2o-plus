@@ -2,7 +2,7 @@ package org.dapper.core.unit;
 
 
 
-import org.dapper.basic.domain.base.BaseEntityByType;
+import org.dapper.basic.domain.base.Entity;
 import org.dapper.core.repository.IRepository;
 
 import java.io.Closeable;
@@ -20,7 +20,7 @@ public interface IUnitOfWork extends Closeable {
      * @param <TEntity> 领域对象
      * @return
      */
-    <TEntity extends BaseEntityByType> IRepository getRepository(Class<TEntity> returnType);
+    <TEntity extends Entity> IRepository getRepository(Class<TEntity> returnType);
 
     /**
      * 切换数据库
