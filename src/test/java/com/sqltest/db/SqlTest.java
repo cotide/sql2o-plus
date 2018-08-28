@@ -2,9 +2,9 @@ package com.sqltest.db;
 
 
 import com.sqltest.model.UserInfo;
-import org.dapper.core.exceptions.SqlBuildException;
+import io.github.cotide.dapper.exceptions.SqlBuildException;
 import org.junit.Test;
-import org.dapper.query.Sql;
+import io.github.cotide.dapper.query.Sql;
 
 /**
  * SQL对象测试

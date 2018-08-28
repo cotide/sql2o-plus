@@ -1,7 +1,10 @@
 package com.sqltest.model;
 
-import org.dapper.basic.domain.base.Entity;
-import org.dapper.core.attr.*;
+import io.github.cotide.dapper.basic.domain.Entity;
+import io.github.cotide.dapper.core.attr.Column;
+import io.github.cotide.dapper.core.attr.Ignore;
+import io.github.cotide.dapper.core.attr.PrimaryKey;
+import io.github.cotide.dapper.core.attr.Table;
 
 import java.util.Date;
 

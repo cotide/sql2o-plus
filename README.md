@@ -1,21 +1,18 @@
 # sql2o-plus  
+
 [![Build Status](https://travis-ci.org/cotide/sql2o-plus.svg?branch=master)](https://travis-ci.org/cotide/sql2o-plus)
 [![License](https://img.shields.io/badge/license-Apache2-blue.svg)](https://github.com/cotide/sql2o-plus/blob/master/LICENSE)
 [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/sql2o-plus/Lobby)
 
-基于[sql2o](https://github.com/aaberg/sql2o)的轻量级ORM
+🍌sql2o-plus a simple object mapper for java 
+
 
 > Java版本 1.8
  
-##  Maven Build
-
-```xshell
-clean cobertura:cobertura compile install
-```
-
 ## 特点
 
-- 集成SQL Linq语法糖
+- [sql2o](https://github.com/aaberg/sql2o)驱动
+- 集成SQL linq语法糖
 - 集成SQL分页
 - CRUD 封装/简化调用方法
 - 支持事务
@@ -23,12 +20,14 @@ clean cobertura:cobertura compile install
 
 ## 实体映射 
 
-
 ```java
-package com.sqltest.model;
-import org.dapper.basic.domain.base.Entity;
-import org.dapper.core.attr.*; 
-import java.util.Date; 
+package com.sqltest.model; 
+import io.github.cotide.dapper.basic.domain.Entity;
+import io.github.cotide.dapper.core.attr.Column;
+import io.github.cotide.dapper.core.attr.Ignore;
+import io.github.cotide.dapper.core.attr.PrimaryKey;
+import io.github.cotide.dapper.core.attr.Table;
+import java.util.Date;
 
 @lombok.Getter
 @lombok.Setter
@@ -58,7 +57,7 @@ public class UserInfo extends Entity {
 
 - @Table (表名)
 - @PrimaryKey (主键)
-- @Column (字段名，如果跟数据库字段名称一致可不用标记该字段)
+- @Column (字段名,与数据库字段名称一致可不标记)
 - @Ignore (忽略字段)
 
 
@@ -117,19 +116,19 @@ IRepository<UserInfo> userInfoRepository =  db.getRepository(UserInfo.class);
 // getList()
 List<UserInfo> result1 =  userInfoRepository.getList();
 
-// getList(Sql sql)
+wrapper
 List<UserInfo> result2 = userInfoRepository.getList(Sql.builder().select().from(UserInfo.class));
 
-// getList(String sql,Object ... param)
+wrapper
 String sql = "select * from user_info where user_id = @0 ";
 List<UserInfo> result3 = userInfoRepository.getList(sql,1);
 
 // ** Dto getList **
-// getDtoList(Class<TDto> returnType,Sql sql)
+wrapper
 Sql sql1 = Sql.builder().select(" user_id as id, user_Name as name ").from(UserInfo.class).where("user_id = @0",1);
 List<UserInfoDto> result4 =  db.getSqlQuery().getDtoList(UserInfoDto.class,sql1);
 
-// getDtoList(Class<TDto> returnType,String sql,Object ... param)
+wrapper
 String sql2 = "select user_id as id, user_Name as name from user_info where user_id = @0 ";
 List<UserInfoDto> result5 =  db.getSqlQuery().getDtoList(UserInfoDto.class,sql2,1);
 ```
@@ -232,7 +231,6 @@ try(Database db = getDatabase()){
    db.commit();
    assert(user.getId()>0):"database transaction is error";
 }  
-
 ```
 
 
@@ -269,4 +267,6 @@ try(Database db = getDatabase()){
 
 
 
+## License
 
+[Apache2](http://www.apache.org/licenses/LICENSE-2.0.txt)

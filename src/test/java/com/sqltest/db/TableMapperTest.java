@@ -1,15 +1,12 @@
 package com.sqltest.db;
 
 import com.sqltest.model.UserInfo;
-import org.dapper.core.attr.Ignore;
-import org.dapper.core.attr.PrimaryKey;
-import org.dapper.core.unit.info.PocoColumn;
-import org.dapper.core.unit.info.PocoData;
-import org.dapper.core.unit.info.TableInfo;
+import io.github.cotide.dapper.core.attr.Ignore;
+import io.github.cotide.dapper.core.unit.info.PocoColumn;
+import io.github.cotide.dapper.core.unit.info.PocoData;
+import io.github.cotide.dapper.core.unit.info.TableInfo;
 import org.junit.Test;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Map;

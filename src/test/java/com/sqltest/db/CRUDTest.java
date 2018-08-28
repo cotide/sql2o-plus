@@ -2,9 +2,9 @@ package com.sqltest.db;
 
 import com.sqltest.base.BaseTest;
 import com.sqltest.model.UserInfo;
-import org.dapper.Database;
-import org.dapper.core.repository.IRepository;
-import org.dapper.query.Sql;
+import io.github.cotide.dapper.Database;
+import io.github.cotide.dapper.repository.inter.IRepository;
+import io.github.cotide.dapper.query.Sql;
 import org.junit.Test;
 
 import java.util.Date;

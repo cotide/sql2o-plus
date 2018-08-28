@@ -1,7 +1,7 @@
 package com.sqltest.base;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import org.dapper.Database;
+import io.github.cotide.dapper.Database;
 import org.junit.BeforeClass;
 
 public class BaseTest {

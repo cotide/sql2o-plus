@@ -3,14 +3,11 @@ package com.sqltest.db;
 import com.sqltest.base.BaseTest;
 import com.sqltest.dto.UserInfoDto;
 import com.sqltest.model.UserInfo;
-import org.dapper.Database;
-import org.dapper.query.Sql;
-import org.junit.Assert;
+import io.github.cotide.dapper.Database;
+import io.github.cotide.dapper.query.Sql;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class ExecuteTest extends BaseTest {
 

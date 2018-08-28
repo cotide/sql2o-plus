@@ -1,19 +1,12 @@
 package com.sqltest.db;
 
 import com.sqltest.base.BaseTest;
-import com.sqltest.dto.UserInfoDto;
 import com.sqltest.model.UserInfo;
-import org.dapper.Database;
-import org.dapper.basic.collections.PageList;
-import org.dapper.core.attr.Ignore;
-import org.dapper.core.repository.IRepository;
-import org.dapper.query.Sql;
+import io.github.cotide.dapper.Database;
+import io.github.cotide.dapper.repository.inter.IRepository;
 import org.junit.Test;
-import org.omg.CORBA.PUBLIC_MEMBER;
 
-import java.lang.reflect.Field;
 import java.util.Date;
-import java.util.List;
 
 public class TranTest extends BaseTest {
 

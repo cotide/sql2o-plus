@@ -1,11 +1,9 @@
 package com.sqltest;
 
 import com.sqltest.model.UserInfo;
-import org.dapper.Database;
 import org.junit.Test;
-import org.sql2o.Connection;
-import org.sql2o.Query;
-import org.sql2o.Sql2o;
+import sql2o.Connection;
+import sql2o.Sql2o;
 
 import java.util.ArrayList;
 import java.util.Date;
