@@ -1,6 +1,6 @@
-package io.sql2o.reflection;
+package sql2o.reflection;
 
-import io.sql2o.Sql2oException;
+import sql2o.Sql2oException;
 
 import java.lang.reflect.Field;
 

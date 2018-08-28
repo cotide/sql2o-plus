@@ -1,4 +1,4 @@
-package io.github.cotide.core.unit;
+package io.github.cotide.dapper.core.unit;
 
 
 import lombok.AccessLevel;

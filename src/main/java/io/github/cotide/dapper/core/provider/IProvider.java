@@ -1,8 +1,8 @@
-package io.github.cotide.core.provider;
+package io.github.cotide.dapper.core.provider;
 
-import io.github.cotide.Database;
-import io.github.cotide.core.unit.info.TableInfo;
-import io.github.cotide.core.unit.parm.SQLParts;
+import io.github.cotide.dapper.Database;
+import io.github.cotide.dapper.core.unit.info.TableInfo;
+import io.github.cotide.dapper.core.unit.parm.SQLParts;
 
 import java.sql.PreparedStatement;
 

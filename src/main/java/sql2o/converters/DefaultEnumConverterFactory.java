@@ -1,4 +1,4 @@
-package io.sql2o.converters;
+package sql2o.converters;
 
 /**
  * Default implementation of {@link EnumConverterFactory},

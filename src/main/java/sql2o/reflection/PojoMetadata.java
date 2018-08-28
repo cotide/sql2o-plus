@@ -1,10 +1,10 @@
-package io.sql2o.reflection;
+package sql2o.reflection;
 
-import io.sql2o.Sql2oException;
-import io.sql2o.tools.AbstractCache;
-import io.sql2o.tools.UnderscoreToCamelCase;
-import io.dapper.core.attr.Column;
-import io.dapper.core.attr.PrimaryKey;
+import sql2o.Sql2oException;
+import sql2o.tools.AbstractCache;
+import sql2o.tools.UnderscoreToCamelCase;
+import io.github.cotide.dapper.core.attr.Column;
+import io.github.cotide.dapper.core.attr.PrimaryKey;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;

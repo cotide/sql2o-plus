@@ -1,11 +1,14 @@
-package io.github.cotide.core.provider.mapper;
+package io.github.cotide.dapper.core.provider.mapper;
 
-import io.github.cotide.core.provider.Internal.ArrayKey;
-import io.github.cotide.core.unit.Cache;
-import io.github.cotide.core.provider.Internal.Tuple;
+import io.github.cotide.dapper.core.provider.Internal.ArrayKey;
+import io.github.cotide.dapper.core.unit.Cache;
+import io.github.cotide.dapper.core.provider.Internal.Tuple;
 
 import java.lang.reflect.Type;
 
+/**
+ * @author cotide
+ */
 public class MultiPocoFactory {
 
     /**

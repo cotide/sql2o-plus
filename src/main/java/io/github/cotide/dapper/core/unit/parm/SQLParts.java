@@ -1,4 +1,4 @@
-package io.github.cotide.core.unit.parm;
+package io.github.cotide.dapper.core.unit.parm;
 
 
 /**

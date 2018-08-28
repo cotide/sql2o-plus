@@ -1,4 +1,4 @@
-package io.sql2o.reflection;
+package sql2o.reflection;
 
 /**
  * Created with IntelliJ IDEA.

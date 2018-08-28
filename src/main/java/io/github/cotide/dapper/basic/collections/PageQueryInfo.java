@@ -1,4 +1,4 @@
-package io.github.cotide.basic.collections;
+package io.github.cotide.dapper.basic.collections;
 
 public class PageQueryInfo {
     private String countSql;

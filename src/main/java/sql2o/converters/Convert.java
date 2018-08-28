@@ -1,12 +1,12 @@
-package io.sql2o.converters;
+package sql2o.converters;
 
-import io.sql2o.tools.FeatureDetector;
+import sql2o.tools.FeatureDetector;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
-import io.sql2o.converters.joda.DateTimeConverter;
-import io.sql2o.converters.joda.LocalDateConverter;
-import io.sql2o.converters.joda.LocalTimeConverter;
+import sql2o.converters.joda.DateTimeConverter;
+import sql2o.converters.joda.LocalDateConverter;
+import sql2o.converters.joda.LocalTimeConverter;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

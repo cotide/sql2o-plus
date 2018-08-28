@@ -1,10 +1,10 @@
-package io.sql2o.reflection;
+package sql2o.reflection;
 
-import io.sql2o.Sql2oException;
-import io.sql2o.converters.Convert;
-import io.sql2o.converters.Converter;
-import io.sql2o.converters.ConverterException;
-import io.sql2o.quirks.Quirks;
+import sql2o.Sql2oException;
+import sql2o.converters.Convert;
+import sql2o.converters.Converter;
+import sql2o.converters.ConverterException;
+import sql2o.quirks.Quirks;
 
 /**
  * Used internally to represent a plain old java object.

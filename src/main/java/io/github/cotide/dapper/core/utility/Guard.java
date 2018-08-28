@@ -1,5 +1,8 @@
-package io.github.cotide.core.utility;
+package io.github.cotide.dapper.core.utility;
 
+/**
+ * @author cotide
+ */
 public class Guard {
 
 

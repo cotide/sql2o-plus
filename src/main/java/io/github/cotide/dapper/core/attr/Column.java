@@ -1,4 +1,4 @@
-package io.github.cotide.core.attr;
+package io.github.cotide.dapper.core.attr;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

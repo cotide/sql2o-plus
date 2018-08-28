@@ -1,4 +1,4 @@
-package io.sql2o.converters;
+package sql2o.converters;
 
 import java.util.Date;
 

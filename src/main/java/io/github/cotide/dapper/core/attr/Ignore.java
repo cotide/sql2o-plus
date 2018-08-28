@@ -1,14 +1,10 @@
-package io.github.cotide.core.attr;
+package io.github.cotide.dapper.core.attr;
 
 import java.lang.annotation.*;
 
 /**
  * 忽略字段
  */
-//@Target({ElementType.METHOD, ElementType.FIELD})
-////@Retention(RetentionPolicy.RUNTIME)
-
-
 @Documented
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)

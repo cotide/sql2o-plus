@@ -1,12 +1,12 @@
-package io.sql2o.extensions.postgres.converters;
+package sql2o.extensions.postgres.converters;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import io.sql2o.converters.Converter;
-import io.sql2o.converters.ConverterException;
-import io.sql2o.converters.ConvertersProvider;
-import io.sql2o.converters.StringConverter;
+import sql2o.converters.Converter;
+import sql2o.converters.ConverterException;
+import sql2o.converters.ConvertersProvider;
+import sql2o.converters.StringConverter;
 import org.postgresql.util.PGobject;
 
 import java.util.Map;

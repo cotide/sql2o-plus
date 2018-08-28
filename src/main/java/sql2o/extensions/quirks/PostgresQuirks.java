@@ -1,7 +1,7 @@
-package io.sql2o.extensions.quirks;
+package sql2o.extensions.quirks;
 
-import io.sql2o.converters.Converter;
-import io.sql2o.quirks.NoQuirks;
+import sql2o.converters.Converter;
+import sql2o.quirks.NoQuirks;
 
 import java.util.Map;
 

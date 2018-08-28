@@ -1,8 +1,8 @@
-package io.sql2o.data;
+package sql2o.data;
 
-import io.sql2o.ResultSetIteratorBase;
-import io.sql2o.Sql2oException;
-import io.sql2o.quirks.Quirks;
+import sql2o.ResultSetIteratorBase;
+import sql2o.Sql2oException;
+import sql2o.quirks.Quirks;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

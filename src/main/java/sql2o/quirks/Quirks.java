@@ -1,7 +1,7 @@
-package io.sql2o.quirks;
+package sql2o.quirks;
 
-import io.sql2o.quirks.parameterparsing.SqlParameterParsingStrategy;
-import io.sql2o.converters.Converter;
+import sql2o.quirks.parameterparsing.SqlParameterParsingStrategy;
+import sql2o.converters.Converter;
 
 import java.io.InputStream;
 import java.sql.*;

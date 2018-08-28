@@ -1,6 +1,6 @@
-package io.github.cotide.core.provider.mapper;
+package io.github.cotide.dapper.core.provider.mapper;
 
-import io.github.cotide.core.unit.PocoData;
+import io.github.cotide.dapper.core.unit.PocoData;
 
 import java.util.HashMap;
 import java.util.Map;

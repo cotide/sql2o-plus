@@ -1,9 +1,9 @@
-package io.github.cotide.core.unit;
+package io.github.cotide.dapper.core.unit;
 
-import io.github.cotide.core.provider.mapper.IMapper;
-import io.github.cotide.core.provider.mapper.Mappers;
-import io.github.cotide.core.unit.info.PocoColumn;
-import io.github.cotide.core.unit.info.TableInfo;
+import io.github.cotide.dapper.core.provider.mapper.IMapper;
+import io.github.cotide.dapper.core.provider.mapper.Mappers;
+import io.github.cotide.dapper.core.unit.info.PocoColumn;
+import io.github.cotide.dapper.core.unit.info.TableInfo;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;

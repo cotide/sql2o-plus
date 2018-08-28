@@ -1,7 +1,7 @@
-package io.sql2o.converters.joda;
+package sql2o.converters.joda;
 
-import io.sql2o.converters.Converter;
-import io.sql2o.converters.ConverterException;
+import sql2o.converters.Converter;
+import sql2o.converters.ConverterException;
 import org.joda.time.LocalTime;
 
 import java.sql.Timestamp;

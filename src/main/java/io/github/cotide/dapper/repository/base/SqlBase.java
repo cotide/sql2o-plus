@@ -1,4 +1,4 @@
-package io.github.cotide.dapper.repository.sql.base;
+package io.github.cotide.dapper.repository.base;
 
 import io.github.cotide.dapper.core.unit.IUnitOfWork;
 import io.github.cotide.dapper.core.unit.Sql2oUnitOfWork;

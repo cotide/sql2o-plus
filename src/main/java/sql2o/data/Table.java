@@ -1,4 +1,4 @@
-package io.sql2o.data;
+package sql2o.data;
 
 import java.util.*;
 

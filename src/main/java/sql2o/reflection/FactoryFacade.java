@@ -1,4 +1,4 @@
-package io.sql2o.reflection;
+package sql2o.reflection;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -13,7 +13,7 @@ public class FactoryFacade {
         ObjectConstructorFactory o;
         try {
             m = (MethodSetterFactory) Class
-                    .forName("io.sql2o.reflection.MethodAccessorsGenerator")
+                    .forName("sql2o.reflection.MethodAccessorsGenerator")
                     .newInstance();
             mg = (MethodGetterFactory) m;
             o = (ObjectConstructorFactory) m;
@@ -25,9 +25,9 @@ public class FactoryFacade {
         FieldGetterFactory fg;
         FieldSetterFactory f;
         try {
-            Class clsg = Class.forName("io.sql2o.reflection.UnsafeFieldGetterFactory");
+            Class clsg = Class.forName("sql2o.reflection.UnsafeFieldGetterFactory");
             fg = (FieldGetterFactory) clsg.newInstance();
-            Class cls = Class.forName("io.sql2o.reflection.UnsafeFieldSetterFactory");
+            Class cls = Class.forName("sql2o.reflection.UnsafeFieldSetterFactory");
             f = (FieldSetterFactory) cls.newInstance();
             if(o==null) o = (ObjectConstructorFactory) f;
         } catch (Throwable ex) {

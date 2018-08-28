@@ -17,7 +17,7 @@ public class ConnectionSources {
      * with proxy that will omit {@link Connection#close()} or {@link Connection#commit()} calls.
      * This is useful to make {@link sql2o.Connection} work with externally managed transactions
      * @param connection connection to wrap
-     * @return a connection wrapper that represent a nested connection
+     * @return a connection inter that represent a nested connection
      */
     public static ConnectionSource join(final Connection connection) {
         return new ConnectionSource() {

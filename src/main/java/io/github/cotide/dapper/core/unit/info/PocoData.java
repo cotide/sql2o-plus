@@ -1,11 +1,10 @@
-package io.github.cotide.core.unit.info;
+package io.github.cotide.dapper.core.unit.info;
 
-import io.github.cotide.core.attr.Column;
-import io.github.cotide.core.attr.Ignore;
-import io.github.cotide.core.attr.PrimaryKey;
-import io.github.cotide.core.attr.Table;
+import io.github.cotide.dapper.core.attr.Column;
+import io.github.cotide.dapper.core.attr.Ignore;
+import io.github.cotide.dapper.core.attr.PrimaryKey;
+import io.github.cotide.dapper.core.attr.Table;
 import lombok.Getter;
-import org.dapper.core.attr.*;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;

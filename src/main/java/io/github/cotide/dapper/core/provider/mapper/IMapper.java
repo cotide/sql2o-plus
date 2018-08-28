@@ -1,7 +1,7 @@
-package io.github.cotide.core.provider.mapper;
+package io.github.cotide.dapper.core.provider.mapper;
 
-import io.github.cotide.core.unit.info.PocoColumn;
-import io.github.cotide.core.unit.info.TableInfo;
+import io.github.cotide.dapper.core.unit.info.PocoColumn;
+import io.github.cotide.dapper.core.unit.info.TableInfo;
 
 import java.lang.reflect.Field;
 

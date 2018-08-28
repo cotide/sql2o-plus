@@ -1,4 +1,4 @@
-package io.sql2o.converters;
+package sql2o.converters;
 
 /**
  * Used by sql2o to convert a value from the database into an {@link Integer}.

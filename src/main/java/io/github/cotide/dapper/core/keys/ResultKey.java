@@ -1,4 +1,4 @@
-package io.github.cotide.core.keys;
+package io.github.cotide.dapper.core.keys;
 
 import java.math.BigInteger;
 import java.util.Arrays;

@@ -1,4 +1,4 @@
-package io.sql2o.quirks.parameterparsing.impl;
+package sql2o.quirks.parameterparsing.impl;
 
 /**
  * Created by lars on 22.09.2014.

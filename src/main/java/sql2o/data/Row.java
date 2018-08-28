@@ -1,14 +1,13 @@
-package io.sql2o.data;
+package sql2o.data;
 
-import io.sql2o.Sql2oException;
-import io.sql2o.converters.ConverterException;
-import org.sql2o.converters.*;
-import io.sql2o.quirks.Quirks;
+import sql2o.Sql2oException;
+import sql2o.converters.ConverterException;
+import sql2o.quirks.Quirks;
 
 import java.math.BigDecimal;
 import java.util.*;
 
-import static io.sql2o.converters.Convert.throwIfNull;
+import static sql2o.converters.Convert.throwIfNull;
 
 /**
  * Represents a result set row.
@@ -40,7 +39,9 @@ public class Row {
         Integer index = columnNameToIdxMap.get(
                 isCaseSensitive?columnName
                 :columnName.toLowerCase());
-        if(index!=null) return getObject(index);
+        if(index!=null) {
+            return getObject(index);
+        }
         throw new Sql2oException(String.format("Column with name '%s' does not exist", columnName));
     }
 

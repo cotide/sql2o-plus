@@ -1,6 +1,6 @@
-package io.sql2o.data;
+package sql2o.data;
 
-import io.sql2o.ResultSetIterable;
+import sql2o.ResultSetIterable;
 
 import java.util.List;
 

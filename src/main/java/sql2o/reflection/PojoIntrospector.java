@@ -1,6 +1,6 @@
-package io.sql2o.reflection;
+package sql2o.reflection;
 
-import io.sql2o.tools.AbstractCache;
+import sql2o.tools.AbstractCache;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;

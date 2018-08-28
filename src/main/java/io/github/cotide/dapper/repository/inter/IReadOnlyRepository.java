@@ -1,4 +1,4 @@
-package io.github.cotide.dapper.repository;
+package io.github.cotide.dapper.repository.inter;
 
 import io.github.cotide.dapper.basic.collections.PageList;
 import io.github.cotide.dapper.basic.domain.Entity;

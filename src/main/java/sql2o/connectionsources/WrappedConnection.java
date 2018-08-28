@@ -1,4 +1,4 @@
-package io.sql2o.connectionsources;
+package sql2o.connectionsources;
 
 import java.sql.*;
 import java.util.Map;
@@ -6,7 +6,7 @@ import java.util.Properties;
 import java.util.concurrent.Executor;
 
 /**
- * Simple {@link Connection wrapper}
+ * Simple {@link Connection inter}
  * Created by nickl on 09.01.17.
  */
 public class WrappedConnection implements Connection {

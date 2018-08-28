@@ -1,4 +1,4 @@
-package io.github.cotide.dapper.basic.domain.ex;
+package io.github.cotide.dapper.basic.domain.extend;
 
 import io.github.cotide.dapper.core.attr.PrimaryKey;
 

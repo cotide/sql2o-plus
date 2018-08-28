@@ -1,6 +1,6 @@
-package io.sql2o.extensions.quirks;
-import io.sql2o.quirks.Quirks;
-import io.sql2o.quirks.QuirksProvider;
+package sql2o.extensions.quirks;
+import sql2o.quirks.Quirks;
+import sql2o.quirks.QuirksProvider;
 
 /**
  * Created by lars on 28.10.14.

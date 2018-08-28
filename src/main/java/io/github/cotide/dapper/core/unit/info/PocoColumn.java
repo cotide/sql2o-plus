@@ -1,16 +1,16 @@
-package io.github.cotide.core.unit.info;
+package io.github.cotide.dapper.core.unit.info;
 
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import io.github.cotide.core.attr.Column;
-import io.github.cotide.core.attr.Ignore;
-import io.github.cotide.core.attr.PrimaryKey;
-import io.github.cotide.basic.enums.EnumMapping;
+import io.github.cotide.dapper.core.attr.Column;
+import io.github.cotide.dapper.core.attr.Ignore;
+import io.github.cotide.dapper.core.attr.PrimaryKey;
+import io.github.cotide.dapper.basic.enums.EnumMapping;
 import lombok.NonNull;
-import io.github.cotide.basic.domain.base.Entity;
-import io.github.cotide.core.exceptions.SqlBuildException;
+import io.github.cotide.dapper.basic.domain.Entity;
+import io.github.cotide.dapper.exceptions.SqlBuildException;
 
 /**
  * 表字段信息

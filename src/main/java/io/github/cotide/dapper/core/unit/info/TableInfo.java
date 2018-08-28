@@ -1,9 +1,9 @@
-package io.github.cotide.core.unit.info;
+package io.github.cotide.dapper.core.unit.info;
 
-import io.github.cotide.core.attr.PrimaryKey;
-import io.github.cotide.core.attr.Table;
-import io.github.cotide.core.unit.Sql2oCache;
-import io.github.cotide.core.unit.Sql2oUtils;
+import io.github.cotide.dapper.core.attr.PrimaryKey;
+import io.github.cotide.dapper.core.attr.Table;
+import io.github.cotide.dapper.core.unit.Sql2oCache;
+import io.github.cotide.dapper.core.unit.Sql2oUtils;
 
 import java.lang.reflect.Field;
 

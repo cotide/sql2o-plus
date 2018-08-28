@@ -1,7 +1,7 @@
-package io.sql2o.connectionsources;
+package sql2o.connectionsources;
 
-import io.sql2o.logging.LocalLoggerFactory;
-import io.sql2o.logging.Logger;
+import sql2o.logging.LocalLoggerFactory;
+import sql2o.logging.Logger;
 
 import java.sql.Connection;
 import java.sql.SQLException;

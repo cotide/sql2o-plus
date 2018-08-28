@@ -1,5 +1,8 @@
-package io.github.cotide.core.provider.Internal;
+package io.github.cotide.dapper.core.provider.Internal;
 
+/**
+ * @author cotide
+ */
 public class Tuple<T1,T2,T3,T4> {
 
     private final T1 m_Item1;

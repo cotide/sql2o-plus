@@ -1,5 +1,8 @@
-package io.github.cotide.core.provider.Internal;
+package io.github.cotide.dapper.core.provider.Internal;
 
+/**
+ * @author cotide
+ */
 public class ArrayKey<T> {
 
     private int _hashCode;

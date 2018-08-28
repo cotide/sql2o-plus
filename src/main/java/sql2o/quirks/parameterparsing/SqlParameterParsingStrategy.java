@@ -1,4 +1,4 @@
-package io.sql2o.quirks.parameterparsing;
+package sql2o.quirks.parameterparsing;
 
 import java.util.List;
 import java.util.Map;

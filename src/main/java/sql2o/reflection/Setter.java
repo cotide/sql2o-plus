@@ -1,4 +1,4 @@
-package io.sql2o.reflection;
+package sql2o.reflection;
 
 /**
  * The Setter interface is used by sql2o to set property values when doing automatic column to property mapping

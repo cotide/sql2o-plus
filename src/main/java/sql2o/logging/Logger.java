@@ -1,4 +1,4 @@
-package io.sql2o.logging;
+package sql2o.logging;
 
 /**
  * Created by lars on 2/9/14.

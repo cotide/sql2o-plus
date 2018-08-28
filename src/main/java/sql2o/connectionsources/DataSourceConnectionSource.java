@@ -1,4 +1,4 @@
-package io.sql2o.connectionsources;
+package sql2o.connectionsources;
 
 import javax.sql.DataSource;
 import java.sql.Connection;

@@ -1,7 +1,10 @@
-package io.github.cotide.core.provider;
+package io.github.cotide.dapper.core.provider;
 
-import io.github.cotide.core.unit.parm.SQLParts;
+import io.github.cotide.dapper.core.unit.parm.SQLParts;
 
+/**
+ * @author cotide
+ */
 public interface IPagingHelper {
 
 

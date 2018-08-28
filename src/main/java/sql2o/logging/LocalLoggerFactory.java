@@ -1,6 +1,6 @@
-package io.sql2o.logging;
+package sql2o.logging;
 
-import io.sql2o.tools.FeatureDetector;
+import sql2o.tools.FeatureDetector;
 import org.slf4j.LoggerFactory;
 
 /**

@@ -1,6 +1,6 @@
-package io.sql2o.connectionsources;
+package sql2o.connectionsources;
 
-import io.sql2o.Connection;
+import sql2o.Connection;
 
 import java.sql.SQLException;
 

@@ -22,7 +22,7 @@
     <scm>
         <connection>scm:git@github.com:cotide/sql2o-plus.git</connection>
         <developerConnection>scm:git@github.com:cotide/sql2o-plus.git</developerConnection>
-        <url>git@github.com:cotide/sql2o-plus.git</url>
+        <url>https://github.com/cotide/sql2o-plus.git</url>
     </scm>
 
     <properties>

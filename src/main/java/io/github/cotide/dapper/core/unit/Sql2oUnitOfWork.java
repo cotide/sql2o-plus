@@ -1,8 +1,8 @@
-package io.github.cotide.core.unit;
+package io.github.cotide.dapper.core.unit;
 
-import io.github.cotide.core.repository.IRepository;
-import io.github.cotide.basic.domain.base.Entity;
-import io.github.cotide.core.repository.sql.DapperRepositoryBase;
+import io.github.cotide.dapper.repository.inter.IRepository;
+import io.github.cotide.dapper.basic.domain.Entity;
+import io.github.cotide.dapper.repository.DapperRepositoryBase;
 import sql2o.Connection;
 import sql2o.Sql2o;
 

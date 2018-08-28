@@ -1,6 +1,6 @@
-package io.sql2o.converters;
+package sql2o.converters;
 
-import io.sql2o.tools.IOUtils;
+import sql2o.tools.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
