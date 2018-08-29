@@ -8,6 +8,32 @@
 
 
 > Java版本 1.8
+
+## Maven 
+
+### snapshots 版本
+
+> 编辑pom.xml 
+
+```shell
+<repository>
+    <id>oss-snapshots</id>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    <releases>
+        <enabled>false</enabled>
+    </releases>
+    <snapshots>
+        <enabled>true</enabled>
+    </snapshots>
+</repository>
+
+<dependency>
+    <groupId>io.github.cotide</groupId>
+    <artifactId>sql2o-plus</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+</dependency>
+```
+
  
 ## 特点
 
@@ -16,6 +42,8 @@
 - 集成SQL分页
 - CRUD 封装/简化调用方法
 - 支持事务
+
+ 
 
 
 ## 实体映射 
