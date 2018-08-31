@@ -11,10 +11,12 @@
 
 ## Maven 
 
+> 编辑pom.xml 
+
  
 ### releases 版本
 
-```shell 
+```xml 
 <dependency>
     <groupId>io.github.cotide</groupId>
     <artifactId>sql2o-plus</artifactId>
@@ -24,9 +26,7 @@
 
 ### snapshots 版本
 
-> 编辑pom.xml 
-
-```shell
+```xml
 <repository>
     <id>oss-snapshots</id>
     <url>https://oss.sonatype.org/content/repositories/snapshots</url>
