@@ -11,6 +11,17 @@
 
 ## Maven 
 
+ 
+### releases 版本
+
+```shell 
+<dependency>
+    <groupId>io.github.cotide</groupId>
+    <artifactId>sql2o-plus</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
+
 ### snapshots 版本
 
 > 编辑pom.xml 
@@ -25,8 +36,7 @@
     <snapshots>
         <enabled>true</enabled>
     </snapshots>
-</repository>
-
+</repository> 
 <dependency>
     <groupId>io.github.cotide</groupId>
     <artifactId>sql2o-plus</artifactId>
