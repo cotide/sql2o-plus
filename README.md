@@ -129,6 +129,12 @@ public class UserInfoDto {
     private String name;
 
     private int login;
+
+    private EnumUserStatus status;
+
+    private EnumVipLevel level;
+
+    private Date createTime;
 }
 ```
 
@@ -319,9 +325,9 @@ try(Database db = getDatabase()){
 ```
 
 
-## 注意问题
+## 问题
 
-如果使用SpringBoot时,需要指定JPA版本，不然@Column不会被解析映射到POJO对象
+如果@Column不会被解析映射到POJO对象,需要指定JPA版本 
 
 ```json
 <dependency>
