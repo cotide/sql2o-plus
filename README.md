@@ -11,7 +11,7 @@
 
 ## Maven 
 
-> 编辑pom.xml 
+> pom.xml 
 
  
 ### releases 版本
@@ -40,7 +40,7 @@
 <dependency>
     <groupId>io.github.cotide</groupId>
     <artifactId>sql2o-plus</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -59,14 +59,20 @@
 ## 实体映射 
 
 ```java
-package com.sqltest.model; 
+package com.sqltest.model;
+import com.sqltest.model.enums.EnumUserStatus;
+import com.sqltest.model.enums.EnumVipLevel;
 import io.github.cotide.dapper.basic.domain.Entity;
+import io.github.cotide.dapper.basic.enums.EnumMapping;
 import io.github.cotide.dapper.core.attr.Column;
 import io.github.cotide.dapper.core.attr.Ignore;
 import io.github.cotide.dapper.core.attr.PrimaryKey;
-import io.github.cotide.dapper.core.attr.Table;
+import io.github.cotide.dapper.core.attr.Table; 
 import java.util.Date;
 
+/**
+ * 用户信息
+ */
 @lombok.Getter
 @lombok.Setter
 @Table("user_info")
@@ -81,6 +87,13 @@ public class UserInfo extends Entity {
     @Column("password")
     private String pwd;
 
+    // 映射枚举规则
+    @EnumMapping(EnumMapping.ORDINAL)
+    private EnumUserStatus status;
+     
+    @Column("level")
+    private EnumVipLevel level;
+
     private int login;
 
     @Column("create_time")
@@ -89,6 +102,7 @@ public class UserInfo extends Entity {
     @Ignore
     private String other;
 }
+
 ```
 
 ### 注解描述
@@ -97,6 +111,7 @@ public class UserInfo extends Entity {
 - @PrimaryKey (主键)
 - @Column (字段名,与数据库字段名称一致可不标记)
 - @Ignore (忽略字段)
+- @EnumMapping (枚举映射)
 
 
 ## Dto实体
@@ -303,6 +318,19 @@ try(Database db = getDatabase()){
 }
 ```
 
+
+## 注意问题
+
+如果使用SpringBoot时,需要指定JPA版本，不然@Column不会被解析映射到POJO对象
+
+```json
+<dependency>
+    <scope>provided</scope>
+    <groupId>javax.persistence</groupId>
+    <artifactId>persistence-api</artifactId>
+    <version>1.0.2</version>
+</dependency> 
+```
 
 
 ## License

@@ -9,6 +9,10 @@ import sql2o.Query;
  */
 public abstract class SqlBase {
 
+    /**
+     * 是否调试模式
+     */
+    boolean isDebug = true;
 
     protected final Sql2oUnitOfWork UnitOfWork;
 
@@ -21,7 +25,7 @@ public abstract class SqlBase {
         UnitOfWork.getOpenConnection();
         Query sqlBuild = UnitOfWork.dbConnection.createQuery(sql)
                 .setAutoDeriveColumnNames(false)
-                .throwOnMappingFailure(false)
+                .throwOnMappingFailure(isDebug)
                 .withParams(parm);
 
         return sqlBuild;

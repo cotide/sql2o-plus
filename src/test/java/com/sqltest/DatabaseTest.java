@@ -11,7 +11,7 @@ import java.util.List;
 
 public class DatabaseTest {
 
-    final String url = "jdbc:mysql://192.168.1.100:3307/g_main?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8&useSSL=false";
+    final String url = "jdbc:mysql://192.168.1.100:3307/g_main?cachePrepStmts=true&useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8&useSSL=false";
     final String user ="root";
     final String pass ="123456";
 

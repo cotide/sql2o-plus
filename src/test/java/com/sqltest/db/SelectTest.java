@@ -15,6 +15,16 @@ import java.util.List;
 public class SelectTest extends BaseTest {
 
 
+
+    @Test
+    public  void getById()
+    {
+        Database db = getDatabase();
+        IRepository<UserInfo> userInfoIRepository =  db.getRepository(UserInfo.class);
+        UserInfo UserInfo =   userInfoIRepository.getById(29);
+    }
+
+
     @Test
     public void getListTest(){
 
@@ -72,12 +82,13 @@ public class SelectTest extends BaseTest {
             IRepository<UserInfo> userInfoRepository = db.getRepository(UserInfo.class);
 
             // getById(Object primaryKey)
-            UserInfo result = userInfoRepository.getById(1);
+            UserInfo result = userInfoRepository.getById(29);
             assert (result != null && result.getId() > 0) : "UserInfoRepository getById(Object primaryKey) is error";
             System.out.println(">>>>>>>>>> Result <<<<<<<<<<");
             System.out.println("id:" + result.getId());
             System.out.println("user_Name:" + result.getName());
             System.out.println("login:" + result.getLogin());
+
 
             // get(Sql inter)
             UserInfo result2 = userInfoRepository.get(

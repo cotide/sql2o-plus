@@ -2,7 +2,10 @@ package com.sqltest.db;
 
 import com.sqltest.base.BaseTest;
 import com.sqltest.model.UserInfo;
+import com.sqltest.model.enums.EnumUserStatus;
+import com.sqltest.model.enums.EnumVipLevel;
 import io.github.cotide.dapper.Database;
+import io.github.cotide.dapper.basic.enums.EnumMapping;
 import io.github.cotide.dapper.repository.inter.IRepository;
 import io.github.cotide.dapper.query.Sql;
 import org.junit.Test;

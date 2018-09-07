@@ -1,6 +1,11 @@
 package com.sqltest.dto;
 
+import com.sqltest.model.enums.EnumUserStatus;
+import com.sqltest.model.enums.EnumVipLevel;
+import io.github.cotide.dapper.basic.enums.EnumMapping;
 import lombok.Data;
+
+import java.util.Date;
 
 @Data
 public class UserInfoDto {
@@ -10,4 +15,10 @@ public class UserInfoDto {
     private String name;
 
     private int login;
+
+    private EnumUserStatus status;
+
+    private EnumVipLevel level;
+
+    private Date createTime;
 }

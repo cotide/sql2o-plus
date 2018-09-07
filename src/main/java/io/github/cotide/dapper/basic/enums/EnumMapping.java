@@ -9,7 +9,14 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface EnumMapping {
 
+    /**
+     * 字符串模式
+     */
     String TO_STRING = "toString";
+
+    /**
+     * 数值模式
+     */
     String ORDINAL   = "ordinal";
 
     String value() default TO_STRING;
