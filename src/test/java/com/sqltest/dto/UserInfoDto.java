@@ -3,7 +3,6 @@ package com.sqltest.dto;
 import com.sqltest.model.enums.EnumGroup;
 import com.sqltest.model.enums.EnumUserStatus;
 import com.sqltest.model.enums.EnumVipLevel;
-import io.github.cotide.dapper.basic.enums.EnumMapping;
 import lombok.Data;
 
 import java.util.Date;
