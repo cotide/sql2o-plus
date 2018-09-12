@@ -54,20 +54,40 @@
 - 支持事务
 
  
+## 示例表脚本
 
+```sql
+-- Create Table
+USE `g_main_test`;
+DROP TABLE IF EXISTS user_info;
+
+CREATE TABLE user_info (
+  `user_id` INT (11) NOT NULL AUTO_INCREMENT COMMENT '用户Id', 
+  `user_name` VARCHAR (255) DEFAULT NULL COMMENT '用户名', 
+  `password` VARCHAR (255) DEFAULT NULL COMMENT '密码', 
+  `login` INT (11)  NULL COMMENT '客户号', 
+  `level` VARCHAR (255) NULL COMMENT '等级 VIP1,VIP2,VIP3 ',
+  `group` VARCHAR (255) NULL COMMENT '小组 GROUP1,GROUP2,GROUP3 ',
+  `status` TINYINT(4) DEFAULT 0 COMMENT '状态 0-正常 1-无效',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户信息';
+```
 
 ## 实体映射 
 
 ```java
 package com.sqltest.model;
+
+import com.sqltest.model.enums.EnumGroup;
 import com.sqltest.model.enums.EnumUserStatus;
 import com.sqltest.model.enums.EnumVipLevel;
-import io.github.cotide.dapper.basic.domain.Entity;
-import io.github.cotide.dapper.basic.enums.EnumMapping;
+import io.github.cotide.dapper.basic.domain.Entity; 
 import io.github.cotide.dapper.core.attr.Column;
 import io.github.cotide.dapper.core.attr.Ignore;
 import io.github.cotide.dapper.core.attr.PrimaryKey;
-import io.github.cotide.dapper.core.attr.Table; 
+import io.github.cotide.dapper.core.attr.Table;
+
 import java.util.Date;
 
 /**
@@ -87,12 +107,14 @@ public class UserInfo extends Entity {
     @Column("password")
     private String pwd;
 
-    // 映射枚举规则
-    @EnumMapping(EnumMapping.ORDINAL)
+    @Column("status")
     private EnumUserStatus status;
-     
+
     @Column("level")
     private EnumVipLevel level;
+
+    @Column("`group`")
+    private EnumGroup group;
 
     private int login;
 
@@ -104,6 +126,12 @@ public class UserInfo extends Entity {
 }
 
 ```
+
+### 枚举定义 
+
+- IntegerEnum 整数型枚举存储-> [例子](src/test/java/com/sqltest/model/enums/EnumUserStatus.java)
+- StringEnum 字符串型枚举存储-> [例子](src/test/java/com/sqltest/model/enums/EnumGroup.java)
+ 
 
 ### 注解描述
 

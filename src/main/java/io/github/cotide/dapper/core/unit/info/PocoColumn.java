@@ -4,6 +4,9 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import io.github.cotide.dapper.basic.enums.IEnum;
+import io.github.cotide.dapper.basic.enums.IntegerEnum;
+import io.github.cotide.dapper.basic.enums.StringEnum;
 import io.github.cotide.dapper.core.attr.Column;
 import io.github.cotide.dapper.core.attr.Ignore;
 import io.github.cotide.dapper.core.attr.PrimaryKey;
@@ -47,7 +50,19 @@ public class PocoColumn {
             try {
                 Object value = field.get(model);
                 if (null != value) {
+
                     if (value instanceof Enum) {
+
+                        if(value instanceof StringEnum)
+                        {
+                            return value.toString();
+                        }else if(value instanceof IntegerEnum)
+                        {
+                           return  ((IEnum)value).getCode();
+                        }
+
+
+
                         EnumMapping enumMapping = field.getAnnotation(EnumMapping.class);
                         if (null == enumMapping) {
                             return value.toString();

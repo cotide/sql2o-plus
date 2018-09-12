@@ -1,5 +1,12 @@
 package sql2o.converters;
 
+import io.github.cotide.dapper.basic.enums.EnumMapping;
+import io.github.cotide.dapper.basic.enums.IEnum;
+import org.omg.Messaging.SYNC_WITH_TRANSPORT;
+
+import java.lang.annotation.Annotation;
+import java.util.Arrays;
+
 /**
  * Default implementation of {@link EnumConverterFactory},
  * used by sql2o to convert a value from the database into an {@link Enum}.
@@ -16,7 +23,18 @@ public class DefaultEnumConverterFactory implements EnumConverterFactory {
                     if (val instanceof String){
                         return (E)Enum.valueOf(enumType, val.toString());
                     } else if (val instanceof Number){
-                        return enumType.getEnumConstants()[((Number)val).intValue()];
+
+                        for (Enum item: enumType.getEnumConstants())
+                        {
+                            if(item instanceof IEnum)
+                            {
+                                if(((IEnum)item).getCode() == val)
+                                {
+                                    return (E)item;
+                                }
+                            }
+                        }
+                        return null;
                     }
                 } catch (Throwable t) {
                     throw new ConverterException("Error converting value '" + val.toString() + "' to " + enumType.getName(), t);

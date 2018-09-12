@@ -1,19 +1,18 @@
 package com.sqltest.model.enums;
-
-
+import io.github.cotide.dapper.basic.enums.IntegerEnum;
 import lombok.Getter;
 
 @Getter
-public enum  EnumUserStatus {
+public enum EnumUserStatus implements IntegerEnum {
 
-    NORMAL(0,"正常"),
-    STOP(1,"禁止");
+    NORMAL(1,"正常"),
+    STOP(2,"禁止");
 
-    private int code;
+    private Integer code;
 
     private String desc;
 
-    EnumUserStatus(int code,String desc)
+    EnumUserStatus(Integer code,String desc)
     {
 
         this.code = code;

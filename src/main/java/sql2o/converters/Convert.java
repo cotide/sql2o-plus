@@ -10,6 +10,7 @@ import sql2o.converters.joda.LocalTimeConverter;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
@@ -138,6 +139,7 @@ public class Convert {
         if (c != null) return c;
 
         if (clazz.isEnum()) {
+
             return registeredEnumConverterFactory.newConverter((Class) clazz);
         }
         return null;

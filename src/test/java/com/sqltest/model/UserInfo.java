@@ -1,9 +1,9 @@
 package com.sqltest.model;
 
+import com.sqltest.model.enums.EnumGroup;
 import com.sqltest.model.enums.EnumUserStatus;
 import com.sqltest.model.enums.EnumVipLevel;
 import io.github.cotide.dapper.basic.domain.Entity;
-import io.github.cotide.dapper.basic.enums.EnumMapping;
 import io.github.cotide.dapper.core.attr.Column;
 import io.github.cotide.dapper.core.attr.Ignore;
 import io.github.cotide.dapper.core.attr.PrimaryKey;
@@ -28,11 +28,14 @@ public class UserInfo extends Entity {
     @Column("password")
     private String pwd;
 
-    @EnumMapping(EnumMapping.ORDINAL)
+    @Column("status")
     private EnumUserStatus status;
 
     @Column("level")
     private EnumVipLevel level;
+
+    @Column("`group`")
+    private EnumGroup group;
 
     private int login;
 
