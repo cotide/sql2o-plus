@@ -17,7 +17,7 @@ public class Sql2oUnitOfWork implements IUnitOfWork {
      */
     private Sql2o sql2o;
 
-    /**
+     /**
      * 当前连接对象
      */
     public Connection dbConnection;
@@ -25,14 +25,19 @@ public class Sql2oUnitOfWork implements IUnitOfWork {
     /**
      * 是否执行事务操作
      */
-    public boolean isTran =false;
-
+    protected boolean isTran =false;
 
     /**
+     * 是否调试模式
+     */
+    protected boolean isDebug = false;
+
+
+     /**
      * 构造函数
      * @param dataSource 数据源
      */
-   public Sql2oUnitOfWork(DataSource dataSource){
+    public Sql2oUnitOfWork(DataSource dataSource){
         this(dataSource,false);
     }
 
@@ -42,12 +47,25 @@ public class Sql2oUnitOfWork implements IUnitOfWork {
      * @param isTransaction 是否启用事务
      */
     public Sql2oUnitOfWork(DataSource dataSource, boolean isTransaction){
+        this(dataSource,isTransaction,false);
+    }
+
+
+
+    /**
+     * 构造函数
+     * @param dataSource 数据源
+     * @param isTransaction 是否启用事务
+     * @param isDebug 是否调试状态
+     */
+    public Sql2oUnitOfWork(DataSource dataSource, boolean isTransaction,boolean isDebug){
         sql2o = new Sql2o(dataSource);
         if(isTransaction)
         {
             dbConnection = sql2o.beginTransaction();
-            isTran = true;
+            this.isTran = true;
         }
+        this.isDebug = isDebug;
     }
 
 
@@ -55,7 +73,6 @@ public class Sql2oUnitOfWork implements IUnitOfWork {
     public <TEntity extends Entity> IRepository getRepository(Class<TEntity> returnType) {
         return new DapperRepositoryBase(returnType,this);
     }
-
 
 
     /**
@@ -116,6 +133,13 @@ public class Sql2oUnitOfWork implements IUnitOfWork {
         }
     }
 
+    /**
+     * 读取当前是否调试状态
+     * @return
+     */
+    public Boolean isDebug(){
+        return this.isDebug;
+    }
 
     public void getOpenConnection() {
         if(dbConnection !=null){

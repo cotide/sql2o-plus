@@ -46,6 +46,7 @@ public class EnumTest extends BaseTest {
     public void GetList(){
 
         Database db = getDatabase();
+
         IRepository<UserInfo> userInfoIRepository = db.getRepository(UserInfo.class);
         UserInfo user = userInfoIRepository.getById(1);
         assert (user != null&&user.getId()>0) : "user is null";

@@ -3,6 +3,7 @@ package io.github.cotide.dapper;
 import io.github.cotide.dapper.repository.inter.IRepository;
 import io.github.cotide.dapper.core.unit.Sql2oUnitOfWork;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import io.github.cotide.dapper.basic.domain.Entity;
@@ -27,7 +28,20 @@ import java.util.regex.Pattern;
  * @author cotide
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class  Database implements  AutoCloseable,Closeable {
+public class Database implements  AutoCloseable,Closeable {
+
+    /**
+     * 是否调试模式
+     */
+    private boolean isDebug = false;
+
+    /**
+     * 是否调试模式
+     * @param debug
+     */
+    public void isDebug(Boolean debug){
+        isDebug = debug;
+    }
 
     private final static Logger logger = LocalLoggerFactory.getLogger(Database.class);
 
@@ -70,7 +84,10 @@ public class  Database implements  AutoCloseable,Closeable {
 
         if (_unitOfWork == null)
         {
-            _unitOfWork = new Sql2oUnitOfWork(instance.sql2o.getDataSource());
+            _unitOfWork = new Sql2oUnitOfWork(
+                    instance.sql2o.getDataSource(),
+                    false,
+                    isDebug);
         }
         return _unitOfWork;
     }
@@ -84,7 +101,8 @@ public class  Database implements  AutoCloseable,Closeable {
         {
             _unitOfWork = new Sql2oUnitOfWork(
                     instance.sql2o.getDataSource(),
-                    true);
+                    true,
+                    isDebug);
         }else{
            _unitOfWork.beginTransation();
         }

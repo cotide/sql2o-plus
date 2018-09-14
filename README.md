@@ -358,6 +358,13 @@ try(Database db = getDatabase()){
 }
 ```
 
+## Debug模式
+
+```java
+Database db = getDatabase();
+db.isDebug(true); 
+```
+当指定db.isDebug(true)后，进行查询操作,实体属性如果不能完全匹配会抛出失败原因,[例子](src/test/java/com/sqltest/db/DebugTest.java)
 
 ## 问题
 

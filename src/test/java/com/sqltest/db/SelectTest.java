@@ -15,6 +15,22 @@ import java.util.List;
 public class SelectTest extends BaseTest {
 
 
+    @Test
+    public  void getWhereIn()
+    {
+        Database db = getDatabase();
+        IRepository<UserInfo> userInfoIRepository =  db.getRepository(UserInfo.class);
+        Sql sql = Sql.builder().select().from(UserInfo.class)
+                .whereIn("user_id",1,2);
+
+        List<UserInfo> result =   userInfoIRepository.getList(sql);
+        for (UserInfo item : result) {
+            System.out.println("id:" + item.getId());
+            System.out.println("user_Name:" + item.getName());
+            System.out.println("login:" + item.getLogin());
+        }
+    }
+
 
     @Test
     public  void getById()
@@ -50,7 +66,6 @@ public class SelectTest extends BaseTest {
     public void  getDtoListTest(){
             Database db = getDatabase();
             IRepository<UserInfo> userInfoRepository = db.getRepository(UserInfo.class);
-
             // getDtoList(Class<TDto> returnType,Sql inter)
             Sql sql1 = Sql.builder().select(" user_id as id, user_Name as name ").from(UserInfo.class).where("user_id = @0", 1);
             List<UserInfoDto> result = userInfoRepository.getDtoList(UserInfoDto.class, sql1);

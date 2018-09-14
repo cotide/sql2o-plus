@@ -5,6 +5,7 @@ import io.github.cotide.dapper.core.unit.info.TableInfo;
 import io.github.cotide.dapper.basic.domain.Entity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,6 +14,7 @@ import java.util.regex.Pattern;
  * SQL
  */
 public class Sql {
+
     private String _sql;
     private Object[] _args;
     private Sql _rhs;
@@ -55,33 +57,32 @@ public class Sql {
 
 
     public Sql whereIn(String column, Object... paras) throws SqlBuildException {
-        if (column == null || column.length() == 0)
+        if (column == null || column.length() == 0){
             throw new SqlBuildException("query error: must have 'in' word");
-        if (paras == null || paras.length == 0)
-            throw new SqlBuildException("paras error");
-
-        if(paras.length>0)
-        {
-//            if(paras[0] instanceof Integer )
-//            {
-//                StringBuffer appendValue =  new StringBuffer();
-//                for (Object value: paras ) {
-//                    appendValue.append(value+",");
-//                }
-//                String appendSql =   String.format("%s IN (%s)",column,trimEnd(appendValue.toString(),','));
-//                return where(appendSql);
-//            }else if (paras[0] instanceof String )
-//            {
-                    StringBuffer appendValue =  new StringBuffer();
-                    int index = 0;
-                    for (Object value: paras ) {
-                        appendValue.append("@"+index+",");
-                        ++index;
-                    }
-                    String appendSql =   String.format("%s in (%s)",column,trimEnd(appendValue.toString(),','));
-                    return where(appendSql,paras);
-//            }
         }
+        if (paras == null || paras.length == 0)
+        {
+            throw new SqlBuildException("paras error");
+        }
+        if(paras.getClass().isArray())
+        {
+            StringBuffer appendValue =  new StringBuffer();
+
+            for (int i=0 ;i<paras.length;i++)
+            {
+                appendValue.append("@"+i);
+                if(i != paras.length-1)
+                {
+                    appendValue.append(",");
+                }
+            }
+
+            String appendSql =  String.format("%s in (%s)",column,appendValue);
+            where(appendSql,paras);
+        }else{
+            where(String.format("%s in (@0)",column,paras));
+        }
+
         return this;
     }
 
@@ -106,10 +107,6 @@ public class Sql {
 
 
     public Sql orderBy(String columns) {
-        return append(new Sql("order by " + columns));
-    }
-
-    public Sql groupBy(String columns) {
         return append(new Sql("order by " + columns));
     }
 
@@ -140,7 +137,9 @@ public class Sql {
 
     private void build() {
         if (_sqlFinal != null && _sqlFinal.length() > 0)
-            return;
+        {
+           return;
+        }
 
         StringBuilder sb = new StringBuilder();
         List<Object> args = new ArrayList<Object>();
@@ -159,9 +158,13 @@ public class Sql {
 
             String sql = _sql;
             if (is(lhs, "where ") && is(this, "where "))
+            {
                 sql = "and " + sql.substring(6);
+            }
             if (is(lhs, "order by ") && is(this, "order by "))
+            {
                 sql = ", " + sql.substring(9);
+            }
 
             for (Object arg : _args) {
                 args.add(arg);
@@ -170,7 +173,9 @@ public class Sql {
         }
 
         if (_rhs != null)
+        {
             _rhs.build(sb, args, this);
+        }
     }
 
     private static boolean is(Sql sql, String sqlType) {
@@ -179,11 +184,7 @@ public class Sql {
                 && sql._sql.toLowerCase().startsWith(sqlType.toLowerCase());
     }
 
-    private String trimEnd(String s, char c) {
-        int i;
-        for(i = 0; i < s.length() && s.charAt(i) == c; ++i);
-        return s.substring(i);
-    }
+
     //#endregion
 
 }
