@@ -53,26 +53,7 @@
 - CRUD 封装/简化调用方法
 - 支持事务
 
- 
-## 示例表脚本
-
-```sql
--- Create Table
-USE `g_main_test`;
-DROP TABLE IF EXISTS user_info;
-
-CREATE TABLE user_info (
-  `user_id` INT (11) NOT NULL AUTO_INCREMENT COMMENT '用户Id', 
-  `user_name` VARCHAR (255) DEFAULT NULL COMMENT '用户名', 
-  `password` VARCHAR (255) DEFAULT NULL COMMENT '密码', 
-  `login` INT (11)  NULL COMMENT '客户号', 
-  `level` VARCHAR (255) NULL COMMENT '等级 VIP1,VIP2,VIP3 ',
-  `group` VARCHAR (255) NULL COMMENT '小组 GROUP1,GROUP2,GROUP3 ',
-  `status` TINYINT(4) DEFAULT 0 COMMENT '状态 0-正常 1-无效',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  PRIMARY KEY (user_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户信息';
-```
+  
 
 ## 实体映射 
 
