@@ -19,26 +19,56 @@ import java.util.Date;
 @Table("user_info")
 public class UserInfo extends Entity {
 
+    /**
+     * 用户Id
+     */
     @PrimaryKey("user_id")
     private int id;
 
+    /**
+     * 用户名
+     */
     @Column("user_Name")
     private String name;
 
+    /**
+     * 用户类型Id
+     */
+    @Column("user_type_id")
+    private Integer userTypeId;
+
+    /**
+     * 密码
+     */
     @Column("password")
     private String pwd;
 
+    /**
+     * 状态 1-正常 2-无效
+     */
     @Column("status")
     private EnumUserStatus status;
 
+    /**
+     * 等级 VIP1,VIP2,VIP3
+     */
     @Column("level")
     private EnumVipLevel level;
 
+    /**
+     * 小组 GROUP1,GROUP2,GROUP3
+     */
     @Column("`group`")
     private EnumGroup group;
 
+    /**
+     * 客户号
+     */
     private int login;
 
+    /**
+     * 创建时间
+     */
     @Column("create_time")
     private Date createTime;
 

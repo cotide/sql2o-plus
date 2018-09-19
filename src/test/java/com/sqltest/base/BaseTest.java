@@ -7,7 +7,7 @@ import org.junit.BeforeClass;
 public class BaseTest {
 
     String url = "jdbc:mysql://192.168.1.100:3307/g_main_test?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8&useSSL=false";
-    String user ="test";
+    String user ="root";
     String pass ="123456";
 
     @BeforeClass

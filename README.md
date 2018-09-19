@@ -251,6 +251,28 @@ UserInfoDto result4 = db.getSqlQuery().getDto(
         UserInfoDto.class,Sql.builder().select("user_id as id, user_Name as name").from(UserInfo.class).where("user_id  = @0",1));
 ```
 
+
+### Join查询
+
+```java
+Database db = getDatabase();
+Sql sql = Sql.builder()
+    .select("a.user_id as id," +
+            "a.user_Name as name,"+
+            "b.id as typeId,"+
+            "b.name as typeName,"+
+            "a.login,"+
+            "a.status,"+
+            "a.group,"+
+            "a.level,"+
+            "a.create_time as createTime")
+    .from(UserInfo.class,"a")
+    .join(UserType.class,"b")
+    .on("a.user_type_id = b.id");
+List<UserInfoDetailDto> result =  db.getSqlQuery(.getDtoList(UserInfoDetailDto.class,sql); 
+```
+
+
 ### 分页
 
 ```java
@@ -364,7 +386,7 @@ try(Database db = getDatabase()){
 Database db = getDatabase();
 db.isDebug(true); 
 ```
-当指定db.isDebug(true)后，进行查询操作,实体属性如果不能完全匹配会抛出失败原因,[例子](src/test/java/com/sqltest/db/DebugTest.java)
+Database指定db.isDebug(true)后，查询结果属性不能匹配会抛出异常信息,[例子](src/test/java/com/sqltest/db/DebugTest.java)
 
 ## 问题
 
@@ -378,6 +400,11 @@ db.isDebug(true);
     <version>1.0.2</version>
 </dependency> 
 ```
+
+## 其他
+
+- [示例数据库脚本](https://github.com/cotide/sql2o-plus/wiki/%E7%A4%BA%E4%BE%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E8%84%9A%E6%9C%AC)
+
 
 
 ## License

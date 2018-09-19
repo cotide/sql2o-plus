@@ -2,6 +2,7 @@ package com.sqltest.db;
 
 import com.sqltest.base.BaseTest;
 import com.sqltest.model.UserInfo;
+import com.sqltest.model.enums.EnumGroup;
 import com.sqltest.model.enums.EnumUserStatus;
 import com.sqltest.model.enums.EnumVipLevel;
 import io.github.cotide.dapper.Database;
@@ -22,6 +23,9 @@ public class CRUDTest extends BaseTest {
             domain.setName("Test");
             domain.setLogin(10086);
             domain.setPwd("123456");
+            domain.setStatus(EnumUserStatus.NORMAL);
+            domain.setLevel(EnumVipLevel.VIP3);
+            domain.setGroup(EnumGroup.GROUP2);
             domain.setCreateTime(new Date());
             UserInfo user = userInfoRepository.create(domain);
             assert (user != null&&user.getId()>0) : "userinfo is null";

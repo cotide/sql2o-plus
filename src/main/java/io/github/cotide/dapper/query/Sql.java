@@ -106,6 +106,12 @@ public class Sql {
     }
 
 
+    public <T extends Entity>  Sql  from(Class<T> modelClass,String asName) {
+        String tableName  = TableInfo.fromPoco(modelClass).getTableName();
+        return append(new Sql("from " +  tableName+" "+asName));
+    }
+
+
     public Sql orderBy(String columns) {
         return append(new Sql("order by " + columns));
     }
@@ -121,7 +127,58 @@ public class Sql {
         return _argsFinal;
     }
 
+    public SqlJoinClause innerJoin(String table){
+        return join("INNER JOIN ",table);
+    }
+
+    public <T extends Entity> SqlJoinClause innerJoin(Class<T> modelClass){
+        String tableName  = TableInfo.fromPoco(modelClass).getTableName();
+        return join("INNER JOIN ",tableName);
+    }
+
+    public <T extends Entity> SqlJoinClause innerJoin(Class<T> modelClass,String asName){
+        String tableName  = TableInfo.fromPoco(modelClass).getTableName();
+        return join("INNER JOIN ",tableName + " " + asName);
+    }
+
+
+    public SqlJoinClause leftJoin(String table)
+    {
+        return join("LEFT JOIN ",table);
+    }
+
+
+    public <T extends Entity> SqlJoinClause leftJoin(Class<T> modelClass){
+        String tableName  = TableInfo.fromPoco(modelClass).getTableName();
+        return join("LEFT JOIN ",tableName);
+    }
+
+    public <T extends Entity> SqlJoinClause leftJoin(Class<T> modelClass,String asName){
+        String tableName  = TableInfo.fromPoco(modelClass).getTableName();
+        return join("LEFT JOIN ",tableName + " " + asName);
+    }
+
+    public SqlJoinClause join(String table)
+    {
+        return join("LEFT JOIN ",table);
+    }
+    public <T extends Entity> SqlJoinClause join(Class<T> modelClass){
+        String tableName  = TableInfo.fromPoco(modelClass).getTableName();
+        return join("LEFT JOIN ",tableName);
+    }
+
+    public <T extends Entity> SqlJoinClause join(Class<T> modelClass,String asName){
+        String tableName  = TableInfo.fromPoco(modelClass).getTableName();
+        return join("LEFT JOIN ",tableName + " " + asName);
+    }
+
+
     //#region  Helper
+
+    private SqlJoinClause join(String joinType,String table)
+    {
+        return new SqlJoinClause(append(new Sql(joinType+table)));
+    }
 
     private String buildSql() {
         Matcher m = SQL_BRACKET.matcher(_sqlFinal);
