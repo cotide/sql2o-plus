@@ -252,7 +252,7 @@ UserInfoDto result4 = db.getSqlQuery().getDto(
 ```
 
 
-### Join查询
+### 联表查询
 
 ```java
 Database db = getDatabase();
