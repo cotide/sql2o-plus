@@ -119,8 +119,7 @@ public class UserInfo extends Entity {
 - @Table (表名)
 - @PrimaryKey (主键)
 - @Column (字段名,与数据库字段名称一致可不标记)
-- @Ignore (忽略字段)
-- @EnumMapping (枚举映射)
+- @Ignore (忽略字段) 
 
 
 ## Dto实体
@@ -180,6 +179,21 @@ protected Database getDruidDatabase() {
 ```
 
 ## 查询
+
+### Sql Lambda
+
+```java
+Sql sql = Sql.builder().select().from(UserInfo.class)
+                .where(UserInfo::getName,"Test")
+                .whereIn(UserInfo::getId,1,2)
+                .orderBy(UserInfo::getCreateTime,OrderBy.DESC);
+                
+/*** [Sql语句] ***/
+// select  *  from user_info where user_Name  = :p0  and user_id in (:p1,:p2)
+// order by create_time DESC
+/*** [参数值] ***/
+// [Test],[1],[2]
+```
 
 ### 列表查询
 
@@ -263,20 +277,7 @@ IRepository<UserInfo> userInfoRepository =  db.getRepository(UserInfo.class);
 PageList<UserInfo> result = userInfoRepository.getPageList(1,10,Sql.builder().select().from(UserInfo.class));
 ```
 
-### Sql Lambda
 
-```java
-Sql sql = Sql.builder().select().from(UserInfo.class)
-                .where(UserInfo::getName,"Test")
-                .whereIn(UserInfo::getId,1,2)
-                .orderBy(UserInfo::getCreateTime,OrderBy.DESC);
-                
-/*** [Sql语句] ***/
-// select  *  from user_info where user_Name  = :p0  and user_id in (:p1,:p2)
-// order by create_time DESC
-/*** [参数值] ***/
-// [Test],[1],[2]
-```
 
 
 ## 持久化
