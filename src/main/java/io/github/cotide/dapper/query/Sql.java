@@ -1,11 +1,12 @@
 package io.github.cotide.dapper.query;
 
+import io.github.cotide.dapper.core.functions.TypeFunction;
+import io.github.cotide.dapper.core.unit.Sql2oCache;
+import io.github.cotide.dapper.core.unit.Sql2oUtils;
 import io.github.cotide.dapper.exceptions.SqlBuildException;
-import io.github.cotide.dapper.core.unit.info.TableInfo;
 import io.github.cotide.dapper.basic.domain.Entity;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -55,6 +56,16 @@ public class Sql {
         return append(new Sql("where " + sql, params));
     }
 
+    public  <T extends Entity,R> Sql where(TypeFunction<T, R> function,Object param) {
+         String columnName = Sql2oUtils.getLambdaColumnName(function);
+         return where(columnName+"  = @0 ",param);
+    }
+
+    public  <T extends Entity,R>  Sql whereIn(TypeFunction<T, R> function, Object... paras) throws SqlBuildException {
+
+        String column = Sql2oUtils.getLambdaColumnName(function);
+        return whereIn(column,paras);
+    }
 
     public Sql whereIn(String column, Object... paras) throws SqlBuildException {
         if (column == null || column.length() == 0){
@@ -101,19 +112,34 @@ public class Sql {
 
 
     public <T extends Entity>  Sql  from(Class<T> modelClass) {
-        String tableName  = TableInfo.fromPoco(modelClass).getTableName();
+        String tableName  = Sql2oCache.getTableName(modelClass);
         return append(new Sql("from " +  tableName));
     }
 
 
     public <T extends Entity>  Sql  from(Class<T> modelClass,String asName) {
-        String tableName  = TableInfo.fromPoco(modelClass).getTableName();
+        String tableName  = Sql2oCache.getTableName(modelClass);
         return append(new Sql("from " +  tableName+" "+asName));
     }
 
 
     public Sql orderBy(String columns) {
         return append(new Sql("order by " + columns));
+    }
+
+    public Sql orderBy(String columns,OrderBy orderBy) {
+
+        return append(new Sql("order by " + columns + " "+ orderBy.toString()));
+    }
+
+
+    public  <T extends Entity,R> Sql orderBy(TypeFunction<T, R> function) {
+        return orderBy(function,OrderBy.DESC);
+    }
+
+    public  <T extends Entity,R> Sql orderBy(TypeFunction<T, R> function,OrderBy orderBy) {
+        String columnName = Sql2oUtils.getLambdaColumnName(function);
+        return orderBy(columnName,orderBy);
     }
 
 
@@ -132,14 +158,13 @@ public class Sql {
     }
 
     public <T extends Entity> SqlJoinClause innerJoin(Class<T> modelClass){
-        String tableName  = TableInfo.fromPoco(modelClass).getTableName();
-        return join("INNER JOIN ",tableName);
+        return join("INNER JOIN ",Sql2oCache.getTableName(modelClass));
     }
 
     public <T extends Entity> SqlJoinClause innerJoin(Class<T> modelClass,String asName){
-        String tableName  = TableInfo.fromPoco(modelClass).getTableName();
-        return join("INNER JOIN ",tableName + " " + asName);
+        return join("INNER JOIN ",Sql2oCache.getTableName(modelClass) + " " + asName);
     }
+
 
 
     public SqlJoinClause leftJoin(String table)
@@ -149,13 +174,11 @@ public class Sql {
 
 
     public <T extends Entity> SqlJoinClause leftJoin(Class<T> modelClass){
-        String tableName  = TableInfo.fromPoco(modelClass).getTableName();
-        return join("LEFT JOIN ",tableName);
+        return join("LEFT JOIN ",Sql2oCache.getTableName(modelClass));
     }
 
     public <T extends Entity> SqlJoinClause leftJoin(Class<T> modelClass,String asName){
-        String tableName  = TableInfo.fromPoco(modelClass).getTableName();
-        return join("LEFT JOIN ",tableName + " " + asName);
+        return join("LEFT JOIN ",Sql2oCache.getTableName(modelClass) + " " + asName);
     }
 
     public SqlJoinClause join(String table)
@@ -163,13 +186,11 @@ public class Sql {
         return join("LEFT JOIN ",table);
     }
     public <T extends Entity> SqlJoinClause join(Class<T> modelClass){
-        String tableName  = TableInfo.fromPoco(modelClass).getTableName();
-        return join("LEFT JOIN ",tableName);
+        return join("LEFT JOIN ",Sql2oCache.getTableName(modelClass));
     }
 
     public <T extends Entity> SqlJoinClause join(Class<T> modelClass,String asName){
-        String tableName  = TableInfo.fromPoco(modelClass).getTableName();
-        return join("LEFT JOIN ",tableName + " " + asName);
+        return join("LEFT JOIN ",Sql2oCache.getTableName(modelClass) + " " + asName);
     }
 
 

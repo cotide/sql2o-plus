@@ -40,8 +40,12 @@ public class PojoMetadata {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()){
+            return false;
+        }
 
         PojoMetadata that = (PojoMetadata) o;
 
@@ -84,31 +88,24 @@ public class PojoMetadata {
 
     private PropertyAndFieldInfo initializePropertyInfo() {
 
-        HashMap<String, Getter> propertyGetters = new HashMap<String, Getter>();
-        HashMap<String, Setter> propertySetters = new HashMap<String, Setter>();
-        HashMap<String, Field> fields = new HashMap<String, Field>();
+        HashMap<String, Getter> propertyGetters = new HashMap<>();
+        HashMap<String, Setter> propertySetters = new HashMap<>();
+        HashMap<String, Field>  fields          = new HashMap<>();
 
-        boolean isJpaColumnInClasspath = false;
-        try {
-            Class.forName("javax.persistence.Column");
-            isJpaColumnInClasspath = true;
-        } catch (ClassNotFoundException e) {
-            // javax.persistence.Column is not in the classpath
-        }
-        
-        Class theClass = clazz;
+        Class<?>             theClass          = clazz;
         ObjectConstructor objectConstructor = factoryFacade.newConstructor(theClass);
         do {
+            boolean isJpaColumnInClasspath = true;
             for (Field f : theClass.getDeclaredFields()) {
-                if(Modifier.isStatic(f.getModifiers())) {
+                if (Modifier.isStatic(f.getModifiers())) {
                     continue;
                 }
-                String propertyName = readAnnotatedColumnName(f, isJpaColumnInClasspath);
-                if(propertyName == null) {
+                String propertyName = readAnnotatedColumnName(f, true);
+                if (propertyName == null) {
                     propertyName = f.getName();
                 }
                 propertyName = caseSensitive ? propertyName : propertyName.toLowerCase();
-                
+
                 propertyGetters.put(propertyName, factoryFacade.newGetter(f));
                 propertySetters.put(propertyName, factoryFacade.newSetter(f));
                 fields.put(propertyName, f);
@@ -130,7 +127,7 @@ public class PojoMetadata {
 
                 if (m.getName().startsWith("set") && m.getParameterTypes().length == 1) {
                     String propertyName = readAnnotatedColumnName(m, isJpaColumnInClasspath);
-                    if(propertyName == null) {
+                    if (propertyName == null) {
                         propertyName = m.getName().substring(3);
                     }
                     if (caseSensitive) {
@@ -145,8 +142,7 @@ public class PojoMetadata {
             theClass = theClass.getSuperclass();
         } while (!theClass.equals(Object.class));
 
-        return new PropertyAndFieldInfo(propertyGetters, propertySetters, fields, objectConstructor);
-
+        return new PropertyAndFieldInfo(propertyGetters, propertySetters, objectConstructor);
     }
 
     public Map<String, String> getColumnMappings() {
@@ -178,7 +174,9 @@ public class PojoMetadata {
 
         if (autoDeriveColumnNames) {
             name = UnderscoreToCamelCase.convert(name);
-            if (!this.caseSensitive) name = name.toLowerCase();
+            if (!this.caseSensitive){
+                name = name.toLowerCase();
+            }
         }
 
         return propertyInfo.propertyGetters.get(name);
@@ -209,7 +207,9 @@ public class PojoMetadata {
 
         if (autoDeriveColumnNames) {
             name = UnderscoreToCamelCase.convert(name);
-            if (!this.caseSensitive) name = name.toLowerCase();
+            if (!this.caseSensitive){
+                name = name.toLowerCase();
+            }
         }
 
         return propertyInfo.propertySetters.get(name);
@@ -226,8 +226,8 @@ public class PojoMetadata {
     }
     
     /**
-     * Try to read the {@link javax.persistence.Column} annotation and return the name of the column.
-     * Returns null if no {@link javax.persistence.Column} annotation is present or if the name of the column is empty
+     * Try to read the {@link io.github.cotide.dapper.core.attr.Column} annotation and return the name of the column.
+     * Returns null if no {@link io.github.cotide.dapper.core.attr.Column} annotation is present or if the name of the column is empty
      */
     private String readAnnotatedColumnName(AnnotatedElement classMember, boolean isJpaColumnInClasspath) {
         if(isJpaColumnInClasspath) {
@@ -256,16 +256,15 @@ public class PojoMetadata {
         // to make HotSpot a little less work for inlining
         public final Map<String, Getter> propertyGetters;
         public final Map<String, Setter> propertySetters;
-        public final Map<String, Field> fields;
         public final ObjectConstructor objectConstructor;
 
         private PropertyAndFieldInfo(
-            Map<String, Getter> propertyGetters, Map<String, Setter> propertySetters,
-            Map<String, Field> fields, ObjectConstructor objectConstructor) {
+            Map<String, Getter> propertyGetters,
+            Map<String, Setter> propertySetters,
+            ObjectConstructor objectConstructor) {
 
             this.propertyGetters = propertyGetters;
             this.propertySetters = propertySetters;
-            this.fields = fields;
             this.objectConstructor = objectConstructor;
         }
     }

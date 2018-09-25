@@ -1,16 +1,16 @@
 package io.github.cotide.dapper.repository;
 
+import io.github.cotide.dapper.core.unit.Sql2oCache;
 import io.github.cotide.dapper.repository.base.SqlBase;
 import io.github.cotide.dapper.basic.collections.PageList;
 import io.github.cotide.dapper.exceptions.SqlBuildException;
 import io.github.cotide.dapper.core.unit.IUnitOfWork;
-import io.github.cotide.dapper.core.unit.info.PocoColumn;
-import io.github.cotide.dapper.core.unit.info.TableInfo;
 import io.github.cotide.dapper.basic.collections.PageQueryInfo;
 import io.github.cotide.dapper.query.Sql;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
@@ -47,6 +47,7 @@ public class SqlQueryBase  extends SqlBase {
     {
         try {
             return  createQuery(
+                    returnType,
                     sql.getFinalSql(),
                     sql.getFinalArgs())
                     .executeAndFetch(returnType);
@@ -88,6 +89,7 @@ public class SqlQueryBase  extends SqlBase {
 
             try {
                 return createQuery(
+                        returnType,
                         sql.getFinalSql(),
                         sql.getFinalArgs())
                         .executeAndFetchFirst(returnType);
@@ -129,7 +131,6 @@ public class SqlQueryBase  extends SqlBase {
         }
     }
 
-    //#endregion
 
 
     //#region 分页获取数据
@@ -143,9 +144,14 @@ public class SqlQueryBase  extends SqlBase {
         sql = addSelectClause(returnType, sql);
         PageQueryInfo queryInfo = buildPagingQueris((pageIndex - 1) * pageSize, pageSize, sql);
         Integer count =  getDto(Integer.class,queryInfo.getCountSql(),param);
-        List<TDto>  list = getDtoList(returnType,queryInfo.getPageSql(),param);
-        PageList<TDto> result = new PageList<TDto>(list,pageIndex,pageSize,count);
-        return result;
+        if(count==null||count<=0)
+        {
+            return new PageList<>(new ArrayList<>(), pageIndex, pageSize, 0);
+        }else {
+            List<TDto>  list = getDtoList(returnType,queryInfo.getPageSql(),param);
+            PageList<TDto> result = new PageList<>(list, pageIndex, pageSize, count);
+            return result;
+        }
     }
 
     //#endregion
@@ -176,14 +182,14 @@ public class SqlQueryBase  extends SqlBase {
         if (!selectMatcher.find()) {
 
             StringBuffer cols = new StringBuffer();
-            for (PocoColumn entry : PocoColumn.fromFields(type)) {
-                cols.append(entry.getColumnName()).append(",");
+            Map<String, String> colums =  Sql2oCache.computeModelColumnMappings(type);
+            for (Map.Entry<String, String> entry : colums.entrySet()) {
+                cols.append(entry.getValue()).append(",");
             }
-
             if (fromMatcher.find()) {
                 sql = String.format("SELECT %s %s", cols.substring(0, cols.length() - 1), sql);
             } else {
-                sql = String.format("SELECT %s FROM %s %s", cols.substring(0, cols.length() - 1), TableInfo.fromPoco(type).getTableName(), sql);
+                sql = String.format("SELECT %s FROM %s %s", cols.substring(0, cols.length() - 1), Sql2oCache.getTableName(type), sql);
             }
         }
 

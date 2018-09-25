@@ -1,18 +1,21 @@
 package io.github.cotide.dapper.repository;
 
+import io.github.cotide.dapper.core.attr.PrimaryKey;
+import io.github.cotide.dapper.core.unit.Sql2oCache;
 import io.github.cotide.dapper.core.unit.Sql2oUnitOfWork;
 import io.github.cotide.dapper.basic.collections.PageList;
 import io.github.cotide.dapper.basic.domain.Entity;
 import io.github.cotide.dapper.core.attr.Ignore;
 import io.github.cotide.dapper.core.unit.Sql2oUtils;
-import io.github.cotide.dapper.core.unit.info.PocoColumn;
-import io.github.cotide.dapper.core.unit.info.PocoData;
-import io.github.cotide.dapper.core.unit.info.TableInfo;
+import io.github.cotide.dapper.core.utility.Guard;
+import io.github.cotide.dapper.exceptions.PrimaryKeyException;
+import io.github.cotide.dapper.exceptions.SqlBuildException;
 import io.github.cotide.dapper.query.Sql;
 import io.github.cotide.dapper.repository.SqlQueryBase;
 import io.github.cotide.dapper.repository.inter.IRepository;
 
 import java.lang.reflect.Field;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +51,6 @@ public class DapperRepositoryBase<TEntity  extends Entity>
 
     @Override
     public Boolean delete(TEntity entity) {
-
         return  executeDelete(entity);
     }
 
@@ -70,7 +72,7 @@ public class DapperRepositoryBase<TEntity  extends Entity>
     @Override
     public TEntity getById(Object primaryKey) {
         Sql sql = Sql.builder().select().from(modelClass).where(
-                String.format("%s = @0",TableInfo.fromPoco(modelClass).getPrimaryKey()),
+                String.format("%s = @0", Sql2oCache.getPKColumn(modelClass)),
                 primaryKey);
        return super.getDto(modelClass,sql);
     }
@@ -96,59 +98,52 @@ public class DapperRepositoryBase<TEntity  extends Entity>
     }
 
 
+
     /**
      * 新增
      *
      * @param object
      * @return 影响行数
      */
-    private  <T extends Entity> T executeInsert(T object) {
+    private  <TEntity extends Entity> TEntity executeInsert(TEntity object) {
 
-            PocoData pocoData = PocoData.forType(object.getClass());
-            TableInfo pd = pocoData.getTableInfo();
-            String tableName = pd.getTableName();
-            // 主键
-            PocoColumn primaryKeyFild = null;
-            Map<String, PocoColumn> columns =  pocoData.getColumns();
-            StringBuilder names = new StringBuilder();
-            StringBuilder values = new StringBuilder();
-            List<Object> args = new ArrayList<>();
-            for (String key : columns.keySet())
-            {
-                PocoColumn  col = columns.get(key);
-                // 检查是否忽略字段类型
-                if (col.getField().isAnnotationPresent(Ignore.class))
-                {
-                    continue;
-                }
-                // 检查是否主键字段类型
-                if(col.isPrimaryKey()){
-                    primaryKeyFild = col;
-                    if(pd.getAutoIncrement())
-                    {
-                        continue;
-                    }
-                }
-                names.append(col.getColumnName()).append(",");
-                values.append("?,");
-                args.add(col.getValue(object));
-            }
+        Guard.isNotNull(object,"object");
+        Class<?> modelClass = object.getClass();
+        String tableName = Sql2oCache.getTableName(modelClass);
+        String pkField =  Sql2oCache.getPKField(modelClass);
+        StringBuilder names = new StringBuilder();
+        StringBuilder param = new StringBuilder();
+        List<Object> values = new ArrayList<>();
+
+        List<Field> mapperFields =
+                Sql2oCache.isAutoIncreMent(modelClass)?
+                        Sql2oCache.computeNoKeyModelFields(modelClass):
+                        Sql2oCache.computeModelFields(modelClass);
+
+        for (Field field : mapperFields)
+        {
+            names.append(",").append(Sql2oCache.getColumnName(field));
+            param.append(",?");
+            values.add(Sql2oUtils.getValue(object,field));
+        }
 
         String insertSql = String.format("INSERT INTO %s (%s) VALUES (%s);",
                     tableName,
-                    names.substring(0, names.length() - 1),
-                    values.substring(0, values.length() - 1));
+                    names.substring(1),
+                    param.substring(1));
 
-        if(primaryKeyFild!=null)
+        if(pkField!=null && !pkField.isEmpty())
         {
+
             try {
-                UnitOfWork.getOpenConnection();
+
                 Field keyField = object
                         .getClass()
-                        .getDeclaredField(primaryKeyFild.getField().getName());
+                        .getDeclaredField(pkField);
+                UnitOfWork.getOpenConnection();
                 Object result = UnitOfWork.dbConnection
                         .createQuery(insertSql)
-                        .withParams(args)
+                        .withParams(values)
                         .executeUpdate()
                         .getKey(keyField.getType());
                 keyField.setAccessible(true);
@@ -163,16 +158,19 @@ public class DapperRepositoryBase<TEntity  extends Entity>
             }
             return null;
         }else{
-            UnitOfWork.getOpenConnection();
-            UnitOfWork
-                    .dbConnection
-                    .createQuery(insertSql)
-                    .withParams(args)
-                    .executeUpdate()
-                    .getKey();
-            return null;
+            try {
+                UnitOfWork.getOpenConnection();
+                UnitOfWork
+                        .dbConnection
+                        .createQuery(insertSql)
+                        .withParams(values)
+                        .executeUpdate()
+                        .getKey();
+                return object;
+            }finally {
+                UnitOfWork.close();
+            }
         }
-
     }
 
 
@@ -182,51 +180,50 @@ public class DapperRepositoryBase<TEntity  extends Entity>
      * @param object
      * @return 影响行数
      */
-    private  <T extends Entity> T executeUpdate(T object) {
+    private <T extends Entity> T executeUpdate(T object) {
 
-        PocoData pocoData = PocoData.forType(object.getClass());
-        TableInfo pd = pocoData.getTableInfo();
-        String tableName = pd.getTableName();
-        String primaryKeyName = null;
-        Object primaryKeyValue = null;
-        Map<String, PocoColumn> columns =  pocoData.getColumns();
-        List<Object> args = new ArrayList<>();
-        StringBuffer sb = new StringBuffer();
-        for (String key : columns.keySet())
+        Guard.isNotNull(object,"object");
+        Class<?> modelClass = object.getClass();
+        String tableName = Sql2oCache.getTableName(modelClass);
+        String pkField =  Sql2oCache.getPKField(modelClass);
+        String pkColumn = Sql2oCache.getPKColumn(modelClass);
+        if(pkField==null
+            || pkField.isEmpty()
+            || pkColumn == null
+            || pkColumn.isEmpty())
         {
-            PocoColumn  col = columns.get(key);
-            // 检查是否忽略字段类型
-            if (col.getField().isAnnotationPresent(Ignore.class))
-            {
-                continue;
-            }
-            // 检查是否主键字段类型
-            if(col.isPrimaryKey()){
-                primaryKeyName = col.getColumnName();
-                primaryKeyValue = col.getValue(object);
-                if(pd.getAutoIncrement())
-                {
-                    continue;
-                }
-            }
-            sb.append(String.format("%s = ? ,", col.getColumnName()));
-            args.add(col.getValue(object));
+            throw  new PrimaryKeyException();
         }
-
+        StringBuffer sb = new StringBuffer();
+        List<Object> values = new ArrayList<>();
+        for (Field field : Sql2oCache.computeNoKeyModelFields(modelClass))
+        {
+            sb.append(String.format(",%s = ?", Sql2oCache.getColumnName(field)));
+            values.add(Sql2oUtils.getValue(object,field));
+        }
         try {
-
             String updateSql = String.format("UPDATE %s SET %s WHERE %s = ?",
-                    tableName, sb.substring(0, sb.length() - 1), primaryKeyName);
-            args.add(primaryKeyValue);
+                    tableName, sb.substring(1), pkColumn);
+
+            Field keyField = object
+                    .getClass()
+                    .getDeclaredField(pkField);
+            keyField.setAccessible(true);
+            values.add(keyField.get(object));
             UnitOfWork.getOpenConnection();
             UnitOfWork.dbConnection
                     .createQuery(updateSql)
-                    .withParams(args)
+                    .withParams(values)
                     .executeUpdate();
             return object;
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
         } finally {
             this.UnitOfWork.close();
         }
+        return null;
     }
 
 
@@ -238,47 +235,41 @@ public class DapperRepositoryBase<TEntity  extends Entity>
      */
     private  <T extends Entity> boolean executeDelete(T object){
 
-        if(Sql2oUtils.isNull(object))
+        Guard.isNotNull(object,"object");
+        Class<?> modelClass = object.getClass();
+        String tableName = Sql2oCache.getTableName(modelClass);
+        String pkField =  Sql2oCache.getPKField(modelClass);
+        String pkColumn = Sql2oCache.getPKColumn(modelClass);
+        if(pkField==null
+                || pkField.isEmpty()
+                || pkColumn == null
+                || pkColumn.isEmpty())
         {
-            return false;
+            throw  new PrimaryKeyException();
         }
 
-        PocoData pocoData = PocoData.forType(object.getClass());
-        TableInfo pd = pocoData.getTableInfo();
-        String primaryKey = pd.getPrimaryKey();
-        Object primaryKeyValue = null;
-        if (Sql2oUtils.isNotNullOrEmpty(primaryKey)) {
-
-            PocoColumn primaryKeyColumn =
-                    pocoData.getColumns()
-                            .values()
-                            .stream()
-                            .filter(e->e.isPrimaryKey())
-                            .findFirst()
-                            .orElse(null);
-
-            if(primaryKeyColumn!=null)
-            {
-                primaryKeyValue = primaryKeyColumn.getValue(object);
-            }
-        }
-        if(Sql2oUtils.isNotNull(primaryKeyValue))
-        {
-             String deleteSql = String.format("DELETE FROM %s WHERE %s = ?", pd.getTableName(), primaryKey);
-             try {
-                 UnitOfWork.getOpenConnection();
-                 return UnitOfWork
-                        .dbConnection
-                        .createQuery(deleteSql)
-                        .withParams(primaryKeyValue)
-                        .executeUpdate()
-                        .getResult() > 0;
-             }finally {
-                 this.UnitOfWork.close();
-             }
+        String deleteSql = String.format("DELETE FROM %s WHERE %s = ?",tableName, pkColumn);
+        try {
+            Field keyField = object
+                    .getClass()
+                    .getDeclaredField(pkField);
+            keyField.setAccessible(true);
+            Object value = keyField.get(object);
+            UnitOfWork.getOpenConnection();
+            return UnitOfWork
+                    .dbConnection
+                    .createQuery(deleteSql)
+                    .withParams(value)
+                    .executeUpdate()
+                    .getResult() > 0;
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } finally {
+            this.UnitOfWork.close();
         }
         return false;
     }
-
 
 }

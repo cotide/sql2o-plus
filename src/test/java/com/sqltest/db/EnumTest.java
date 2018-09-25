@@ -48,7 +48,7 @@ public class EnumTest extends BaseTest {
         Database db = getDatabase();
 
         IRepository<UserInfo> userInfoIRepository = db.getRepository(UserInfo.class);
-        UserInfo user = userInfoIRepository.getById(1);
+        UserInfo user = userInfoIRepository.getById(7);
         assert (user != null&&user.getId()>0) : "user is null";
         assert (user.getLevel() == EnumVipLevel.VIP3) : "user vip is error";
         assert (user.getStatus() == EnumUserStatus.STOP) : "user status is error";

@@ -18,12 +18,9 @@ public @interface PrimaryKey {
      */
     String value() default "id";
 
-
-    String sequenceName()  default  "";
-
     /**
      * 是否自增列
      * @return
      */
-    boolean autoIncrement() default  false;
+    boolean autoIncrement() default true;
 }

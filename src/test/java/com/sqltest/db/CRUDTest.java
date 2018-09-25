@@ -43,7 +43,7 @@ public class CRUDTest extends BaseTest {
                    Sql.builder()
                            .select()
                            .from(UserInfo.class)
-                           .where("user_id = @0", 1));
+                           .where("user_id = @0", 4));
            assert (user != null) : "userinfo is null";
            System.out.println(">>>>>>>>>> get result <<<<<<<<<<");
            System.out.println(user.getId());
@@ -63,7 +63,7 @@ public class CRUDTest extends BaseTest {
                     Sql.builder()
                             .select()
                             .from(UserInfo.class)
-                            .where("user_id = @0", 1));
+                            .where("user_id = @0", 4));
             assert (user != null) : "userinfo is null";
             System.out.println(">>>>>>>>>> Result <<<<<<<<<<");
             System.out.println(user.getId());

@@ -263,6 +263,21 @@ IRepository<UserInfo> userInfoRepository =  db.getRepository(UserInfo.class);
 PageList<UserInfo> result = userInfoRepository.getPageList(1,10,Sql.builder().select().from(UserInfo.class));
 ```
 
+### Sql Lambda
+
+```java
+Sql sql = Sql.builder().select().from(UserInfo.class)
+                .where(UserInfo::getName,"Test")
+                .whereIn(UserInfo::getId,1,2)
+                .orderBy(UserInfo::getCreateTime,OrderBy.DESC);
+                
+/*** [Sql语句] ***/
+// select  *  from user_info where user_Name  = :p0  and user_id in (:p1,:p2)
+// order by create_time DESC
+/*** [参数值] ***/
+// [Test],[1],[2]
+```
+
 
 ## 持久化
 
@@ -368,26 +383,14 @@ Database db = getDatabase();
 db.isDebug(true); 
 ```
 Database指定db.isDebug(true)后，查询结果属性不能匹配会抛出异常信息,[例子](src/test/java/com/sqltest/db/DebugTest.java)
+ 
 
-## 问题
-
-如果@Column不会被解析映射到POJO对象,需要指定JPA版本 
-
-```json
-<dependency>
-    <scope>provided</scope>
-    <groupId>javax.persistence</groupId>
-    <artifactId>persistence-api</artifactId>
-    <version>1.0.2</version>
-</dependency> 
-```
 
 ## 其他
 
 - [示例数据库脚本](https://github.com/cotide/sql2o-plus/wiki/%E7%A4%BA%E4%BE%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E8%84%9A%E6%9C%AC)
-
-
+ 
 
 ## License
 
-[Apache2](http://www.apache.org/licenses/LICENSE-2.0.txt)
+- [Apache2](http://www.apache.org/licenses/LICENSE-2.0.txt)
