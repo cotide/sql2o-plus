@@ -204,19 +204,17 @@ IRepository<UserInfo> userInfoRepository =  db.getRepository(UserInfo.class);
 // getList()
 List<UserInfo> result1 =  userInfoRepository.getList();
 
-wrapper
+// getList(Sql sql)
 List<UserInfo> result2 = userInfoRepository.getList(Sql.builder().select().from(UserInfo.class));
 
-wrapper
+// getList(String sql,Object ... param)
 String sql = "select * from user_info where user_id = @0 ";
 List<UserInfo> result3 = userInfoRepository.getList(sql,1);
 
 // ** Dto getList **
-wrapper
 Sql sql1 = Sql.builder().select(" user_id as id, user_Name as name ").from(UserInfo.class).where("user_id = @0",1);
 List<UserInfoDto> result4 =  db.getSqlQuery().getDtoList(UserInfoDto.class,sql1);
 
-wrapper
 String sql2 = "select user_id as id, user_Name as name from user_info where user_id = @0 ";
 List<UserInfoDto> result5 =  db.getSqlQuery().getDtoList(UserInfoDto.class,sql2,1);
 ```
@@ -383,7 +381,7 @@ try(Database db = getDatabase()){
 Database db = getDatabase();
 db.isDebug(true); 
 ```
-Database指定db.isDebug(true)后，查询结果属性不能匹配会抛出异常信息,[例子](src/test/java/com/sqltest/db/DebugTest.java)
+Database指定isDebug(true)后，查询结果属性不能匹配会抛出异常信息,[例子](src/test/java/com/sqltest/db/DebugTest.java)
  
 
 

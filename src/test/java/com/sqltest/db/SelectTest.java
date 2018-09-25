@@ -51,11 +51,11 @@ public class SelectTest extends BaseTest {
             List<UserInfo> result = userInfoRepository.getList();
             assert (result.size() > 0 && result.get(0).getId() > 0) : "UserInfoRepository getList() is error";
 
-            // getList(Sql inter)
+            // getList(Sql sql)
             List<UserInfo> result2 = userInfoRepository.getList(Sql.builder().select().from(UserInfo.class));
             assert (result2.size() > 0 && result2.get(0).getId() > 0) : "UserInfoRepository getList(Sql inter) is error";
 
-            // getList(String inter,Object ... param)
+            // getList(String sql,Object ... param)
             String sql = "select * from user_info where user_id = @0 ";
             List<UserInfo> result3 = userInfoRepository.getList(sql, 1);
             assert (result3.size() == 1 && result3.get(0).getId() > 0) : "UserInfoRepository getList(String inter,Object ... param) is error";
