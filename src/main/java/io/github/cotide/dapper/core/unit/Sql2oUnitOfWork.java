@@ -37,7 +37,7 @@ public class Sql2oUnitOfWork implements IUnitOfWork {
      * 构造函数
      * @param dataSource 数据源
      */
-    public Sql2oUnitOfWork(DataSource dataSource){
+    public Sql2oUnitOfWork(Sql2o dataSource){
         this(dataSource,false);
     }
 
@@ -46,7 +46,7 @@ public class Sql2oUnitOfWork implements IUnitOfWork {
      * @param dataSource 数据源
      * @param isTransaction 是否启用事务
      */
-    public Sql2oUnitOfWork(DataSource dataSource, boolean isTransaction){
+    public Sql2oUnitOfWork(Sql2o dataSource, boolean isTransaction){
         this(dataSource,isTransaction,false);
     }
 
@@ -58,8 +58,8 @@ public class Sql2oUnitOfWork implements IUnitOfWork {
      * @param isTransaction 是否启用事务
      * @param isDebug 是否调试状态
      */
-    public Sql2oUnitOfWork(DataSource dataSource, boolean isTransaction,boolean isDebug){
-        sql2o = new Sql2o(dataSource);
+    public Sql2oUnitOfWork(Sql2o dataSource, boolean isTransaction,boolean isDebug){
+        sql2o = dataSource;
         if(isTransaction)
         {
             dbConnection = sql2o.beginTransaction();

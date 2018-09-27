@@ -22,8 +22,8 @@ public class Guard {
                                    String msg){
         if (isNull(parameter))
         {
-            String showTitle = "数据验证错误：";
-            String showMsg = " is not null ";
+            String showTitle = "数据验证错误";
+            String showMsg = "is not null";
             if(!isNull(parameter))
             {
                 showTitle = title;
@@ -80,8 +80,8 @@ public class Guard {
     {
         if (isBlankOrNull(parameter))
         {
-            String showTitle = "数据验证错误：";
-            String showMsg = " is not null ";
+            String showTitle = "数据验证错误";
+            String showMsg = "is not null";
             if(!isBlankOrNull(title))
             {
                 showTitle = title;
@@ -103,8 +103,8 @@ public class Guard {
 
         if(parameter == null || parameter<=0)
         {
-            String showTitle = "数据验证错误：";
-            String showMsg = " is not int value";
+            String showTitle = "数据验证错误";
+            String showMsg = "is not int value";
             String errorMsg = String.format("%s:%s %s",showTitle,parameterName,showMsg);
             throw  new IllegalArgumentException(errorMsg);
         }
@@ -117,8 +117,8 @@ public class Guard {
     {
         if(parameter == null || parameter<=0)
         {
-            String showTitle = "数据验证错误：";
-            String showMsg = " is not int value";
+            String showTitle = "数据验证错误";
+            String showMsg = "is not int value";
             String errorMsg = String.format("%s:%s %s",showTitle,parameterName,showMsg);
             throw  new IllegalArgumentException(errorMsg);
         }

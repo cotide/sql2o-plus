@@ -116,11 +116,13 @@ public class MethodAccessorsGenerator implements MethodGetterFactory, MethodSett
         }
     }
 
+    @Override
     public Getter newGetter(final Method method) {
         final Class type = method.getReturnType();
         final MethodAccessor methodAccessor = newMethodAccessor(method);
 
         return new Getter() {
+            @Override
             public Object getProperty(Object obj) {
                 try {
                     return methodAccessor.invoke(obj, null);
@@ -129,18 +131,23 @@ public class MethodAccessorsGenerator implements MethodGetterFactory, MethodSett
                 }
             }
 
+            @Override
             public Class getType() {
                 return type;
             }
         };
     }
 
+    @Override
     public Setter newSetter(final Method method) {
         final Class type = method.getParameterTypes()[0];
         final MethodAccessor methodAccessor = newMethodAccessor(method);
         return new Setter() {
+            @Override
             public void setProperty(Object obj, Object value) {
-                if (value == null && type.isPrimitive()) return;
+                if (value == null && type.isPrimitive()) {
+                    return;
+                }
                 try {
                     methodAccessor.invoke(obj, new Object[]{value});
                 } catch (InvocationTargetException e) {
@@ -148,6 +155,7 @@ public class MethodAccessorsGenerator implements MethodGetterFactory, MethodSett
                 }
             }
 
+            @Override
             public Class getType() {
                 return type;
             }

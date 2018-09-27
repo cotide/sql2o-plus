@@ -2,10 +2,12 @@ package com.sqltest.db;
 
 
 import com.sqltest.model.UserInfo;
-import io.github.cotide.dapper.exceptions.SqlBuildException;
-import io.github.cotide.dapper.query.OrderBy;
+import com.sqltest.model.UserType;
+import io.github.cotide.dapper.query.enums.OrderBy;
 import org.junit.Test;
 import io.github.cotide.dapper.query.Sql;
+
+import java.util.Arrays;
 
 /**
  * SQL对象测试
@@ -21,11 +23,7 @@ public class SqlTest {
         System.out.println("SQL语句:");
         System.out.println(sql.getFinalSql());
         System.out.println("SQL参数值:");
-        int index = 0;
-        for (Object item: sql.getFinalArgs() ) {
-            System.out.println("arg"+index +","+item);
-            index++;
-        }
+        Arrays.stream(sql.getFinalArgs()).forEach(System.out::println);
     }
 
     @Test
@@ -34,11 +32,8 @@ public class SqlTest {
         Sql sql = Sql.builder().append("select * from user_info ").where("id = @0",1).where(" id = @0",2);
         System.out.println("Sql语句:");
         System.out.println(sql.getFinalSql());
-        for (Object item : sql.getFinalArgs())
-        {
-            System.out.println("参数值:");
-            System.out.println(item.toString());
-        }
+        System.out.println("SQL参数值:");
+        Arrays.stream(sql.getFinalArgs()).forEach(System.out::println);
     }
 
 
@@ -49,11 +44,8 @@ public class SqlTest {
                 .where(UserInfo::getName,"Test");
         System.out.println("Sql语句:");
         System.out.println(sql.getFinalSql());
-        for (Object item : sql.getFinalArgs())
-        {
-            System.out.println("参数值:");
-            System.out.println(item.toString());
-        }
+        System.out.println("SQL参数值:");
+        Arrays.stream(sql.getFinalArgs()).forEach(System.out::println);
     }
 
 
@@ -69,11 +61,8 @@ public class SqlTest {
 
         System.out.println("Sql语句:");
         System.out.println(sql.getFinalSql());
-        for (Object item : sql.getFinalArgs())
-        {
-            System.out.println("参数值:");
-            System.out.println(item.toString());
-        }
+        System.out.println("SQL参数值:");
+        Arrays.stream(sql.getFinalArgs()).forEach(System.out::println);
     }
 
     @Test
@@ -86,11 +75,8 @@ public class SqlTest {
 
         System.out.println("Sql语句:");
         System.out.println(sql.getFinalSql());
-        for (Object item : sql.getFinalArgs())
-        {
-            System.out.println("参数值:");
-            System.out.println(item.toString());
-        }
+        System.out.println("SQL参数值:");
+        Arrays.stream(sql.getFinalArgs()).forEach(System.out::println);
     }
 
     @Test
@@ -104,11 +90,8 @@ public class SqlTest {
 
         System.out.println("Sql语句:");
         System.out.println(sql.getFinalSql());
-        for (Object item : sql.getFinalArgs())
-        {
-            System.out.println("参数值:");
-            System.out.println(item.toString());
-        }
+        System.out.println("SQL参数值:");
+        Arrays.stream(sql.getFinalArgs()).forEach(System.out::println);
     }
 
 
@@ -122,14 +105,42 @@ public class SqlTest {
 
         System.out.println("Sql语句:");
         System.out.println(sql.getFinalSql());
-        for (Object item : sql.getFinalArgs())
-        {
-            System.out.println("参数值:");
-            System.out.println(item.toString());
-        }
-
+        System.out.println("SQL参数值:");
+        Arrays.stream(sql.getFinalArgs()).forEach(System.out::println);
     }
 
+
+    @Test
+    public void sqlJoin(){
+
+        Sql sql = Sql.builder().select().from(UserInfo.class,"a")
+                .leftJoin(UserType.class,"b")
+                .on("a.user_id = b.id")
+                .where("a",UserInfo::getId,1);
+        System.out.println("Sql语句:");
+        System.out.println(sql.getFinalSql());
+        System.out.println("SQL参数值:");
+        Arrays.stream(sql.getFinalArgs()).forEach(System.out::println);
+    }
+
+
+    @Test
+    public void sqlJoin2(){
+
+        Sql sql = Sql.builder().select().from(UserInfo.class,"a")
+                .leftJoin(UserType.class,"b")
+                .on("a.user_id = b.id")
+                .leftJoin(UserType.class,"c")
+                .on("c.id = b.id")
+                .where("a",UserInfo::getId,1)
+                .whereIn("b",UserType::getId,1,2,3)
+                .where("c.id = @0 ",555);
+        System.out.println("Sql语句:");
+        System.out.println(sql.getFinalSql());
+        System.out.println("SQL参数值:");
+        Arrays.stream(sql.getFinalArgs()).forEach(System.out::println);
+
+    }
 
 
 

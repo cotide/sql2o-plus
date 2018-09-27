@@ -10,11 +10,11 @@ import com.sqltest.model.enums.EnumUserStatus;
 import com.sqltest.model.enums.EnumVipLevel;
 import io.github.cotide.dapper.Database;
 import io.github.cotide.dapper.basic.collections.PageList;
-import io.github.cotide.dapper.core.attr.Table;
 import io.github.cotide.dapper.query.Sql;
 import io.github.cotide.dapper.repository.inter.IRepository;
 import org.junit.Test;
 
+import java.lang.reflect.Array;
 import java.util.Date;
 import java.util.List;
 
@@ -90,8 +90,61 @@ public class JoinTest  extends BaseTest {
 
         assert (result.size() >= 0 && result.get(0).getId() > 0)
                 : "UserInfoRepository getDtoList(Class<TDto> returnType,Sql inter) is error";
-        System.out.println(">>>>>>>>>> Result <<<<<<<<<<");
+
         for (UserInfoDetailDto item : result) {
+            System.out.println(">>>>>>>>>> Result <<<<<<<<<<");
+            System.out.println("user_info.id:" + item.getId());
+            System.out.println("user_info.user_Name:" + item.getName());
+            System.out.println("user_type.id:" + item.getTypeId());
+            System.out.println("user_type.typeName:" + item.getTypeName());
+            System.out.println("user_info.login:" + item.getLogin());
+            System.out.println("user_info.status:" + item.getStatus());
+            System.out.println("user_info.group:" + item.getGroup());
+            System.out.println("user_info.level:" + item.getLevel());
+            System.out.println("user_info.create_time:" + item.getCreateTime());
+        }
+    }
+
+    @Test
+    public void  getListJoin2Test(){
+
+        Database db = getDatabase();
+        Sql sql = Sql.builder()
+                .select("a.user_id as id," +
+                        "a.user_Name as name,"+
+                        "b.id as typeId,"+
+                        "b.name as typeName,"+
+                        "a.login,"+
+                        "a.status,"+
+                        "a.group,"+
+                        "a.level,"+
+                        "a.create_time as createTime")
+                .fromDb("g_main_test",UserInfo.class,"a")
+                .leftJoinDb("g_main_test",UserType.class).as("b")
+                .on("a.user_type_id = b.id")
+                .innerJoinDb("g_main_test",UserType.class).as("c")
+                .on("a.user_type_id = c.id")
+                .joinDb("g_main_test",UserType.class).as("d")
+                .on("a.user_type_id = d.id")
+                .rightJoinDb("g_main_test",UserType.class,"e")
+                .on("a.user_type_id = e.id")
+                .rightJoin("g_main_test.user_type f")
+                .on("a.user_type_id = f.id")
+                .where("a",UserInfo::getId,1)
+                .append("WHERE 1=1 ")
+                .append("where 2-2");
+
+
+        System.out.println(sql.getFinalSql());
+        List<UserInfoDetailDto> result =  db.getSqlQuery()
+                .getDtoList(UserInfoDetailDto.class,sql);
+
+//        assert (result.size() >= 0 && result.get(0).getId() > 0)
+//                : "UserInfoRepository getDtoList(Class<TDto> returnType,Sql inter) is error";
+
+        System.out.println(result.size());
+        for (UserInfoDetailDto item : result) {
+            System.out.println(">>>>>>>>>> Result <<<<<<<<<<");
             System.out.println("user_info.id:" + item.getId());
             System.out.println("user_info.user_Name:" + item.getName());
             System.out.println("user_type.id:" + item.getTypeId());

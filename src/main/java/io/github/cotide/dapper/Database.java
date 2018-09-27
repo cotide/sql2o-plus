@@ -51,8 +51,7 @@ public class Database implements  AutoCloseable,Closeable {
      */
     public Database(DataSource dataSource)
     {
-        instance = new Database();
-        instance.setSql2o(new Sql2o(dataSource));
+        open(new Sql2o(dataSource));
     }
 
     /**
@@ -62,16 +61,15 @@ public class Database implements  AutoCloseable,Closeable {
      * @param password
      */
     public Database(String url, String username, String password) {
-        // DbType dbType  =  getDbType(url);
-        instance = new Database();
-        instance.setSql2o(new Sql2o(url,username,password));
+        open(new Sql2o(url,username,password));
     }
+
 
 
     /**
      * 数据源
      */
-    protected static Database instance;
+    protected Database instance;
 
     @Setter
     private Sql2o sql2o;
@@ -85,7 +83,7 @@ public class Database implements  AutoCloseable,Closeable {
         if (_unitOfWork == null)
         {
             _unitOfWork = new Sql2oUnitOfWork(
-                    instance.sql2o.getDataSource(),
+                    instance.sql2o,
                     false,
                     isDebug);
         }
@@ -100,7 +98,7 @@ public class Database implements  AutoCloseable,Closeable {
         if(_unitOfWork==null)
         {
             _unitOfWork = new Sql2oUnitOfWork(
-                    instance.sql2o.getDataSource(),
+                    instance.sql2o,
                     true,
                     isDebug);
         }else{
@@ -151,6 +149,12 @@ public class Database implements  AutoCloseable,Closeable {
     }
 
     //#region Helper
+
+    private void open(Sql2o sql2o)
+    {
+        instance = new Database();
+        instance.setSql2o(sql2o);
+    }
 
     /**
      * 根据URL 获取数据库类型

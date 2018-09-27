@@ -3,13 +3,18 @@ package io.github.cotide.dapper.query;
 import io.github.cotide.dapper.core.functions.TypeFunction;
 import io.github.cotide.dapper.core.unit.Sql2oCache;
 import io.github.cotide.dapper.core.unit.Sql2oUtils;
+import io.github.cotide.dapper.core.utility.Guard;
 import io.github.cotide.dapper.exceptions.SqlBuildException;
 import io.github.cotide.dapper.basic.domain.Entity;
+import io.github.cotide.dapper.query.enums.OrderBy;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * SQL
@@ -53,18 +58,26 @@ public class Sql {
     }
 
     public Sql where(String sql, Object... params) {
+        Guard.isNotNullOrEmpty(sql,"where sql");
         return append(new Sql("where " + sql, params));
     }
 
+    public  <T extends Entity,R> Sql where(String asName,TypeFunction<T, R> function,Object param) {
+        return where((asName!=null&&!asName.isEmpty()?asName+".":"")+Sql2oUtils.getLambdaColumnName(function)+"  = @0 ",param);
+    }
+
     public  <T extends Entity,R> Sql where(TypeFunction<T, R> function,Object param) {
-         String columnName = Sql2oUtils.getLambdaColumnName(function);
-         return where(columnName+"  = @0 ",param);
+        return where(Sql2oUtils.getLambdaColumnName(function)+"  = @0 ",param);
+    }
+
+    public  <T extends Entity,R>  Sql whereIn(String asName,TypeFunction<T, R> function, Object... paras) throws SqlBuildException {
+
+        return whereIn((asName!=null&&!asName.isEmpty()?asName+".":"")+Sql2oUtils.getLambdaColumnName(function),paras);
     }
 
     public  <T extends Entity,R>  Sql whereIn(TypeFunction<T, R> function, Object... paras) throws SqlBuildException {
 
-        String column = Sql2oUtils.getLambdaColumnName(function);
-        return whereIn(column,paras);
+        return whereIn(Sql2oUtils.getLambdaColumnName(function),paras);
     }
 
     public Sql whereIn(String column, Object... paras) throws SqlBuildException {
@@ -97,39 +110,39 @@ public class Sql {
         return this;
     }
 
-    public Sql select(String columns) {
-        return append(new Sql("select " + columns));
-    }
-
-    public Sql select() {
-        return append(new Sql("select  * " ));
+    public SelectClause select(String columns) {
+        Guard.isNotNullOrEmpty(columns,"select columns");
+        return new SelectClause(append(new Sql("select " + columns+" ")));
     }
 
 
-    public Sql from(String tables) {
-        return append(new Sql("from " + tables));
+    public SelectClause select() {
+        return select("*");
     }
 
 
-    public <T extends Entity>  Sql  from(Class<T> modelClass) {
-        String tableName  = Sql2oCache.getTableName(modelClass);
-        return append(new Sql("from " +  tableName));
+    public Sql as(String asName)
+    {
+        return append(new Sql(asName!=null?(asName+" "):""));
     }
-
-
-    public <T extends Entity>  Sql  from(Class<T> modelClass,String asName) {
-        String tableName  = Sql2oCache.getTableName(modelClass);
-        return append(new Sql("from " +  tableName+" "+asName));
-    }
-
 
     public Sql orderBy(String columns) {
+        Guard.isNotNullOrEmpty(columns,"orderBy columns");
         return append(new Sql("order by " + columns));
     }
 
-    public Sql orderBy(String columns,OrderBy orderBy) {
-
+    public Sql orderBy(String columns, OrderBy orderBy) {
+        Guard.isNotNullOrEmpty(columns,"orderBy columns");
         return append(new Sql("order by " + columns + " "+ orderBy.toString()));
+    }
+
+    public  <T extends Entity,R> Sql orderBy(String asName,TypeFunction<T, R> function) {
+        return orderBy(asName,function,OrderBy.DESC);
+    }
+
+    public  <T extends Entity,R> Sql orderBy(String asName,TypeFunction<T, R> function,OrderBy orderBy) {
+        String columnName = Sql2oUtils.getLambdaColumnName(function);
+        return orderBy((asName!=null&&!asName.isEmpty()?asName+".":"")+columnName,orderBy);
     }
 
 
@@ -154,49 +167,127 @@ public class Sql {
     }
 
     public SqlJoinClause innerJoin(String table){
-        return join("INNER JOIN ",table);
+        return innerJoin(table,null);
+    }
+    public SqlJoinClause innerJoin(String table,String asName){
+        Guard.isNotNullOrEmpty(table,"innerJoin table name");
+        return joinClause("INNER JOIN ",table + " " + (asName!=null?asName+" ":""));
+    }
+
+    public <T extends Entity> SqlJoinClause innerJoinDb(String dbName,Class<T> modelClass){
+        Guard.isNotNullOrEmpty(dbName,"innerJoin dbName");
+        return innerJoin(dbName+"."+Sql2oCache.getTableName(modelClass));
+    }
+
+    public <T extends Entity> SqlJoinClause innerJoinDb(String dbName,Class<T> modelClass,String asName){
+        Guard.isNotNullOrEmpty(dbName,"innerJoin dbName");
+        return innerJoin(dbName+"."+Sql2oCache.getTableName(modelClass),asName);
     }
 
     public <T extends Entity> SqlJoinClause innerJoin(Class<T> modelClass){
-        return join("INNER JOIN ",Sql2oCache.getTableName(modelClass));
+        return innerJoin(Sql2oCache.getTableName(modelClass));
     }
 
     public <T extends Entity> SqlJoinClause innerJoin(Class<T> modelClass,String asName){
-        return join("INNER JOIN ",Sql2oCache.getTableName(modelClass) + " " + asName);
+        return innerJoin(Sql2oCache.getTableName(modelClass),asName);
     }
 
 
+    public SqlJoinClause rightJoin(String table,String asName)
+    {
+        Guard.isNotNullOrEmpty(table,"rightJoin table name");
+        return joinClause("RIGHT JOIN ",table + " " + (asName!=null?asName+" ":""));
+    }
+
+    public SqlJoinClause rightJoin(String table)
+    {
+        return rightJoin(table,null);
+    }
+
+    public <T extends Entity> SqlJoinClause rightJoin(Class<T> modelClass){
+        return rightJoin(Sql2oCache.getTableName(modelClass));
+    }
+
+    public <T extends Entity> SqlJoinClause rightJoin(Class<T> modelClass,String asName){
+        return rightJoin(Sql2oCache.getTableName(modelClass),asName);
+    }
+
+    public <T extends Entity> SqlJoinClause rightJoinDb(String dbName,Class<T> modelClass){
+        Guard.isNotNullOrEmpty(dbName,"rightJoin dbName");
+        return rightJoin(dbName+"."+Sql2oCache.getTableName(modelClass));
+    }
+
+    public <T extends Entity> SqlJoinClause rightJoinDb(String dbName,Class<T> modelClass,String asName){
+        Guard.isNotNullOrEmpty(dbName,"rightJoin dbName");
+        return rightJoin(dbName+"."+Sql2oCache.getTableName(modelClass),asName);
+    }
+
+
+
+
+    public SqlJoinClause leftJoin(String table,String asName)
+    {
+        Guard.isNotNullOrEmpty(table,"leftJoin table name");
+        return joinClause("LEFT JOIN ",table + " " + (asName!=null?asName+" ":""));
+    }
 
     public SqlJoinClause leftJoin(String table)
     {
-        return join("LEFT JOIN ",table);
+       return leftJoin(table,null);
     }
 
-
     public <T extends Entity> SqlJoinClause leftJoin(Class<T> modelClass){
-        return join("LEFT JOIN ",Sql2oCache.getTableName(modelClass));
+        return leftJoin(Sql2oCache.getTableName(modelClass));
     }
 
     public <T extends Entity> SqlJoinClause leftJoin(Class<T> modelClass,String asName){
-        return join("LEFT JOIN ",Sql2oCache.getTableName(modelClass) + " " + asName);
+        return leftJoin(Sql2oCache.getTableName(modelClass),asName);
+    }
+
+    public <T extends Entity> SqlJoinClause leftJoinDb(String dbName,Class<T> modelClass){
+        Guard.isNotNullOrEmpty(dbName,"leftJoin dbName");
+        return leftJoin(dbName+"."+Sql2oCache.getTableName(modelClass));
+    }
+
+    public <T extends Entity> SqlJoinClause leftJoinDb(String dbName,Class<T> modelClass,String asName){
+        Guard.isNotNullOrEmpty(dbName,"leftJoin dbName");
+        return leftJoin(dbName+"."+Sql2oCache.getTableName(modelClass),asName);
+    }
+
+
+    public SqlJoinClause join(String table,String asName)
+    {
+        return joinClause("LEFT JOIN ",table+ " " + (asName!=null?asName+" ":""));
     }
 
     public SqlJoinClause join(String table)
     {
-        return join("LEFT JOIN ",table);
+        return join(table,null);
     }
     public <T extends Entity> SqlJoinClause join(Class<T> modelClass){
-        return join("LEFT JOIN ",Sql2oCache.getTableName(modelClass));
+        return join(Sql2oCache.getTableName(modelClass));
     }
 
     public <T extends Entity> SqlJoinClause join(Class<T> modelClass,String asName){
-        return join("LEFT JOIN ",Sql2oCache.getTableName(modelClass) + " " + asName);
+        return join(Sql2oCache.getTableName(modelClass),asName);
+    }
+
+
+
+    public <T extends Entity> SqlJoinClause joinDb(String dbName,Class<T> modelClass){
+        Guard.isNotNullOrEmpty(dbName,"join dbName");
+        return join(dbName+"."+Sql2oCache.getTableName(modelClass));
+    }
+
+    public <T extends Entity> SqlJoinClause joinDb(String dbName,Class<T> modelClass,String asName){
+        Guard.isNotNullOrEmpty(dbName,"join dbName");
+        return join(dbName+"."+Sql2oCache.getTableName(modelClass),asName);
     }
 
 
     //#region  Helper
 
-    private SqlJoinClause join(String joinType,String table)
+    private SqlJoinClause joinClause(String joinType,String table)
     {
         return new SqlJoinClause(append(new Sql(joinType+table)));
     }
@@ -261,7 +352,6 @@ public class Sql {
                 && sql._sql != null
                 && sql._sql.toLowerCase().startsWith(sqlType.toLowerCase());
     }
-
 
     //#endregion
 
