@@ -1,6 +1,8 @@
 # sql2o-plus  
 
+
 [![Build Status](https://travis-ci.org/cotide/sql2o-plus.svg?branch=master)](https://travis-ci.org/cotide/sql2o-plus)
+[![Maven Central](https://img.shields.io/maven-central/v/org.apache.maven/apache-maven.svg)](https://search.maven.org/artifact/io.github.cotide/sql2o-plus/1.0.1/jar)
 [![License](https://img.shields.io/badge/license-Apache2-blue.svg)](https://github.com/cotide/sql2o-plus/blob/master/LICENSE)
 [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/sql2o-plus/Lobby)
 
@@ -20,8 +22,8 @@
 <dependency>
     <groupId>io.github.cotide</groupId>
     <artifactId>sql2o-plus</artifactId>
-    <version>1.0.0</version>
-</dependency>
+    <version>1.0.1</version>
+</dependency> 
 ```
 
 ### snapshots 版本
