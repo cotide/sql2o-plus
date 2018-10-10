@@ -8,7 +8,6 @@
 
 🍌sql2o-plus a simple object mapper for java 
 
-
 > Java版本 1.8
 
 ## Maven 
@@ -42,7 +41,7 @@
 <dependency>
     <groupId>io.github.cotide</groupId>
     <artifactId>sql2o-plus</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.2-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -390,7 +389,7 @@ Database指定isDebug(true)后，查询结果属性不能匹配会抛出异常�
 ## 其他
 
 - [示例数据库脚本](https://github.com/cotide/sql2o-plus/wiki/%E7%A4%BA%E4%BE%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E8%84%9A%E6%9C%AC)
- 
+- [示例项目](https://github.com/cotide/moni-webapi)
 
 ## License
 
