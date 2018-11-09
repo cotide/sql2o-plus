@@ -32,7 +32,7 @@ public class UserInfo extends Entity {
     /**
      * 用户名
      */
-    @Column("user_Name")
+    @Column("user_name")
     private String name;
 
     /**

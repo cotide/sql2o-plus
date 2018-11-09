@@ -41,6 +41,26 @@ public class Sql2oUtils {
         return null;
     }
 
+    public static String getDtoLambdaColumnName(Serializable lambda) {
+        for (Class<?> cl = lambda.getClass(); cl != null; cl = cl.getSuperclass()) {
+            try {
+                Method m = cl.getDeclaredMethod("writeReplace");
+                m.setAccessible(true);
+                Object replacement = m.invoke(lambda);
+                if (!(replacement instanceof SerializedLambda)) {
+                    break; // custom interface implementation
+                }
+                SerializedLambda serializedLambda = (SerializedLambda) replacement;
+                return Sql2oCache.getDtoLambdaColumnName(serializedLambda);
+            } catch (NoSuchMethodException e) {
+                // do nothing
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                break;
+            }
+        }
+        return null;
+    }
+
 
     public static  <TEntity extends Entity>  Object getValue(TEntity model,Field field)
     {

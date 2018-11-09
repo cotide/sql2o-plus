@@ -31,7 +31,7 @@ public class SelectClause  extends  BaseClause{
     public Sql from(String table,String asName)
     {
         Guard.isNotNullOrEmpty(table,"from table");
-        return (_sql.append(new Sql("FROM "+table+" "+(asName!=null?asName:""))));
+        return (_sql.append(new Sql("from "+table+" "+(asName!=null?asName:""))));
     }
 
 

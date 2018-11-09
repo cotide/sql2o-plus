@@ -49,7 +49,7 @@
 ## 特点
 
 - [sql2o](https://github.com/aaberg/sql2o)驱动
-- 集成SQL linq语法糖
+- 集成SQL Lambda表达式
 - 集成SQL分页
 - CRUD 封装/简化调用方法
 - 支持事务
@@ -134,22 +134,30 @@ import com.sqltest.model.enums.EnumVipLevel;
 import lombok.Data;
 import java.util.Date;
 
+
 @Data
 public class UserInfoDto {
 
+
+    @Column("user_id")
     private int id;
 
+    @Column("user_name")
     private String name;
 
     private int login;
 
     private EnumUserStatus status;
 
+    @Column("`group`")
     private EnumGroup group;
 
     private EnumVipLevel level;
 
     private Date createTime;
+
+    @Ignore
+    private String other;
 }
 ```
 
@@ -184,17 +192,76 @@ protected Database getDruidDatabase() {
 ### Sql Lambda
 
 ```java
-Sql sql = Sql.builder().select().from(UserInfo.class)
-                .where(UserInfo::getName,"Test")
-                .whereIn(UserInfo::getId,1,2)
-                .orderBy(UserInfo::getCreateTime,OrderBy.DESC);
+Sql sql = Sql.builder()
+          .select(UserInfo::getId,UserInfo::getName)
+          .from(UserInfo.class)
+          .where(UserInfo::getName,"Test")
+          .whereIn(UserInfo::getId,1,2)
+          .orderBy(UserInfo::getCreateTime, OrderBy.DESC);
                 
 /*** [Sql语句] ***/
-// select  *  from user_info where user_Name  = :p0  and user_id in (:p1,:p2)
+// select user_id,user_name 
+// FROM user_info 
+// where user_name  = :p0 and user_id in (:p1,:p2)
 // order by create_time DESC
 /*** [参数值] ***/
 // [Test],[1],[2]
 ```
+
+### Dto Mapper
+
+#### ResultMap
+
+```java
+ResultMap column  = new ResultMap();
+column.put(UserInfo::getId, UserInfoDto::getId);
+column.put(UserInfo::getName, "name");
+column.put(UserInfo::getUserTypeId); 
+
+Sql sql = Sql.builder().select(
+         column)
+        .from(UserInfo.class)
+        .where(UserInfo::getName,"Test")
+        .whereIn(UserInfo::getId,1,2)
+        .orderBy(UserInfo::getCreateTime, OrderBy.DESC); 
+
+/*** [Sql语句] ***/
+// select user_id  as id,
+// user_name  as name,
+// user_type_id 
+// from user_info 
+// where user_name  = :p0 
+// and user_id in (:p1,:p2)
+// order by create_time DESC
+/*** [参数值] ***/
+// [Test],[1],[2]
+```
+
+#### SelectTo
+
+```java
+Sql sql = Sql.builder()
+                .selectTo(UserInfoDto.class)
+                .from(UserInfo.class)
+                .where(UserInfo::getName,"Test")
+                .whereIn(UserInfo::getId,1,2)
+                .orderBy(UserInfo::getCreateTime, OrderBy.DESC);
+
+/*** [Sql语句] ***/
+// select createTime,
+// level,
+// `group` as group,
+// user_id as id,
+// user_name as name,
+// login,
+// status 
+// from user_info 
+// where user_name  = :p0 
+// and user_id in (:p1,:p2)
+// order by create_time DESC
+/*** [参数值] ***/
+// [Test],[1],[2]
+``` 
 
 ### 列表查询
 

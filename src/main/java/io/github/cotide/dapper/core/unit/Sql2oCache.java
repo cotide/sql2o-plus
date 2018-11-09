@@ -26,9 +26,10 @@ public final class Sql2oCache {
 
     static final Map<Class<?>,String> CACHE_TABLE_NAME = new HashMap<>();
     static final Map<Class<?>, Map<String, String>> CACHE_MODEL_COLUMN_MAPPINGS = new HashMap<>(8);
-    static final Map<Class<?>, String>              CACHE_PK_COLUMN_NAME  = new HashMap<>(8);
+     static final Map<Class<?>, String>              CACHE_PK_COLUMN_NAME  = new HashMap<>(8);
     static final Map<Class<?>, Boolean>              CACHE_PK_COLUMN_IS_AUTO  = new HashMap<>(8);
     static final Map<SerializedLambda,String> CACHE_COLUMN_LAMBDA_NAME = new HashMap<>(8);
+    static final Map<SerializedLambda,String> DTO_CACHE_COLUMN_LAMBDA_NAME = new HashMap<>(8);
 
 
     static final Map<Class<?>, String>              CACHE_PK_FIELD_NAME   = new HashMap<>(8);
@@ -53,6 +54,7 @@ public final class Sql2oCache {
         });
     }
 
+
     public static String getLambdaColumnName(SerializedLambda serializedLambda) {
         return CACHE_COLUMN_LAMBDA_NAME.computeIfAbsent(serializedLambda, lambda -> {
             String className  = serializedLambda.getImplClass().replace("/", ".");
@@ -61,6 +63,21 @@ public final class Sql2oCache {
             try {
                 Field field = Class.forName(className).getDeclaredField(fieldName);
                 return getColumnName(field);
+            } catch (NoSuchFieldException | ClassNotFoundException e) {
+                throw new Sql2oException(e);
+            }
+        });
+    }
+
+
+    public static String getDtoLambdaColumnName(SerializedLambda serializedLambda) {
+        return DTO_CACHE_COLUMN_LAMBDA_NAME.computeIfAbsent(serializedLambda, lambda -> {
+            String className  = serializedLambda.getImplClass().replace("/", ".");
+            String methodName = serializedLambda.getImplMethodName();
+            String fieldName  = methodToFieldName(methodName);
+            try {
+                Field field = Class.forName(className).getDeclaredField(fieldName);
+                return field.getName();
             } catch (NoSuchFieldException | ClassNotFoundException e) {
                 throw new Sql2oException(e);
             }

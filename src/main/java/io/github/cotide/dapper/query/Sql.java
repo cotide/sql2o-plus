@@ -7,14 +7,13 @@ import io.github.cotide.dapper.core.utility.Guard;
 import io.github.cotide.dapper.exceptions.SqlBuildException;
 import io.github.cotide.dapper.basic.domain.Entity;
 import io.github.cotide.dapper.query.enums.OrderBy;
+import io.github.cotide.dapper.query.map.ResultMap;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * SQL
@@ -116,10 +115,50 @@ public class Sql {
     }
 
 
+    public  SelectClause select(
+            ResultMap map)
+    {
+        String selectColumn =  map.getSelectColumn().trim();
+        if(selectColumn == null || "".equals(selectColumn.trim())){
+            return select();
+        }
+        selectColumn = selectColumn.substring(0, selectColumn.length() - 1);
+        return select(selectColumn);
+    }
+
+    public   <T extends Entity,R> SelectClause select(TypeFunction<T, R>... function)
+    {
+        String columnNames = "";
+        for (int j = 0; j<function.length; j++){
+            columnNames += Sql2oUtils.getLambdaColumnName(function[j]);
+            if(j !=function.length-1)
+            {
+                columnNames+=',';
+            }
+        }
+        return select(columnNames);
+    }
+
+
+
+
     public SelectClause select() {
         return select("*");
     }
 
+
+    public <T> SelectClause selectTo(Class<T> modelClass){
+        StringBuffer cols = new StringBuffer();
+        Map<String, String> colums =  Sql2oCache.computeModelColumnMappings(modelClass);
+        for (Map.Entry<String, String> entry : colums.entrySet()) {
+            cols.append(
+                    (entry.getKey().equals(entry.getValue()))?entry.getKey():
+                     String.format("%s as %s",entry.getKey(),entry.getValue()))
+                    .append(",\n");
+        }
+        String sqlColumn =cols.toString().trim();
+        return select(sqlColumn.substring(0, sqlColumn.length() - 1));
+    }
 
     public Sql as(String asName)
     {
