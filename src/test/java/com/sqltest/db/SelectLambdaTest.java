@@ -3,6 +3,7 @@ package com.sqltest.db;
 import com.sqltest.base.BaseTest;
 import com.sqltest.dto.UserInfoDto;
 import com.sqltest.model.UserInfo;
+import com.sqltest.model.UserType;
 import io.github.cotide.dapper.Database;
 import io.github.cotide.dapper.query.Sql;
 import io.github.cotide.dapper.query.enums.OrderBy;
@@ -17,12 +18,16 @@ public class SelectLambdaTest extends BaseTest {
     @Test
     public void sqlSelectMapLambda() {
         ResultMap column  = new ResultMap();
-        column.put(UserInfo::getId, UserInfoDto::getId);
-        column.put(UserInfo::getName, "name");
-        column.put(UserInfo::getUserTypeId);
+        column.put("a",UserInfo::getName,"name")
+              .put("a",UserInfo::getId, UserInfoDto::getId)
+              .put("a",UserInfo::getName, "name")
+              .put("b",UserInfo::getUserTypeId);
+
         Sql sql = Sql.builder().select(
                  column)
-                .from(UserInfo.class)
+                .from(UserInfo.class,"a")
+                .join(UserType.class,"b")
+                .on("a.user_type_id = b.id")
                 .where(UserInfo::getName,"Test")
                 .whereIn(UserInfo::getId,1,2)
                 .orderBy(UserInfo::getCreateTime, OrderBy.DESC);
