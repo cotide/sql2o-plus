@@ -17,17 +17,22 @@ public class SelectLambdaTest extends BaseTest {
 
     @Test
     public void sqlSelectMapLambda() {
-        ResultMap column  = new ResultMap();
-        column.put("a",UserInfo::getName,"name")
-              .put("a",UserInfo::getId, UserInfoDto::getId)
-              .put("a",UserInfo::getName, "name")
-              .put("b",UserInfo::getUserTypeId);
-
+//        ResultMap column  = new ResultMap();
+//        column.put("a",UserInfo::getName,"name")
+//              .put("a",UserInfo::getId, UserInfoDto::getId)
+//              .put("a",UserInfo::getName, "name")
+//              .put("b",UserInfo::getUserTypeId);
         Sql sql = Sql.builder().select(
-                 column)
+                         ResultMap.result()
+                        .put("a",UserInfo::getName,"name")
+                        .put("a",UserInfo::getId, UserInfoDto::getId)
+                        .put("a",UserInfo::getName, "name")
+                        .put("b",UserInfo::getUserTypeId))
                 .from(UserInfo.class,"a")
                 .join(UserType.class,"b")
-                .on("a.user_type_id = b.id")
+                .on("a",UserInfo::getUserTypeId,
+                        "b",UserType::getId)
+                //.on("a.user_type_id = b.id")
                 .where(UserInfo::getName,"Test")
                 .whereIn(UserInfo::getId,1,2)
                 .orderBy(UserInfo::getCreateTime, OrderBy.DESC);

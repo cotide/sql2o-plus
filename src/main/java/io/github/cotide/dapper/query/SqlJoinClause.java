@@ -20,26 +20,36 @@ public class SqlJoinClause extends BaseClause {
 
     public Sql on(String onClause, Object... args)
     {
-        return _sql.append("ON "+ onClause,args);
+        return _sql.append("on "+ onClause,args);
     }
 
-//    public   <T1 extends Entity,R1,T2 extends Entity,R2> Sql on(
-//            TypeFunction<T1, R1> function1,
-//            TypeFunction<T2, R2> function2) {
-//
-//        Class<? extends  Entity> table1Class = (Class<? extends Entity>) function1.getClass();
-//        String table1 = Sql2oCache.getTableName(table1Class.getClass());
-//        String table2 = Sql2oCache.getTableName(function2.getClass());
-//        return on(table1,function1,table2,function2);
-//    }
-//
-//
-//    public  <T1 extends Entity,R1,T2 extends Entity,R2>  Sql on(String asName,
-//                                        TypeFunction<T1, R1> function1,
-//                                        String asName2,
-//                                        TypeFunction<T2, R2> function2) {
-//        String columnName1 = Sql2oUtils.getLambdaColumnName(function1);
-//        String columnName2 = Sql2oUtils.getLambdaColumnName(function2);
-//        return _sql.append("ON "+asName+"."+columnName1 +" = "+asName2+"."+columnName2);
-//    }
+    public   <T1 extends Entity,R1,T2 extends Entity,R2> Sql on(
+            String asTableName1,
+            TypeFunction<T1, R1> function1,
+            String asTableName2,
+            TypeFunction<T2, R2> function2) {
+
+        String resultSql = "";
+        if(asTableName1!=null && !asTableName1.trim().equals(""))
+        {
+            resultSql+= asTableName1+".";
+        }
+        resultSql+=Sql2oUtils.getLambdaColumnName(function1);
+        resultSql+= " = ";
+        if(asTableName2!=null && !asTableName2.trim().equals(""))
+        {
+            resultSql+= asTableName2+".";
+        }
+        resultSql+=Sql2oUtils.getLambdaColumnName(function2);
+        return on(resultSql);
+    }
+
+
+    public   <T1 extends Entity,R1,T2 extends Entity,R2> Sql on(
+            TypeFunction<T1, R1> function1,
+            TypeFunction<T2, R2> function2) {
+        return on(null,function1,null,function2);
+    }
+
+
 }

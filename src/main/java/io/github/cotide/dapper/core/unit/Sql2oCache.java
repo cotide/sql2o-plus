@@ -4,6 +4,7 @@ import io.github.cotide.dapper.core.attr.Column;
 import io.github.cotide.dapper.core.attr.Ignore;
 import io.github.cotide.dapper.core.attr.PrimaryKey;
 import io.github.cotide.dapper.core.attr.Table;
+import sql2o.Sql2o;
 import sql2o.Sql2oException;
 
 import java.io.Serializable;
@@ -116,7 +117,7 @@ public final class Sql2oCache {
             {
                 return primaryKey.value();
             }
-            return fieldName;
+            return Sql2oUtils.toUnderline(fieldName);
         });
     }
 

@@ -210,7 +210,7 @@ public class Sql {
     }
     public SqlJoinClause innerJoin(String table,String asName){
         Guard.isNotNullOrEmpty(table,"innerJoin table name");
-        return joinClause("INNER JOIN ",table + " " + (asName!=null?asName+" ":""));
+        return joinClause("inner join ",table + " " + (asName!=null?asName+" ":""));
     }
 
     public <T extends Entity> SqlJoinClause innerJoinDb(String dbName,Class<T> modelClass){
@@ -235,7 +235,7 @@ public class Sql {
     public SqlJoinClause rightJoin(String table,String asName)
     {
         Guard.isNotNullOrEmpty(table,"rightJoin table name");
-        return joinClause("RIGHT JOIN ",table + " " + (asName!=null?asName+" ":""));
+        return joinClause("right join ",table + " " + (asName!=null?asName+" ":""));
     }
 
     public SqlJoinClause rightJoin(String table)
@@ -267,7 +267,7 @@ public class Sql {
     public SqlJoinClause leftJoin(String table,String asName)
     {
         Guard.isNotNullOrEmpty(table,"leftJoin table name");
-        return joinClause("LEFT JOIN ",table + " " + (asName!=null?asName+" ":""));
+        return joinClause("left join ",table + " " + (asName!=null?asName+" ":""));
     }
 
     public SqlJoinClause leftJoin(String table)
@@ -296,7 +296,7 @@ public class Sql {
 
     public SqlJoinClause join(String table,String asName)
     {
-        return joinClause("LEFT JOIN ",table+ " " + (asName!=null?asName+" ":""));
+        return joinClause("left join ",table+ " " + (asName!=null?asName+" ":""));
     }
 
     public SqlJoinClause join(String table)

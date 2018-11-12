@@ -110,4 +110,23 @@ public class Sql2oUtils {
         return columnValueResult;
     }
 
+
+    public static String toUnderline(String value) {
+        StringBuilder result = new StringBuilder();
+        if (value != null && value.length() > 0) {
+            result.append(value.substring(0, 1).toLowerCase());
+            for (int i = 1; i < value.length(); i++) {
+                String s = value.substring(i, i + 1);
+                if (s.equals(s.toUpperCase())) {
+                    result.append("_");
+                    result.append(s.toLowerCase());
+                } else {
+                    result.append(s);
+                }
+            }
+        }
+        return result.toString();
+    }
+
+
 }

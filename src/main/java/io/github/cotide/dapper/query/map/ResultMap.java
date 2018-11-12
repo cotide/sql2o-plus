@@ -5,11 +5,6 @@ import com.sun.org.apache.bcel.internal.generic.RET;
 import io.github.cotide.dapper.basic.domain.Entity;
 import io.github.cotide.dapper.core.functions.TypeFunction;
 import io.github.cotide.dapper.core.unit.Sql2oUtils;
-import io.github.cotide.dapper.query.Sql;
-import lombok.Getter;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class ResultMap {
 
@@ -21,7 +16,11 @@ public class ResultMap {
     }
 
 
-    public <T1 extends Entity, R1> ResultMap put(
+    public static ResultMap result(){
+        return new ResultMap();
+    }
+
+    public <T1, R1> ResultMap put(
             String fromAsTable,
             TypeFunction<T1, R1> source,
             String asName){
@@ -41,7 +40,7 @@ public class ResultMap {
 
     }
 
-    public <T1 extends Entity, R1> ResultMap put(
+    public <T1, R1> ResultMap put(
             TypeFunction<T1, R1> source,
             String asName){
         return put(null,source,asName);
@@ -62,13 +61,13 @@ public class ResultMap {
         return put(fromAsTable,source,Sql2oUtils.getDtoLambdaColumnName(target));
     }
 
-    public <T1 extends Entity, R1> ResultMap put(
+    public <T1 , R1> ResultMap put(
             TypeFunction<T1, R1> source){
         return put(null,source,"");
     }
 
 
-    public <T1 extends Entity, R1> ResultMap put(
+    public <T1 , R1> ResultMap put(
             String fromAsTable,
             TypeFunction<T1, R1> source){
         return put(fromAsTable,source,"");
