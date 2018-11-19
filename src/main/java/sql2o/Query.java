@@ -1,5 +1,6 @@
 package sql2o;
 
+import io.github.cotide.dapper.basic.enums.IEnum;
 import sql2o.converters.Convert;
 import sql2o.converters.Converter;
 import sql2o.converters.ConverterException;
@@ -203,14 +204,7 @@ public class Query implements AutoCloseable {
     }
 
     public Query withParams(Collection<Object> paramValues) {
-        if (null == paramValues) {
-            return this;
-        }
-        int i = 0;
-        for (Object paramValue : paramValues) {
-            paramIndexValues.put(++i, paramValue);
-        }
-        return this;
+      return withParams(paramValues.toArray());
     }
 
     public Query withParams(Object... paramValues) {
@@ -219,7 +213,16 @@ public class Query implements AutoCloseable {
         }
         int i = 0;
         for (Object paramValue : paramValues) {
-            paramIndexValues.put(++i, paramValue);
+            if(paramValue instanceof IEnum)
+            {
+                paramIndexValues.put(++i,((IEnum)paramValue).getCode());
+            }else if(paramValue instanceof  Enum)
+            {
+                paramIndexValues.put(++i, paramValue.toString());
+            }
+            else{
+                paramIndexValues.put(++i, paramValue);
+            }
         }
         return this;
     }
@@ -954,5 +957,6 @@ public class Query implements AutoCloseable {
 
         abstract void setParameter(int paramIdx, PreparedStatement statement) throws SQLException;
     }
+
 
 }

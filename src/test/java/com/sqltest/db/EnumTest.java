@@ -18,6 +18,21 @@ public class EnumTest extends BaseTest {
 
 
     @Test
+    public void selectByEnumString(){
+        Database db = getDatabase();
+
+        IRepository<UserInfo> userInfoIRepository = db.getRepository(UserInfo.class);
+        List<UserInfo> userInfos  = userInfoIRepository.getList(
+                Sql.builder().select().from(UserInfo.class)
+                .where("`group` = @0 ",EnumGroup.GROUP1)
+                .where("`status` = @0",EnumUserStatus.NORMAL)
+                .where(UserInfo::getStatus,EnumUserStatus.NORMAL)
+                .where(UserInfo::getGroup,EnumGroup.GROUP1));
+        System.out.println(userInfos.size());
+    }
+
+
+    @Test
     public  void  createTest(){
         Database db = getDatabase();
         IRepository<UserInfo> userInfoRepository = db.getRepository(UserInfo.class);
