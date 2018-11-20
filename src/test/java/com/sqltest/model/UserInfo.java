@@ -30,6 +30,12 @@ public class UserInfo extends Entity {
     private int id;
 
     /**
+     * 值
+     */
+    @Column("`value`")
+    private String value;
+
+    /**
      * 用户名
      */
     @Column("user_name")

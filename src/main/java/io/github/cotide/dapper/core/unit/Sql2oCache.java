@@ -48,11 +48,14 @@ public final class Sql2oCache {
     }
 
     public static Map<String, String> computeModelColumnMappings(Class<?> modelType) {
-        return CACHE_MODEL_COLUMN_MAPPINGS.computeIfAbsent(modelType, model -> {
-            List<Field> fields = computeModelFields(model);
-            return fields.stream()
-                    .collect(toMap(Sql2oCache::getColumnName, Field::getName));
-        });
+
+       return modelType.isPrimitive() || modelType.equals(String.class)
+               ? new HashMap<>()
+               : CACHE_MODEL_COLUMN_MAPPINGS.computeIfAbsent(modelType, model -> {
+                    List<Field> fields = computeModelFields(model);
+                    return fields.stream()
+                            .collect(toMap(Sql2oCache::getColumnName, Field::getName));
+       });
     }
 
 
@@ -86,22 +89,21 @@ public final class Sql2oCache {
     }
 
     public static List<Field> computeModelFields(Class clazz) {
-        return CACHE_MODEL_AVAILABLE_FIELDS.computeIfAbsent(clazz, model ->
-                Stream.of(model.getDeclaredFields())
+        return clazz.isPrimitive() || clazz.equals(String.class)
+                ? new ArrayList<>()
+                : CACHE_MODEL_AVAILABLE_FIELDS.computeIfAbsent(clazz, model -> Stream.of(model.getDeclaredFields())
                         .filter(field -> !isIgnore(field))
                         .collect(toList()));
     }
 
     public static List<Field> computeNoKeyModelFields(Class clazz) {
-       return computeModelFields(clazz)
-               .stream()
-               .filter(field-> !isPrimarykey(field))
-               .collect(toList());
+
+        return clazz.isPrimitive() || clazz.equals(String.class)
+                ? new ArrayList<>()
+                : computeModelFields(clazz).stream()
+                        .filter(field-> !isPrimarykey(field))
+                        .collect(toList());
     }
-
-
-
-
 
     public static String getColumnName(Field field) {
         String fieldName = field.getName();
@@ -120,6 +122,8 @@ public final class Sql2oCache {
             return Sql2oUtils.toUnderline(fieldName);
         });
     }
+
+
 
 
     public static boolean isIgnore(Field field) {

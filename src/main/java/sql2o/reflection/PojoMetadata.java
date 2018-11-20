@@ -94,6 +94,11 @@ public class PojoMetadata {
 
         Class<?>             theClass          = clazz;
         ObjectConstructor objectConstructor = factoryFacade.newConstructor(theClass);
+        // 处理基本类型或者String结果处理
+        if(theClass.isPrimitive() || theClass.equals(String.class))
+        {
+           return new PropertyAndFieldInfo(propertyGetters, propertySetters, objectConstructor);
+        }
         do {
             boolean isJpaColumnInClasspath = true;
             for (Field f : theClass.getDeclaredFields()) {
