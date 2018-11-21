@@ -176,7 +176,7 @@ public class Sql {
     }
 
     public  <T extends Entity,R> Sql orderBy(String asName,TypeFunction<T, R> function) {
-        return orderBy(asName,function,OrderBy.DESC);
+        return orderBy(asName,function,OrderBy.ASC);
     }
 
     public  <T extends Entity,R> Sql orderBy(String asName,TypeFunction<T, R> function,OrderBy orderBy) {
@@ -186,7 +186,7 @@ public class Sql {
 
 
     public  <T extends Entity,R> Sql orderBy(TypeFunction<T, R> function) {
-        return orderBy(function,OrderBy.DESC);
+        return orderBy(function,OrderBy.ASC);
     }
 
     public  <T extends Entity,R> Sql orderBy(TypeFunction<T, R> function,OrderBy orderBy) {
