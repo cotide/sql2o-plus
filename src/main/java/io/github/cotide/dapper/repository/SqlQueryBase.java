@@ -124,8 +124,9 @@ public class SqlQueryBase  extends SqlBase {
             Sql sql)
     {
         try {
-            return createQuery(sql.getFinalSql(), sql.getFinalArgs())
+             Integer result = createQuery(sql.getFinalSql(), sql.getFinalArgs())
                     .executeScalar(Integer.class);
+             return result==null?0:result;
         } finally {
              UnitOfWork.close();
         }
