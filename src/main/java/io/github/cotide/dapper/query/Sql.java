@@ -1,5 +1,6 @@
 package io.github.cotide.dapper.query;
 
+import com.alibaba.druid.sql.builder.SQLBuilder;
 import io.github.cotide.dapper.core.functions.TypeFunction;
 import io.github.cotide.dapper.core.unit.Sql2oCache;
 import io.github.cotide.dapper.core.unit.Sql2oUtils;
@@ -106,6 +107,22 @@ public class Sql {
             where(String.format("%s in (@0)",column,paras));
         }
 
+        return this;
+    }
+
+
+    public  <T extends Entity,R>  Sql whereLike(String asName,TypeFunction<T, R> function, String parm) throws SqlBuildException {
+
+        return whereLike((asName!=null&&!asName.isEmpty()?asName+".":"")+Sql2oUtils.getLambdaColumnName(function),parm);
+    }
+
+    public  <T extends Entity,R>  Sql whereLike(TypeFunction<T, R> function, String parm) throws SqlBuildException {
+
+        return whereLike(Sql2oUtils.getLambdaColumnName(function),parm);
+    }
+
+    public Sql whereLike(String column, String parm) throws SqlBuildException {
+        where(column+" like @0 ","%"+parm+"%");
         return this;
     }
 

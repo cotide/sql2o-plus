@@ -177,6 +177,28 @@ public class SelectTest extends BaseTest {
     }
 
 
+    @Test
+    public void whereLikeTest(){
+
+        Database db = getDatabase();
+        IRepository<UserInfo> userInfoRepository = db.getRepository(UserInfo.class);
+
+        Sql sql =  Sql.builder()
+                .select()
+                .from(UserInfo.class)
+                .whereLike(UserInfo::getName,"T");
+        List<UserInfo> result =  userInfoRepository
+                .getList(sql);
+        System.out.println(">>>>>>>>>> Result <<<<<<<<<<");
+        System.out.println("size:" + result.size());
+        for (UserInfo item : result) {
+            System.out.println("id:" + item.getId());
+            System.out.println("user_Name:" + item.getName());
+            System.out.println("login:" + item.getLogin());
+        }
+    }
+
+
 
 
 }
