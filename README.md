@@ -389,10 +389,10 @@ userInfoRepository.delete(user);
 
 ```java
 try(Database db = getDatabase()){
-   IRepository<UserInfo> userInfoIRepository =
-           db.getRepository(UserInfo.class); 
    // 开启事务
    db.beginTransaction();
+   IRepository<UserInfo> userInfoIRepository =
+           db.getRepository(UserInfo.class); 
    UserInfo domain = new UserInfo();
    domain.setName("Test");
    domain.setLogin(10086);
