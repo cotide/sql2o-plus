@@ -7,7 +7,9 @@ import io.github.cotide.dapper.query.enums.OrderBy;
 import org.junit.Test;
 import io.github.cotide.dapper.query.Sql;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * SQL对象测试
@@ -53,9 +55,9 @@ public class SqlTest {
     public void sqlWhereIn()   {
 
         Sql sql = Sql.builder().append("select * from user_info ")
-               .where("id = @0","aaaa")
+               //.where("id = @0","aaaa")
                 //.where(" id = @0","bbbb")
-                .whereIn("id",1,2,3)
+                //.whereIn("id",1,2,3)
                 .whereIn("id","A","B","C");
                 //.where("name = @0 and name = @1","ccc","ddd");
 
@@ -64,6 +66,26 @@ public class SqlTest {
         System.out.println("SQL参数值:");
         Arrays.stream(sql.getFinalArgs()).forEach(System.out::println);
     }
+
+
+
+
+    @Test
+    public void sqlWhereIn2()   {
+
+        List<String> parmList = new ArrayList<>();
+        parmList.add("A");
+        parmList.add("B");
+        parmList.add("C");
+
+        Sql sql = Sql.builder().append("select * from user_info ")
+                .whereIn("id",parmList);
+        System.out.println("Sql语句:");
+        System.out.println(sql.getFinalSql());
+        System.out.println("SQL参数值:");
+        Arrays.stream(sql.getFinalArgs()).forEach(System.out::println);
+    }
+
 
     @Test
     public void sqlLambda() {

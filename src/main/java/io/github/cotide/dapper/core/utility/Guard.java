@@ -1,5 +1,7 @@
 package io.github.cotide.dapper.core.utility;
 
+import java.math.BigDecimal;
+
 /**
  * @author cotide
  */
@@ -123,6 +125,25 @@ public class Guard {
             throw  new IllegalArgumentException(errorMsg);
         }
     }
+
+
+    public static void  isNotZeroOrNegative(
+            BigDecimal parameter,
+            String parameterName)
+    {
+        if(parameter == null || parameter.compareTo(BigDecimal.ZERO) !=1)
+        {
+            String showTitle = "数据验证错误";
+            String showMsg = "is not int value";
+            String errorMsg = String.format("%s:%s %s",showTitle,parameterName,showMsg);
+            throw  new IllegalArgumentException(errorMsg);
+        }
+
+    }
+
+
+
+
 
     //#region Helper
 

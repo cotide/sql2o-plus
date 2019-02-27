@@ -43,4 +43,34 @@ public class ExecuteTest extends BaseTest {
        }
 
     }
+
+
+    @Test
+    public void  Execute2(){
+
+        try(Database db = getDatabase()){
+            db.beginTransaction();
+//            Sql sql  =  Sql.builder().append(
+//                    "INSERT INTO user_info (user_Name,password,login,create_time) VALUES (@0,@1,@2,@3);",
+//                    "Execute Test1",
+//                    "123456",
+//                    10086,
+//                    new Date());
+//            sql.append("INSERT INTO user_info (user_Name,password,login,create_time) VALUES (@0,@1,@2,@3);",
+//                    "Execute Test2",
+//                    "123456",
+//                    10086,
+//                    new Date());
+            String sql  =
+                   "INSERT INTO user_info (user_Name,password,login,create_time) VALUES ('ATest1','123456',10086,'2018-10-11 10:20:01');";
+
+            sql = sql+  "INSERT INTO user_info (user_Name,password,login,create_time) VALUES ('ATest1','123456',10086,'2018-10-11 10:20:01');";
+
+            System.out.println(sql);
+
+            db.getSqlRun().execute(sql);
+            db.commit();
+        }
+
+    }
 }
