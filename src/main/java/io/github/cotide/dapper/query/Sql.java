@@ -57,10 +57,32 @@ public class Sql {
         return append(new Sql(sql, params));
     }
 
+
+
+    public  <T extends Entity,R> Sql whereGt(TypeFunction<T, R> function,Object param) {
+        return where(Sql2oUtils.getLambdaColumnName(function)+"  > @0 ",param);
+    }
+
+    public  <T extends Entity,R> Sql whereLt(TypeFunction<T, R> function,Object param) {
+        return where(Sql2oUtils.getLambdaColumnName(function)+"  < @0 ",param);
+    }
+
+
+    public  <T extends Entity,R> Sql whereGte(TypeFunction<T, R> function,Object param) {
+        return where(Sql2oUtils.getLambdaColumnName(function)+"  >= @0 ",param);
+    }
+
+    public  <T extends Entity,R> Sql whereLte(TypeFunction<T, R> function,Object param) {
+        return where(Sql2oUtils.getLambdaColumnName(function)+"  <= @0 ",param);
+    }
+
+
     public Sql where(String sql, Object... params) {
         Guard.isNotNullOrEmpty(sql,"where sql");
         return append(new Sql("where " + sql, params));
     }
+
+
 
     public  <T extends Entity,R> Sql where(String asName,TypeFunction<T, R> function,Object param) {
         return where((asName!=null&&!asName.isEmpty()?asName+".":"")+Sql2oUtils.getLambdaColumnName(function)+"  = @0 ",param);
