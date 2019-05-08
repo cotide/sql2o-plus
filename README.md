@@ -450,6 +450,13 @@ db.isDebug(true);
 Database指定isDebug(true)后，查询结果属性不能匹配会抛出异常信息,[例子](src/test/java/com/sqltest/db/DebugTest.java)
  
 
+## 获取表字段名
+
+```java
+Sql2oUtils.getColumnName(UserInfo::getId);
+// 输出
+user_id
+```
 
 ## 其他
 

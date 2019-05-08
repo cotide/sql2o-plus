@@ -6,7 +6,9 @@ import io.github.cotide.dapper.basic.enums.EnumMapping;
 import io.github.cotide.dapper.basic.enums.IEnum;
 import io.github.cotide.dapper.basic.enums.IntegerEnum;
 import io.github.cotide.dapper.basic.enums.StringEnum;
+import io.github.cotide.dapper.core.functions.TypeFunction;
 import io.github.cotide.dapper.exceptions.SqlBuildException;
+import io.github.cotide.dapper.query.Sql;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -19,6 +21,19 @@ import java.util.*;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Sql2oUtils {
+
+
+    /**
+     * 获取字段名
+     * @param function
+     * @param <T>
+     * @param <R>
+     * @return
+     */
+    public static   <T extends Entity, R>  String getColumnName(TypeFunction<T, R> function) {
+
+        return  Sql2oUtils.getLambdaColumnName(function);
+    }
 
 
     public static String getLambdaColumnName(Serializable lambda) {
