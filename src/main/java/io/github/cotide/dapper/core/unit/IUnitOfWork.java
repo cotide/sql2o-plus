@@ -15,12 +15,13 @@ import java.sql.SQLException;
 public interface IUnitOfWork extends Closeable {
 
 
+
     /**
      * 获取仓储对象
      * @param <TEntity> 领域对象
      * @return
      */
-    <TEntity extends Entity> IRepository getRepository(Class<TEntity> returnType);
+    <TEntity extends Entity>  IRepository<TEntity>  getRepository(Class<TEntity> returnType);
 
     /**
      * 切换数据库

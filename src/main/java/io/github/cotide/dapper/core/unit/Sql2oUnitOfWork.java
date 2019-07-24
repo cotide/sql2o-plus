@@ -70,7 +70,7 @@ public class Sql2oUnitOfWork implements IUnitOfWork {
 
 
     @Override
-    public <TEntity extends Entity> IRepository getRepository(Class<TEntity> returnType) {
+    public <TEntity extends Entity>  IRepository<TEntity> getRepository(Class<TEntity> returnType) {
         return new DapperRepositoryBase(returnType,this);
     }
 

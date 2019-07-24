@@ -125,7 +125,7 @@ public class Database implements  AutoCloseable,Closeable {
     /**
      * 获取仓储
      */
-    public  <TEntity extends Entity> IRepository getRepository(Class<TEntity> returnType)
+    public  <TEntity extends Entity> IRepository<TEntity> getRepository(Class<TEntity> returnType)
     {
         return this.getUnitOfWork().getRepository(returnType);
     }
