@@ -20,8 +20,8 @@ public class SqlTest {
     @Test
     public void selectEntity() {
         Sql sql = Sql.builder().select().from(UserInfo.class)
-                .where("user_Name = @0","leo")
-                .where("user_Name = @1","leo2");
+                .where("user_Name = ?","leo")
+                .where("user_Name = ?","leo2");
         System.out.println("SQL语句:");
         System.out.println(sql.getFinalSql());
         System.out.println("SQL参数值:");
@@ -31,7 +31,7 @@ public class SqlTest {
     @Test
     public void sqlWhere() {
 
-        Sql sql = Sql.builder().append("select * from user_info ").where("id = @0",1).where(" id = @0",2);
+        Sql sql = Sql.builder().append("select * from user_info ").where("id = ?",1).where(" id = ?",2);
         System.out.println("Sql语句:");
         System.out.println(sql.getFinalSql());
         System.out.println("SQL参数值:");
@@ -55,11 +55,11 @@ public class SqlTest {
     public void sqlWhereIn()   {
 
         Sql sql = Sql.builder().append("select * from user_info ")
-               //.where("id = @0","aaaa")
-                //.where(" id = @0","bbbb")
+               //.where("id = ?","aaaa")
+                //.where(" id = ?","bbbb")
                 //.whereIn("id",1,2,3)
                 .whereIn("id","A","B","C");
-                //.where("name = @0 and name = @1","ccc","ddd");
+                //.where("name = ? and name = ?","ccc","ddd");
 
         System.out.println("Sql语句:");
         System.out.println(sql.getFinalSql());
@@ -156,7 +156,7 @@ public class SqlTest {
                 .on("c.id = b.id")
                 .where("a",UserInfo::getId,1)
                 .whereIn("b",UserType::getId,1,2,3)
-                .where("c.id = @0 ",555);
+                .where("c.id = ? ",555);
         System.out.println("Sql语句:");
         System.out.println(sql.getFinalSql());
         System.out.println("SQL参数值:");

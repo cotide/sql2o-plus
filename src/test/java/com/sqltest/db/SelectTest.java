@@ -56,7 +56,7 @@ public class SelectTest extends BaseTest {
             assert (result2.size() > 0 && result2.get(0).getId() > 0) : "UserInfoRepository getList(Sql inter) is error";
 
             // getList(String sql,Object ... param)
-            String sql = "select * from user_info where user_id = @0 ";
+            String sql = "select * from user_info where user_id = ? ";
             List<UserInfo> result3 = userInfoRepository.getList(sql, 1);
             assert (result3.size() == 1 && result3.get(0).getId() > 0) : "UserInfoRepository getList(String inter,Object ... param) is error";
     }
@@ -67,7 +67,7 @@ public class SelectTest extends BaseTest {
             Database db = getDatabase();
             IRepository<UserInfo> userInfoRepository = db.getRepository(UserInfo.class);
             // getDtoList(Class<TDto> returnType,Sql inter)
-            Sql sql1 = Sql.builder().select(" user_id as id, user_Name as name ").from(UserInfo.class).where("user_id = @0", 1);
+            Sql sql1 = Sql.builder().select(" user_id as id, user_Name as name ").from(UserInfo.class).where("user_id = ?", 1);
             List<UserInfoDto> result = userInfoRepository.getDtoList(UserInfoDto.class, sql1);
             assert (result.size() > 0 && result.get(0).getId() > 0) : "UserInfoRepository getDtoList(Class<TDto> returnType,Sql inter) is error";
             System.out.println(">>>>>>>>>> Result <<<<<<<<<<");
@@ -78,7 +78,7 @@ public class SelectTest extends BaseTest {
             }
 
             // getDtoList(Class<TDto> returnType,String inter,Object ... param)
-            String sql2 = "select user_id as id, user_Name as name from user_info where user_id = @0 ";
+            String sql2 = "select user_id as id, user_Name as name from user_info where user_id = ? ";
             List<UserInfoDto> result2 = userInfoRepository.getDtoList(UserInfoDto.class, sql2, 1);
             assert (result2.size() > 0 && result2.get(0).getId() > 0) : "UserInfoRepository getDtoList(Class<TDto> returnType,String inter,Object ... param) is error";
             System.out.println(">>>>>>>>>> Result2 <<<<<<<<<<");
@@ -107,7 +107,7 @@ public class SelectTest extends BaseTest {
 
             // get(Sql inter)
             UserInfo result2 = userInfoRepository.get(
-                    Sql.builder().select().from(UserInfo.class).where("user_id  = @0", 1));
+                    Sql.builder().select().from(UserInfo.class).where("user_id  = ?", 1));
             assert (result2 != null && result2.getId() > 0) : "UserInfoRepository get(Sql inter) is error";
             System.out.println(">>>>>>>>>> Result2 <<<<<<<<<<");
             System.out.println("id:" + result2.getId());
@@ -115,7 +115,7 @@ public class SelectTest extends BaseTest {
             System.out.println("login:" + result2.getLogin());
 
             // get(String inter, Object ...  param)
-            String sql = "select * from user_info where user_id = @0 ";
+            String sql = "select * from user_info where user_id = ? ";
             UserInfo result3 = userInfoRepository.get(sql, 1);
             assert (result3 != null && result3.getId() > 0) : "UserInfoRepository get(String inter, Object ...  param) is error";
             System.out.println(">>>>>>>>>> Result3 <<<<<<<<<<");
@@ -134,7 +134,7 @@ public class SelectTest extends BaseTest {
             // getDto(Class<TDto> returnType, Sql inter)
             UserInfoDto result1 = userInfoRepository.getDto(
                     UserInfoDto.class,
-                    Sql.builder().select("user_id as id, user_Name as name").from(UserInfo.class).where("user_id  = @0", 1));
+                    Sql.builder().select("user_id as id, user_Name as name").from(UserInfo.class).where("user_id  = ?", 1));
             assert (result1 != null && result1.getId() > 0) : "UserInfoRepository getDto(Class<TDto> returnType, Sql inter) is error";
             System.out.println(">>>>>>>>>> Result2 <<<<<<<<<<");
             System.out.println("id:" + result1.getId());
@@ -149,7 +149,7 @@ public class SelectTest extends BaseTest {
             Database db = getDatabase();
             IRepository<UserInfo> userInfoRepository = db.getRepository(UserInfo.class);
             // int count(Sql inter)
-            int result = userInfoRepository.count(Sql.builder().select("count(1)").from(UserInfo.class).where("user_id in (@0,@1,@2,@3)", 1, 2, 3,5));
+            int result = userInfoRepository.count(Sql.builder().select("count(1)").from(UserInfo.class).where("user_id in (?,?,?,?)", 1, 2, 3,5));
             assert (result > 0) : "result value is error";
             System.out.println(">>>>>>>>>> Result <<<<<<<<<<");
             System.out.println("result size:" + result);

@@ -17,7 +17,7 @@ public class ExecuteTest extends BaseTest {
        try(Database db = getDatabase()){
            db.beginTransaction();
            final  String insertSql  =
-                   "INSERT INTO user_info (user_Name,password,login,create_time) VALUES (@0,@1,@2,@3)";
+                   "INSERT INTO user_info (user_Name,password,login,create_time) VALUES (?,?,?,?)";
 
            int id =  db.getSqlRun().execute(
                    insertSql,
@@ -28,12 +28,12 @@ public class ExecuteTest extends BaseTest {
            System.out.println("Object is :"+id);
            assert (id>0):"insert is error";
            final String updateSql  =
-                   "UPDATE user_info set user_Name = @0 WHERE user_id = @1";
+                   "UPDATE user_info set user_Name = ? WHERE user_id = ?";
            db.getSqlRun().execute(updateSql,"Execute Test2",id);
            db.commit();
            Sql sql = Sql.builder()
                    .select("user_id as id, user_Name as name")
-                   .from(UserInfo.class).where("user_id  = @0", id);
+                   .from(UserInfo.class).where("user_id  = ?", id);
            UserInfoDto resultDto = db.getSqlQuery().getDto(UserInfoDto.class,sql);
            assert (resultDto!=null&&resultDto.getName().equals("Execute Test2")):"update get is error";
            System.out.println(">>>>>>>>>> Result <<<<<<<<<<");
@@ -51,12 +51,12 @@ public class ExecuteTest extends BaseTest {
         try(Database db = getDatabase()){
             db.beginTransaction();
 //            Sql sql  =  Sql.builder().append(
-//                    "INSERT INTO user_info (user_Name,password,login,create_time) VALUES (@0,@1,@2,@3);",
+//                    "INSERT INTO user_info (user_Name,password,login,create_time) VALUES (?,?,?,?);",
 //                    "Execute Test1",
 //                    "123456",
 //                    10086,
 //                    new Date());
-//            sql.append("INSERT INTO user_info (user_Name,password,login,create_time) VALUES (@0,@1,@2,@3);",
+//            sql.append("INSERT INTO user_info (user_Name,password,login,create_time) VALUES (?,?,?,?);",
 //                    "Execute Test2",
 //                    "123456",
 //                    10086,

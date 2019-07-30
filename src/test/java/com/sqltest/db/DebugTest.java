@@ -26,7 +26,7 @@ public class DebugTest extends BaseTest {
                                 "status," +
                                 "create_time as createTime")
                         .from(UserInfo.class)
-                        .where("user_id=@0",1));
+                        .where("user_id=?",1));
 
         assert (user != null&&user.getId()>0) : "user is null";
 

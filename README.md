@@ -201,14 +201,14 @@ List<UserInfo> result1 =  userInfoRepository.getList();
 List<UserInfo> result2 = userInfoRepository.getList(Sql.builder().select().from(UserInfo.class));
 
 // getList(String sql,Object ... param)
-String sql = "select * from user_info where user_id = @0 ";
+String sql = "select * from user_info where user_id = ? ";
 List<UserInfo> result3 = userInfoRepository.getList(sql,1);
 
 // ** Dto getList **
-Sql sql1 = Sql.builder().select(" user_id as id, user_Name as name ").from(UserInfo.class).where("user_id = @0",1);
+Sql sql1 = Sql.builder().select(" user_id as id, user_Name as name ").from(UserInfo.class).where("user_id = ?",1);
 List<UserInfoDto> result4 =  db.getSqlQuery().getDtoList(UserInfoDto.class,sql1);
 
-String sql2 = "select user_id as id, user_Name as name from user_info where user_id = @0 ";
+String sql2 = "select user_id as id, user_Name as name from user_info where user_id = ? ";
 List<UserInfoDto> result5 =  db.getSqlQuery().getDtoList(UserInfoDto.class,sql2,1);
 ```
 
@@ -225,16 +225,16 @@ UserInfo result1 =  userInfoRepository.getById(1);
 
 // get(Sql sql)
 UserInfo result2 = userInfoRepository.get(
-        Sql.builder().select().from(UserInfo.class).where("user_id  = @0",1));
+        Sql.builder().select().from(UserInfo.class).where("user_id  = ?",1));
 
 // get(String sql, Object ...  param)
-String sql = "select * from user_info where user_id = @0 ";
+String sql = "select * from user_info where user_id = ? ";
 UserInfo result3 = userInfoRepository.get(sql,1);
 
 // ** Dto get **
 // getDto(Class<TDto> returnType, Sql sql)
 UserInfoDto result4 = db.getSqlQuery().getDto(
-        UserInfoDto.class,Sql.builder().select("user_id as id, user_Name as name").from(UserInfo.class).where("user_id  = @0",1));
+        UserInfoDto.class,Sql.builder().select("user_id as id, user_Name as name").from(UserInfo.class).where("user_id  = ?",1));
 ```
 
 
@@ -366,7 +366,7 @@ UserInfo user =   userInfoRepository.create(domain);
 Database db = getDatabase();
 IRepository<UserInfo> userInfoRepository =  db.getRepository(UserInfo.class);
 // get 
-UserInfo user =  userInfoRepository.get(Sql.builder().select().from(UserInfo.class).where("user_id = @0",3399));
+UserInfo user =  userInfoRepository.get(Sql.builder().select().from(UserInfo.class).where("user_id = ?",3399));
 // update
 user.setName("Test_2 ## -- ");
 userInfoRepository.update(user); 
@@ -378,7 +378,7 @@ userInfoRepository.update(user);
 Database db = getDatabase();
 IRepository<UserInfo> userInfoRepository =  db.getRepository(UserInfo.class);
 // get
-UserInfo user =  userInfoRepository.get(Sql.builder().select().from(UserInfo.class).where("user_id = @0",3391));
+UserInfo user =  userInfoRepository.get(Sql.builder().select().from(UserInfo.class).where("user_id = ?",3391));
 // delete
 userInfoRepository.delete(user);
 ```
@@ -419,7 +419,7 @@ try(Database db = getDatabase()){
    // 开启事务
    db.beginTransaction();
    final  String insertSql  =
-           "INSERT INTO user_info (user_Name,password,login,create_time) VALUES (@0,@1,@2,@3)";
+           "INSERT INTO user_info (user_Name,password,login,create_time) VALUES (?,?,?,?)";
    // Create
    int id =  db.getSqlRun().execute(
            insertSql,
@@ -429,14 +429,14 @@ try(Database db = getDatabase()){
            new Date()).asInt();  
    // Update
    final String updateSql  =
-           "UPDATE user_info set user_Name = @0 WHERE user_id = @1";
+           "UPDATE user_info set user_Name = ? WHERE user_id = ?";
    db.getSqlRun().execute(updateSql,"Execute Test2",id);
    // 事务提交
    db.commit();
    // Select
    Sql sql = Sql.builder()
            .select("user_id as id, user_Name as name")
-           .from(UserInfo.class).where("user_id  = @0", id);
+           .from(UserInfo.class).where("user_id  = ?", id);
    UserInfoDto resultDto = db.getSqlQuery().getDto(UserInfoDto.class,sql);  
 }
 ```

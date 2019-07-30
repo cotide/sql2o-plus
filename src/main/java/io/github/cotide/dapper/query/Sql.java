@@ -27,7 +27,7 @@ public class Sql {
     private String _sqlFinal;
     private Object[] _argsFinal;
 
-    private final static Pattern SQL_BRACKET = Pattern.compile("(?<!@)@\\w+");
+    private final static Pattern SQL_BRACKET = Pattern.compile("(?<!\\?)\\?+");
 
     public Sql() {
 
@@ -60,20 +60,20 @@ public class Sql {
 
 
     public  <T extends Entity,R> Sql whereGt(TypeFunction<T, R> function,Object param) {
-        return where(Sql2oUtils.getLambdaColumnName(function)+"  > @0 ",param);
+        return where(Sql2oUtils.getLambdaColumnName(function)+"  > ? ",param);
     }
 
     public  <T extends Entity,R> Sql whereLt(TypeFunction<T, R> function,Object param) {
-        return where(Sql2oUtils.getLambdaColumnName(function)+"  < @0 ",param);
+        return where(Sql2oUtils.getLambdaColumnName(function)+"  < ? ",param);
     }
 
 
     public  <T extends Entity,R> Sql whereGte(TypeFunction<T, R> function,Object param) {
-        return where(Sql2oUtils.getLambdaColumnName(function)+"  >= @0 ",param);
+        return where(Sql2oUtils.getLambdaColumnName(function)+"  >= ? ",param);
     }
 
     public  <T extends Entity,R> Sql whereLte(TypeFunction<T, R> function,Object param) {
-        return where(Sql2oUtils.getLambdaColumnName(function)+"  <= @0 ",param);
+        return where(Sql2oUtils.getLambdaColumnName(function)+"  <= ? ",param);
     }
 
 
@@ -85,11 +85,11 @@ public class Sql {
 
 
     public  <T extends Entity,R> Sql where(String asName,TypeFunction<T, R> function,Object param) {
-        return where((asName!=null&&!asName.isEmpty()?asName+".":"")+Sql2oUtils.getLambdaColumnName(function)+"  = @0 ",param);
+        return where((asName!=null&&!asName.isEmpty()?asName+".":"")+Sql2oUtils.getLambdaColumnName(function)+"  = ? ",param);
     }
 
     public  <T extends Entity,R> Sql where(TypeFunction<T, R> function,Object param) {
-        return where(Sql2oUtils.getLambdaColumnName(function)+"  = @0 ",param);
+        return where(Sql2oUtils.getLambdaColumnName(function)+"  = ? ",param);
     }
 
     public  <T extends Entity,R>  Sql whereIn(String asName,TypeFunction<T, R> function, Object... paras) throws SqlBuildException {
@@ -126,7 +126,7 @@ public class Sql {
             String appendSql =  String.format("%s in (%s)",column,appendValue);
             where(appendSql,paras);
         }else{
-            where(String.format("%s in (@0)",column,paras));
+            where(String.format("%s in (?)",column,paras));
         }
 
         return this;
@@ -144,7 +144,7 @@ public class Sql {
     }
 
     public Sql whereLike(String column, String parm) throws SqlBuildException {
-        where(column+" like @0 ","%"+parm+"%");
+        where(column+" like ? ","%"+parm+"%");
         return this;
     }
 

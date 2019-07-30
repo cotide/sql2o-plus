@@ -24,8 +24,8 @@ public class EnumTest extends BaseTest {
         IRepository<UserInfo> userInfoIRepository = db.getRepository(UserInfo.class);
         List<UserInfo> userInfos  = userInfoIRepository.getList(
                 Sql.builder().select().from(UserInfo.class)
-                .where("`group` = @0 ",EnumGroup.GROUP1)
-                .where("`status` = @0",EnumUserStatus.NORMAL)
+                .where("`group` = ? ",EnumGroup.GROUP1)
+                .where("`status` = ?",EnumUserStatus.NORMAL)
                 .where(UserInfo::getStatus,EnumUserStatus.NORMAL)
                 .where(UserInfo::getGroup,EnumGroup.GROUP1));
         System.out.println(userInfos.size());
@@ -100,7 +100,7 @@ public class EnumTest extends BaseTest {
                             Sql.builder()
                                 .select("user_id as id,user_name as  name,login,level,status,create_time as createTime")
                                 .from(UserInfo.class)
-                                .where("user_id=@0",3));
+                                .where("user_id=?",3));
 
         assert (user != null&&user.getId()>0) : "user is null";
         //assert (user.getLevel() == EnumVipLevel.VIP3) : "user vip is error";

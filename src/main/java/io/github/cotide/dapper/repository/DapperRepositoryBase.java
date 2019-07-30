@@ -72,7 +72,7 @@ public class DapperRepositoryBase<TEntity  extends Entity>
     @Override
     public TEntity getById(Object primaryKey) {
         Sql sql = Sql.builder().select().from(modelClass).where(
-                String.format("%s = @0", Sql2oCache.getPKColumn(modelClass)),
+                String.format("%s = ?", Sql2oCache.getPKColumn(modelClass)),
                 primaryKey);
        return super.getDto(modelClass,sql);
     }

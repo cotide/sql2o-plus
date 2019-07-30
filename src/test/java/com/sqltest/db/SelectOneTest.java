@@ -20,7 +20,7 @@ public class SelectOneTest extends BaseTest  {
                 String.class,
                 Sql.builder().select(UserInfo::getValue)
                         .from(UserInfo.class)
-                        .where(UserInfo::getId,8));
+                        .where(UserInfo::getId,1));
         System.out.println(">>>>>>>>>> Result1 <<<<<<<<<<");
         System.out.println(result);
 
@@ -29,15 +29,15 @@ public class SelectOneTest extends BaseTest  {
                 String.class,
                 Sql.builder().select(UserInfo::getName)
                         .from(UserInfo.class)
-                        .where(UserInfo::getId,8));
+                        .where(UserInfo::getId,2));
         System.out.println(">>>>>>>>>> Result2 <<<<<<<<<<");
         System.out.println(result1);
 
-        int result2 = db.getSqlQuery().getDto(
+        Integer result2 = db.getSqlQuery().getDto(
                 Integer.class,
                 Sql.builder().select(UserInfo::getLogin)
                         .from(UserInfo.class)
-                        .where(UserInfo::getId,8));
+                        .where(UserInfo::getId,3));
         System.out.println(">>>>>>>>>> Result3 <<<<<<<<<<");
         System.out.println(result2);
 
@@ -45,7 +45,7 @@ public class SelectOneTest extends BaseTest  {
                 UserInfo.class,
                 Sql.builder().select()
                         .from(UserInfo.class)
-                        .where(UserInfo::getId,8));
+                        .where(UserInfo::getId,4));
         System.out.println(">>>>>>>>>> Result4 <<<<<<<<<<");
         System.out.println(result3.getId());
         System.out.println(result3.getName());
