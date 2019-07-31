@@ -1,6 +1,7 @@
 package io.github.cotide.dapper.repository.inter;
 
 import io.github.cotide.dapper.basic.domain.Entity;
+import io.github.cotide.dapper.query.operations.Update;
 
 /**
  * 持久化 CRUD
@@ -27,11 +28,25 @@ public interface IRepository<TEntity  extends Entity> extends IReadOnlyRepositor
     TEntity update(TEntity entity);
 
     /**
+     * 更新实体
+     * @param entity
+     * @return
+     */
+    TEntity update(TEntity entity, Update<TEntity> tEntityUpdate);
+
+
+    /**
+     * 创建更新对象
+     * @return
+     */
+    Update<TEntity> createUpdate();
+
+    /**
      * 删除实体
      * @param entity
      * @return
      */
-    Boolean delete(TEntity entity);
+    boolean delete(TEntity entity);
 
     //#endregion
 

@@ -2,11 +2,13 @@ package com.sqltest.db;
 
 import com.sqltest.base.BaseTest;
 import com.sqltest.model.UserInfo;
+import com.sqltest.model.UserType;
 import com.sqltest.model.enums.EnumGroup;
 import com.sqltest.model.enums.EnumUserStatus;
 import com.sqltest.model.enums.EnumVipLevel;
 import io.github.cotide.dapper.Database;
 import io.github.cotide.dapper.basic.enums.EnumMapping;
+import io.github.cotide.dapper.query.operations.Update;
 import io.github.cotide.dapper.repository.inter.IRepository;
 import io.github.cotide.dapper.query.Sql;
 import org.junit.Test;
@@ -43,7 +45,7 @@ public class CRUDTest extends BaseTest {
                    Sql.builder()
                            .select()
                            .from(UserInfo.class)
-                           .where("user_id = ?", 4));
+                           .where("user_id = ?", 1));
            assert (user != null) : "userinfo is null";
            System.out.println(">>>>>>>>>> get result <<<<<<<<<<");
            System.out.println(user.getId());
@@ -53,6 +55,29 @@ public class CRUDTest extends BaseTest {
            System.out.println(">>>>>>>>>> update result <<<<<<<<<<");
            System.out.println(user.getId());
            System.out.println(user.getName());
+
+          userInfoRepository.update(user);
+    }
+
+    @Test
+    public void  updateOperations()
+    {
+        Database db = getDatabase();
+        IRepository<UserInfo> userInfoRepository = db.getRepository(UserInfo.class);
+        UserInfo user = userInfoRepository.get(
+                Sql.builder()
+                        .select()
+                        .from(UserInfo.class)
+                        .where("user_id = ?", 1));
+        assert (user != null) : "userinfo is null";
+        System.out.println(">>>>>>>>>> get result <<<<<<<<<<");
+        System.out.println(user.getId());
+        System.out.println(user.getName());
+
+
+         Update<UserInfo> userInfoUpdate =  userInfoRepository.createUpdate();
+         userInfoUpdate.set(UserInfo::getPwd,"6543421");
+         userInfoRepository.update(user,userInfoUpdate);
     }
 
     @Test

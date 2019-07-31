@@ -1,17 +1,15 @@
 package io.github.cotide.dapper.repository;
 
-import io.github.cotide.dapper.core.attr.PrimaryKey;
 import io.github.cotide.dapper.core.unit.Sql2oCache;
 import io.github.cotide.dapper.core.unit.Sql2oUnitOfWork;
 import io.github.cotide.dapper.basic.collections.PageList;
 import io.github.cotide.dapper.basic.domain.Entity;
-import io.github.cotide.dapper.core.attr.Ignore;
 import io.github.cotide.dapper.core.unit.Sql2oUtils;
 import io.github.cotide.dapper.core.utility.Guard;
 import io.github.cotide.dapper.exceptions.PrimaryKeyException;
 import io.github.cotide.dapper.exceptions.SqlBuildException;
 import io.github.cotide.dapper.query.Sql;
-import io.github.cotide.dapper.repository.SqlQueryBase;
+import io.github.cotide.dapper.query.operations.Update;
 import io.github.cotide.dapper.repository.inter.IRepository;
 
 import java.lang.reflect.Field;
@@ -49,8 +47,30 @@ public class DapperRepositoryBase<TEntity  extends Entity>
        return executeUpdate(entity);
     }
 
+    /**
+     * 更新实体
+     *
+     * @param entity
+     * @param tEntityUpdate
+     * @return
+     */
     @Override
-    public Boolean delete(TEntity entity) {
+    public TEntity update(TEntity entity, Update<TEntity> tEntityUpdate) {
+        return executeUpdate(entity,tEntityUpdate);
+    }
+
+    /**
+     * 创建更新对象
+     *
+     * @return
+     */
+    @Override
+    public Update<TEntity> createUpdate() {
+        return new Update<>(modelClass);
+    }
+
+    @Override
+    public boolean delete(TEntity entity) {
         return  executeDelete(entity);
     }
 
@@ -105,7 +125,7 @@ public class DapperRepositoryBase<TEntity  extends Entity>
      * @param object
      * @return 影响行数
      */
-    private  <TEntity extends Entity> TEntity executeInsert(TEntity object) {
+    private  TEntity executeInsert(TEntity object) {
 
         Guard.isNotNull(object,"object");
         Class<?> modelClass = object.getClass();
@@ -173,14 +193,24 @@ public class DapperRepositoryBase<TEntity  extends Entity>
         }
     }
 
+    private  TEntity executeUpdate(TEntity object)
+    {
+         Update<TEntity>  update =  this.createUpdate() ;
+
+        for (Field field : Sql2oCache.computeNoKeyModelFields(modelClass))
+        {
+            update.set(Sql2oCache.getColumnName(field),Sql2oUtils.getValue(object,field));
+        }
+        return executeUpdate(object,update);
+    }
 
     /**
-     * 新增
-     *
-     * @param object
-     * @return 影响行数
+     * 更新
+     * @param object 修改对象
+     * @param updateOperations 修改参数
+     * @return
      */
-    private <T extends Entity> T executeUpdate(T object) {
+    private  TEntity executeUpdate(TEntity object,Update<TEntity> updateOperations) {
 
         Guard.isNotNull(object,"object");
         Class<?> modelClass = object.getClass();
@@ -196,11 +226,23 @@ public class DapperRepositoryBase<TEntity  extends Entity>
         }
         StringBuffer sb = new StringBuffer();
         List<Object> values = new ArrayList<>();
-        for (Field field : Sql2oCache.computeNoKeyModelFields(modelClass))
+
+        if(updateOperations == null || !updateOperations.isHaveOps())
         {
-            sb.append(String.format(",%s = ?", Sql2oCache.getColumnName(field)));
-            values.add(Sql2oUtils.getValue(object,field));
+            throw new  SqlBuildException("Update Operations cannot be null");
         }
+
+        Map<String,Object> map =  updateOperations.getOps();
+        for(Map.Entry<String,Object> entry : map.entrySet())
+        {
+            sb.append(String.format(",%s = ?", entry.getKey()));
+            values.add(entry.getValue());
+        }
+//        for (Field field : Sql2oCache.computeNoKeyModelFields(modelClass))
+//        {
+//            sb.append(String.format(",%s = ?", Sql2oCache.getColumnName(field)));
+//            values.add(Sql2oUtils.getValue(object,field));
+//        }
         try {
             String updateSql = String.format("UPDATE %s SET %s WHERE %s = ?",
                     tableName, sb.substring(1), pkColumn);
@@ -230,10 +272,9 @@ public class DapperRepositoryBase<TEntity  extends Entity>
     /**
      * 删除
      * @param object
-     * @param <T>
      * @return
      */
-    private  <T extends Entity> boolean executeDelete(T object){
+    private  boolean executeDelete(TEntity object){
 
         Guard.isNotNull(object,"object");
         Class<?> modelClass = object.getClass();

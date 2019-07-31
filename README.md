@@ -368,8 +368,22 @@ IRepository<UserInfo> userInfoRepository =  db.getRepository(UserInfo.class);
 // get 
 UserInfo user =  userInfoRepository.get(Sql.builder().select().from(UserInfo.class).where("user_id = ?",3399));
 // update
-user.setName("Test_2 ## -- ");
+user.setName("Test_2 ## -- "); 
 userInfoRepository.update(user); 
+```
+
+### 修改2
+
+```java 
+Database db = getDatabase();
+IRepository<UserInfo> userInfoRepository =  db.getRepository(UserInfo.class);
+// get 
+UserInfo user =  userInfoRepository.get(Sql.builder().select().from(UserInfo.class).where("user_id = ?",3399));
+// update
+Update<UserInfo> userInfoUpdate =  userInfoRepository.createUpdate();
+// 指定修改字段值
+userInfoUpdate.set(UserInfo::getPwd,"6543421"); 
+userInfoRepository.update(user,userInfoUpdate);
 ```
 
 ### 删除
