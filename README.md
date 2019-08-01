@@ -282,10 +282,32 @@ Sql sql = Sql.builder()
 // select user_id,user_name 
 // FROM user_info 
 // where user_name  = :p0 and user_id in (:p1,:p2)
-// order by create_time DESC
+// order by create_time desc
 /*** [参数值] ***/
 // [Test],[1],[2]
 ```
+ 
+## Sql or
+ 
+```java
+Sql sql = Sql.builder().select().from(UserInfo.class)
+            .whereLike(UserInfo::getName,"Test_2")
+            .or()
+            .whereLike(UserInfo::getName,"Test_2")
+            .orderBy(UserInfo::getId);
+ 
+/*** [Sql语句] ***/
+// select * 
+// from user_info 
+// where user_name like :p0 
+// or 
+// user_name like :p1 
+// order by user_id asc  
+/*** [参数值] ***/
+// [Test_2],[Test_2]
+```
+
+
  
 
 ## Dto Mapper

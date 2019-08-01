@@ -16,6 +16,26 @@ public class SelectTest extends BaseTest {
 
 
     @Test
+    public  void or()
+    {
+        Database db = getDatabase();
+        IRepository<UserInfo> userInfoIRepository =  db.getRepository(UserInfo.class);
+        Sql sql = Sql.builder().select().from(UserInfo.class)
+                .whereLike(UserInfo::getName,"Test_2")
+                .or()
+                .whereLike(UserInfo::getName,"Test")
+                .orderBy(UserInfo::getId);
+
+        List<UserInfo> result =   userInfoIRepository.getList(sql);
+        for (UserInfo item : result) {
+            System.out.println("id:" + item.getId());
+            System.out.println("user_Name:" + item.getName());
+            System.out.println("login:" + item.getLogin());
+        }
+    }
+
+
+    @Test
     public  void getWhereIn()
     {
         Database db = getDatabase();
@@ -30,6 +50,7 @@ public class SelectTest extends BaseTest {
             System.out.println("login:" + item.getLogin());
         }
     }
+
 
 
     @Test

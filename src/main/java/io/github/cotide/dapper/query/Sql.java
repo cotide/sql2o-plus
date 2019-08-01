@@ -58,6 +58,10 @@ public class Sql {
     }
 
 
+    public SqlWhereClause or()
+    {
+        return whereClause(where("or"));
+    }
 
     public  <T extends Entity,R> Sql whereGt(TypeFunction<T, R> function,Object param) {
         return where(Sql2oUtils.getLambdaColumnName(function)+"  > ? ",param);
@@ -79,7 +83,7 @@ public class Sql {
 
     public Sql where(String sql, Object... params) {
         Guard.isNotNullOrEmpty(sql,"where sql");
-        return append(new Sql("where " + sql, params));
+        return whereClause().where(sql,params);
     }
 
 
@@ -144,8 +148,7 @@ public class Sql {
     }
 
     public Sql whereLike(String column, String parm) throws SqlBuildException {
-        where(column+" like ? ","%"+parm+"%");
-        return this;
+       return whereClause().whereLike(column,parm);
     }
 
     public SelectClause select(String columns) {
@@ -211,7 +214,7 @@ public class Sql {
 
     public Sql orderBy(String columns, OrderBy orderBy) {
         Guard.isNotNullOrEmpty(columns,"orderBy columns");
-        return append(new Sql("order by " + columns + " "+ orderBy.toString()));
+        return append(new Sql("order by " + columns + " "+ orderBy.toString().toLowerCase()));
     }
 
     public  <T extends Entity,R> Sql orderBy(String asName,TypeFunction<T, R> function) {
@@ -220,7 +223,7 @@ public class Sql {
 
     public  <T extends Entity,R> Sql orderBy(String asName,TypeFunction<T, R> function,OrderBy orderBy) {
         String columnName = Sql2oUtils.getLambdaColumnName(function);
-        return orderBy((asName!=null&&!asName.isEmpty()?asName+".":"")+columnName,orderBy);
+        return orderBy((asName!=null&&!asName.isEmpty()?asName+".":"") + columnName,orderBy);
     }
 
 
@@ -365,6 +368,17 @@ public class Sql {
 
     //#region  Helper
 
+    private SqlWhereClause whereClause()
+    {
+        return new SqlWhereClause(this);
+    }
+
+
+    private SqlWhereClause whereClause(Sql sql)
+    {
+        return new SqlWhereClause(sql);
+    }
+
     private SqlJoinClause joinClause(String joinType,String table)
     {
         return new SqlJoinClause(append(new Sql(joinType+table)));
@@ -406,7 +420,17 @@ public class Sql {
             String sql = _sql;
             if (is(lhs, "where ") && is(this, "where "))
             {
-                sql = "and " + sql.substring(6);
+                if(is(this, "where or"))
+                {
+                    sql = "or " + sql.substring(8);
+
+                }else if(is(lhs,"where or"))
+                {
+                    sql = sql.substring(6);
+                }
+                else {
+                    sql = "and " + sql.substring(6);
+                }
             }
             if (is(lhs, "order by ") && is(this, "order by "))
             {

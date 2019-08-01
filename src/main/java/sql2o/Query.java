@@ -592,7 +592,8 @@ public class Query implements AutoCloseable {
 
     private static  <T> ResultSetHandlerFactory<T> newResultSetHandlerFactory(final ResultSetHandler<T> resultSetHandler) {
         return new ResultSetHandlerFactory<T>() {
-            public ResultSetHandler<T> newResultSetHandler(ResultSetMetaData resultSetMetaData) throws SQLException {
+            @Override
+            public ResultSetHandler<T> newResultSetHandler(ResultSetMetaData resultSetMetaData) {
                 return resultSetHandler;
             }
         };

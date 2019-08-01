@@ -1,11 +1,15 @@
 package io.github.cotide.dapper.query;
 
-public class SqlWhereClause extends BaseClause {
+public class SqlOrClause extends BaseClause {
 
-    public SqlWhereClause(Sql sql) {
+    public SqlOrClause(Sql sql) {
         super(sql);
     }
 
 
-    
+    public SqlWhereClause or()
+    {
+        return new SqlWhereClause(_sql);
+    }
+
 }
