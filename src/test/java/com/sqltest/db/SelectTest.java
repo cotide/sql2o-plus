@@ -211,8 +211,7 @@ public class SelectTest extends BaseTest {
                 .select()
                 .from(UserInfo.class)
                 .whereLike(UserInfo::getName,"T");
-        List<UserInfo> result =  userInfoRepository
-                .getList(sql);
+        List<UserInfo> result =  userInfoRepository.getList(sql);
         System.out.println(">>>>>>>>>> Result <<<<<<<<<<");
         System.out.println("size:" + result.size());
         for (UserInfo item : result) {

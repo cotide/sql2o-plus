@@ -14,6 +14,8 @@ import io.github.cotide.dapper.query.parm.SQLParams;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static io.github.cotide.dapper.core.utility.Functions.ifThen;
 
@@ -25,8 +27,15 @@ public class Sql {
 
     private String _sql;
 
+    private String _sqlFinal;
+
 
     private String selectColumns;
+
+    private final static Pattern SQL_WHERE_BRACKET = Pattern.compile( "(?<!WHERE)WHERE+",Pattern.CASE_INSENSITIVE);
+
+    private final static Pattern SQL_FROM_BRACKET = Pattern.compile( "(?<!FROM)FROM+",Pattern.CASE_INSENSITIVE);
+
 
     /**
      * 查询条件
@@ -54,6 +63,8 @@ public class Sql {
      */
     protected String tableName;
 
+
+
     private Dialect dialect = new MySQLDialect();
 
     public Sql() {
@@ -66,7 +77,7 @@ public class Sql {
 
 
     public Sql(String str , Object... obj) {
-        _sql = str;
+        this._sqlFinal = str;
         if(obj!=null && obj.length>0)
         {
             Arrays.stream(obj).forEach(x-> this.paramValues.add(x));
@@ -263,8 +274,10 @@ public class Sql {
 
     public Sql or(Ors orParam)
     {
+        String beginSql = "      \nOR";
         if(this.conditionSQL == null || this.conditionSQL.length()<=0){
-            throw new SqlBuildException("Or query is error");
+           // throw new SqlBuildException("Or query is error");
+            beginSql =  "WHERE ";
         }
         if(orParam==null)
         {
@@ -279,9 +292,9 @@ public class Sql {
 
         if(isAddBracket)
         {
-            conditionSQL.append("      \nOR ( \n");
+            conditionSQL.append(beginSql+" ( \n");
         }else{
-            conditionSQL.append("      \nOR \n");
+            conditionSQL.append(beginSql+" \n");
         }
         conditionSQL.append(orWhereSql.substring(6));
         addParamValues(orParam.getFinalArgs());
@@ -332,6 +345,16 @@ public class Sql {
                 .append(' ')
                 .append(orderBy.toString());
         return this;
+    }
+
+
+    public <T extends Entity,R>  Sql order(String asName,TypeFunction<T, R> function) {
+
+        return order(asName+"."+Sql2oUtils.getLambdaColumnName(function));
+    }
+
+    public <T extends Entity,R>  Sql order(String asName,TypeFunction<T, R> function,OrderBy orderBy) {
+        return order(asName+"."+Sql2oUtils.getLambdaColumnName(function),orderBy);
     }
 
     public <T extends Entity,R>  Sql order(TypeFunction<T, R> function,OrderBy orderBy) {
@@ -525,7 +548,8 @@ public class Sql {
     // region Helper
 
     private void build() {
-        if(StringUtils.isNullOrEmpty(_sql)){
+
+        if(StringUtils.isNullOrEmpty(_sqlFinal)){
             SQLParams sqlParams = SQLParams.builder()
                     .selectColumns(this.selectColumns)
                     .tableName(this.tableName)
@@ -533,18 +557,47 @@ public class Sql {
                     .conditionSQL(this.conditionSQL)
                     .orderBy(this.orderBySQL.toString())
                     .build();
-
             // 生成SQL
             _sql = dialect().select(sqlParams);
-        }else{
 
+        }else {
+            StringBuilder sqlBuild = new StringBuilder(_sqlFinal);
+
+            // Join条件
+            if(this.joinSQL!=null && this.joinSQL.length()>0)
+            {
+                Matcher m  = SQL_FROM_BRACKET.matcher(_sqlFinal);
+                if(m.find())
+                {
+                    sqlBuild.append(this.joinSQL);
+                }
+            }
+
+            // Where条件
+            if(this.conditionSQL!= null && this.conditionSQL.length()>0)
+            {
+               Matcher m  = SQL_WHERE_BRACKET.matcher(_sqlFinal);
+               if(m.find())
+               {
+                   sqlBuild.append(this.conditionSQL);
+               }else{
+                   sqlBuild.append(" \nWHERE " + this.conditionSQL.substring(5));
+               }
+            }
+
+            // 排序
+            String orderSql = this.orderBySQL.toString();
+            if (!StringUtils.isNullOrEmpty(orderSql)) {
+                sqlBuild.append(" \nORDER BY "+ orderSql);
+            }
+            _sql = sqlBuild.toString();
         }
     }
 
 
     private SqlJoinClause joinClause(String joinType,String table)
     {
-        this.joinSQL.append(joinType+ " " + table);
+        this.joinSQL.append(" \n"+joinType+ " " + table);
         return new SqlJoinClause(this);
     }
 

@@ -3,6 +3,7 @@ package com.sqltest.db;
 import com.sqltest.base.BaseTest;
 import com.sqltest.dto.UserInfoDto;
 import com.sqltest.model.UserInfo;
+import com.sqltest.model.UserType;
 import io.github.cotide.dapper.Database;
 import io.github.cotide.dapper.basic.collections.PageList;
 import io.github.cotide.dapper.query.Sql;
@@ -59,7 +60,18 @@ public class SelectExTest extends BaseTest {
 
 
     @Test
-    public void  getCountTest(){
+    public void  getFinalSql1(){
+
+        Sql sql =   Sql.builder()
+                       .select()
+                       .from(UserInfo.class)
+                       .where(UserInfo::getName,"Test");
+
+        System.out.println(sql.getFinalSql());
+        System.out.println("------");
+        System.out.println(sql.getFinalSql());
+        System.out.println("------");
+        System.out.println(sql.getFinalSql());
 
 //        Database db = getDatabase();
 //        // int count(Sql inter)
@@ -71,4 +83,55 @@ public class SelectExTest extends BaseTest {
     }
 
 
+    @Test
+    public void  getFinalSql2(){
+
+        Sql sql =  new Sql("select * from user_info  as  a ")
+                .leftJoin(UserType.class,"b")
+                .on(UserInfo::getUserTypeId,UserType::getId)
+                .where("a",UserInfo::getName,"Test")
+                .where("b",UserInfo::getName,"Test");
+//        System.out.println(sql.getFinalSql());
+//        System.out.println("------");
+//        System.out.println(sql.getFinalSql());
+//        System.out.println("------");
+//        System.out.println(sql.getFinalSql());
+        System.out.println("Sql语句:");
+        System.out.println(sql.getFinalSql());
+        System.out.println("SQL参数值:");
+        sql.getFinalArgs().forEach(System.out::println);
+    }
+
+
+    @Test
+    public void  getFinalSql3()
+    {
+        Sql sql = Sql.builder().select("*")
+                .from(UserInfo.class,"a")
+                .leftJoin(UserType.class,"b")
+                .on("a",UserInfo::getUserTypeId,"b",UserType::getId)
+                .leftJoin(UserType.class,"c")
+                .on("a",UserInfo::getUserTypeId,"c",UserType::getId)
+                .where("a",UserInfo::getName,"Test")
+                .where("a",UserInfo::getName,"Test");
+        System.out.println("Sql语句:");
+        System.out.println(sql.getFinalSql());
+        System.out.println("SQL参数值:");
+        sql.getFinalArgs().forEach(System.out::println);
+    }
+
+
+
+    @Test
+    public void  getFinalSql4()
+    {
+        Sql sql = Sql.builder().select("*")
+                .from(UserInfo.class,"a")
+                .where("a",UserInfo::getName,"Test")
+                .where("a",UserInfo::getName,"Test");
+        System.out.println("Sql语句:");
+        System.out.println(sql.getFinalSql());
+        System.out.println("SQL参数值:");
+        sql.getFinalArgs().forEach(System.out::println);
+    }
 }

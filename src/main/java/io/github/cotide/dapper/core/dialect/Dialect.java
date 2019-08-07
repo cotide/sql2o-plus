@@ -19,7 +19,8 @@ public interface Dialect {
         // Join条件
         if(sqlParams.getJoinSQL().length()>0)
         {
-            sql.append(" \n").append(sqlParams.getJoinSQL());
+            sql.append(" ")
+               .append(sqlParams.getJoinSQL());
         }
 
         // 查询条件
@@ -33,6 +34,5 @@ public interface Dialect {
         }
         return sql.toString();
     }
-
 
 }

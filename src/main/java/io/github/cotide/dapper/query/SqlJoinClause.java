@@ -16,9 +16,8 @@ public class SqlJoinClause extends BaseClause {
 
 
     public Sql on(String statement){
-        _sql.joinSQL
-                .append(" \nON ")
-                .append(statement);
+        _sql.joinSQL.append(" ON ")
+                    .append(statement).append(" ");
         return _sql;
     }
 
@@ -36,7 +35,7 @@ public class SqlJoinClause extends BaseClause {
             String asName2,
             TypeFunction<T2, R2> function2) {
 
-        _sql.joinSQL.append(" \nON ");
+        _sql.joinSQL.append(" ON ");
         if(!StringUtils.isNullOrEmpty(asName1))
         {
             _sql.joinSQL.append(asName1 + ".");
