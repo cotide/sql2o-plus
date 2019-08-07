@@ -1,7 +1,5 @@
 package io.github.cotide.dapper.core.unit;
-
-
-
+ 
 import io.github.cotide.dapper.repository.inter.IRepository;
 import io.github.cotide.dapper.basic.domain.Entity;
 

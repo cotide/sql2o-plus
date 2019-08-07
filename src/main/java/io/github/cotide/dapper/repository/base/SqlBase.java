@@ -8,6 +8,9 @@ import io.github.cotide.dapper.core.unit.Sql2oUnitOfWork;
 import sql2o.Query;
 
 import java.io.InputStream;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author cotide
@@ -21,11 +24,9 @@ public abstract class SqlBase {
         this.UnitOfWork = (Sql2oUnitOfWork)unitOfWork;
     }
 
-
-
     protected  Query createQuery(
             String sql,
-            Object... parm)
+            List<Object> parm)
     {
         UnitOfWork.getOpenConnection();
         Query sqlBuild = UnitOfWork.dbConnection.createQuery(sql)
@@ -40,7 +41,7 @@ public abstract class SqlBase {
     protected <TDto> Query createQuery(
             Class<TDto> returnType,
             String sql,
-            Object... parm)
+            List<Object> parm)
     {
         UnitOfWork.getOpenConnection();
         Query sqlBuild = UnitOfWork.dbConnection.createQuery(sql)
@@ -48,8 +49,9 @@ public abstract class SqlBase {
                 .setAutoDeriveColumnNames(false)
                 .throwOnMappingFailure(UnitOfWork.isDebug())
                 .withParams(parm);
-
         return sqlBuild;
     }
+
+
 
 }

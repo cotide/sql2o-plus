@@ -61,35 +61,14 @@ public class SelectExTest extends BaseTest {
     @Test
     public void  getCountTest(){
 
-        Database db = getDatabase();
-        // int count(Sql inter)
-        int result = db.getSqlQuery().count(Sql.builder().select("count(1)").from(UserInfo.class).where("user_id in (?,?,?)", 1, 2, 3));
-        assert (result > 0) : "result value is error";
-        System.out.println(">>>>>>>>>> Result <<<<<<<<<<");
-        System.out.println("result size:" + result);
+//        Database db = getDatabase();
+//        // int count(Sql inter)
+//        int result = db.getSqlQuery().count(Sql.builder().select("count(1)").from(UserInfo.class)
+//                .where("user_id in (?,?,?)", 1, 2, 3));
+//        assert (result > 0) : "result value is error";
+//        System.out.println(">>>>>>>>>> Result <<<<<<<<<<");
+//        System.out.println("result size:" + result);
     }
 
 
-    @Test
-    public void  pageListTest(){
-
-        Database db = getDatabase();
-        //  getPageList(int pageIndex, int pageSize, Sql inter)
-        PageList<UserInfoDto> result = db.getSqlQuery().getPageDtoList(
-                UserInfoDto.class,
-                1,
-                10,
-                Sql.builder().select().from(UserInfo.class));
-        assert (result.getTotalCount() > 0) : "result value is error";
-        System.out.println(">>>>>>>>>> Result <<<<<<<<<<");
-        System.out.println("pageIndex:" + result.getPageIndex());
-        System.out.println("pageSize:" + result.getPageSize());
-        System.out.println("totalCount:" + result.getTotalCount());
-        System.out.println("totalPage:" + result.getTotalPage());
-        for (UserInfoDto item : result.getItems()) {
-            System.out.println("id:" + item.getId());
-            System.out.println("user_Name:" + item.getName());
-            System.out.println("login:" + item.getLogin());
-        }
-    }
 }

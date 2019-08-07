@@ -1,10 +1,11 @@
 package io.github.cotide.dapper.query;
-
 import io.github.cotide.dapper.basic.domain.Entity;
 import io.github.cotide.dapper.core.functions.TypeFunction;
 import io.github.cotide.dapper.core.unit.Sql2oUtils;
-import io.github.cotide.dapper.core.utility.Guard;
 import io.github.cotide.dapper.exceptions.SqlBuildException;
+import io.github.cotide.dapper.query.base.BaseClause;
+
+import java.util.List;
 
 
 public class SqlWhereClause extends BaseClause {
@@ -14,93 +15,102 @@ public class SqlWhereClause extends BaseClause {
         super(sql);
     }
 
-    public  <T extends Entity,R> Sql whereGt(TypeFunction<T, R> function, Object param) {
-        return where(Sql2oUtils.getLambdaColumnName(function)+"  > ? ",param);
-    }
-
-    public  <T extends Entity,R> Sql whereLt(TypeFunction<T, R> function,Object param) {
-        return where(Sql2oUtils.getLambdaColumnName(function)+"  < ? ",param);
-    }
-
-
-    public  <T extends Entity,R> Sql whereGte(TypeFunction<T, R> function,Object param) {
-        return where(Sql2oUtils.getLambdaColumnName(function)+"  >= ? ",param);
-    }
-
-    public  <T extends Entity,R> Sql whereLte(TypeFunction<T, R> function,Object param) {
-        return where(Sql2oUtils.getLambdaColumnName(function)+"  <= ? ",param);
+    public Sql between(Object a, Object b) {
+        _sql.conditionSQL.append(" BETWEEN ? and ?");
+        _sql.addParamValue(a);
+        _sql.addParamValue(b);
+        return _sql;
     }
 
 
-    public Sql where(String sql, Object... params) {
-        Guard.isNotNullOrEmpty(sql,"where sql");
-        return  _sql.append(new Sql("where " + sql, params));
-
-    }
-
-
-
-    public  <T extends Entity,R> Sql where(String asName,TypeFunction<T, R> function,Object param) {
-        return where((asName!=null&&!asName.isEmpty()?asName+".":"")+Sql2oUtils.getLambdaColumnName(function)+"  = ? ",param);
-    }
-
-    public  <T extends Entity,R> Sql where(TypeFunction<T, R> function,Object param) {
-        return where(Sql2oUtils.getLambdaColumnName(function)+"  = ? ",param);
-    }
-
-    public  <T extends Entity,R>  Sql whereIn(String asName,TypeFunction<T, R> function, Object... paras) throws SqlBuildException {
-
-        return whereIn((asName!=null&&!asName.isEmpty()?asName+".":"")+Sql2oUtils.getLambdaColumnName(function),paras);
-    }
-
-    public  <T extends Entity,R>  Sql whereIn(TypeFunction<T, R> function, Object... paras) throws SqlBuildException {
-
-        return whereIn(Sql2oUtils.getLambdaColumnName(function),paras);
-    }
-
-    public Sql whereIn(String column, Object... paras) throws SqlBuildException {
-        if (column == null || column.length() == 0){
-            throw new SqlBuildException("query error: must have 'in' word");
+    public Sql in(Object... args) {
+        if (null == args || args.length == 0) {
+            throw new SqlBuildException("Column query params is not null");
         }
-        if (paras == null || paras.length == 0)
-        {
-            throw new SqlBuildException("paras error");
-        }
-        if(paras.getClass().isArray())
-        {
-            StringBuffer appendValue =  new StringBuffer();
+        _sql.conditionSQL.append(" IN (");
+        _sql.setInArguments(args);
+        _sql.conditionSQL.append(")");
+        return _sql;
+    }
 
-            for (int i=0 ;i<paras.length;i++)
-            {
-                appendValue.append("@"+i);
-                if(i != paras.length-1)
-                {
-                    appendValue.append(",");
-                }
-            }
+    public <S> Sql in(List<S> list) {
+        return this.in(list.toArray());
+    }
 
-            String appendSql =  String.format("%s in (%s)",column,appendValue);
-            where(appendSql,paras);
-        }else{
-            where(String.format("%s in (?)",column,paras));
-        }
-
-       return _sql;
+    public <S> Sql in(String column, List<S> args) {
+        return this.in(column, args.toArray());
     }
 
 
-    public  <T extends Entity,R>  Sql whereLike(String asName,TypeFunction<T, R> function, String parm) throws SqlBuildException {
-
-        return whereLike((asName!=null&&!asName.isEmpty()?asName+".":"")+Sql2oUtils.getLambdaColumnName(function),parm);
+    public Sql eq(Object value){
+        _sql.conditionSQL.append(" = ?");
+        _sql.addParamValue(value);
+        return _sql;
     }
 
-    public  <T extends Entity,R>  Sql whereLike(TypeFunction<T, R> function, String parm) throws SqlBuildException {
-
-        return whereLike(Sql2oUtils.getLambdaColumnName(function),parm);
+    public Sql notNull() {
+        _sql.conditionSQL.append(" IS NOT NULL");
+        return _sql;
     }
 
-    public Sql whereLike(String column, String parm) throws SqlBuildException {
-      return   where(column+" like ? ","%"+parm+"%");
-
+    public Sql notEq(Object value) {
+        _sql.conditionSQL.append(" != ?");
+        _sql.addParamValue(value);
+        return _sql;
     }
+
+    public Sql notEmpty(String columnName) {
+        _sql.conditionSQL.append(" AND ");
+        _sql.conditionSQL.append(columnName);
+        _sql.conditionSQL.append(" != ''");
+        return _sql;
+    }
+
+    public <T extends Entity,R> Sql notEmpty(
+            TypeFunction<T, R> function) {
+        return this.notEmpty(Sql2oUtils.getLambdaColumnName(function));
+    }
+
+    public Sql notEmpty() {
+        _sql.conditionSQL.append(" != ''");
+        return _sql;
+    }
+
+    public Sql notNull(String columnName) {
+        _sql.conditionSQL.append(" AND ");
+        _sql.conditionSQL.append(columnName);
+        _sql.conditionSQL.append(" IS NOT NULL");
+        return _sql;
+    }
+
+    public Sql like(Object value) {
+        _sql.conditionSQL.append(" LIKE ?");
+        _sql.addParamValue(value);
+        return _sql;
+    }
+
+    public Sql gt(Object value) {
+        _sql.conditionSQL.append(" > ?");
+        _sql.addParamValue(value);
+        return _sql;
+    }
+
+    public Sql gte(Object value) {
+        _sql.conditionSQL.append(" >= ?");
+        _sql.addParamValue(value);
+        return _sql;
+    }
+
+    public Sql lt(Object value) {
+        _sql.conditionSQL.append(" < ?");
+        _sql.addParamValue(value);
+        return _sql;
+    }
+
+    public Sql lte(Object value) {
+        _sql.conditionSQL.append(" <= ?");
+        _sql.addParamValue(value);
+        return _sql;
+    }
+
 }

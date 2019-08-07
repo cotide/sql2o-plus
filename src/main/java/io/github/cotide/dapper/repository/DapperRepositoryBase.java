@@ -109,7 +109,7 @@ public class DapperRepositoryBase<TEntity  extends Entity>
 
     @Override
     public PageList<TEntity> getPageList(int pageIndex, int pageSize, Sql sql) {
-        return getPageDtoList(modelClass,pageIndex,pageSize,sql.getFinalSql(),sql.getFinalArgs());
+        return getPageDtoList(modelClass,pageIndex,pageSize,sql.getFinalSql());
     }
 
     @Override

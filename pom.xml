@@ -6,7 +6,7 @@
 
     <groupId>io.github.cotide</groupId>
     <artifactId>sql2o-plus</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>sql2o-plus</name>

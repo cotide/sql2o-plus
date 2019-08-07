@@ -3,8 +3,10 @@ package com.sqltest.db;
 
 import com.sqltest.base.BaseTest;
 import com.sqltest.model.UserInfo;
+import com.sqltest.model.enums.EnumUserStatus;
 import io.github.cotide.dapper.Database;
 import io.github.cotide.dapper.basic.collections.PageList;
+import io.github.cotide.dapper.query.Ors;
 import io.github.cotide.dapper.repository.inter.IRepository;
 import io.github.cotide.dapper.query.Sql;
 import org.junit.Test;
@@ -22,9 +24,9 @@ public class SelectTest extends BaseTest {
         IRepository<UserInfo> userInfoIRepository =  db.getRepository(UserInfo.class);
         Sql sql = Sql.builder().select().from(UserInfo.class)
                 .whereLike(UserInfo::getName,"Test_2")
-                .or()
+                .or(Ors.sql().where(UserInfo::getStatus, EnumUserStatus.NORMAL))
                 .whereLike(UserInfo::getName,"Test")
-                .orderBy(UserInfo::getId);
+                .order(UserInfo::getId);
 
         List<UserInfo> result =   userInfoIRepository.getList(sql);
         for (UserInfo item : result) {
@@ -170,7 +172,8 @@ public class SelectTest extends BaseTest {
             Database db = getDatabase();
             IRepository<UserInfo> userInfoRepository = db.getRepository(UserInfo.class);
             // int count(Sql inter)
-            int result = userInfoRepository.count(Sql.builder().select("count(1)").from(UserInfo.class).where("user_id in (?,?,?,?)", 1, 2, 3,5));
+            int result = userInfoRepository.count(Sql.builder().select("count(1)").from(UserInfo.class)
+                    .whereIn("user_id", 1, 2, 3,5));
             assert (result > 0) : "result value is error";
             System.out.println(">>>>>>>>>> Result <<<<<<<<<<");
             System.out.println("result size:" + result);

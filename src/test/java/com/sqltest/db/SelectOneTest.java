@@ -1,7 +1,6 @@
 package com.sqltest.db;
 
 import com.sqltest.base.BaseTest;
-import com.sqltest.dto.UserInfoDto;
 import com.sqltest.model.UserInfo;
 import io.github.cotide.dapper.Database;
 import io.github.cotide.dapper.query.Sql;
@@ -11,6 +10,15 @@ import org.junit.Test;
 public class SelectOneTest extends BaseTest  {
 
 
+    @Test
+    public void get(){
+
+        Database db = getDatabase();
+        IRepository<UserInfo> userInfoIRepository =  db.getRepository(UserInfo.class);
+        String sql = "select * from user_info where user_id = ? ";
+        UserInfo userInfo = userInfoIRepository.get(sql,1);
+
+    }
 
     @Test
     public void  getDtoTest(){

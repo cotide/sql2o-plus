@@ -1,8 +1,13 @@
 package com.sqltest.base;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.sqltest.dto.UserInfoDto;
+import com.sqltest.model.UserInfo;
 import io.github.cotide.dapper.Database;
+import io.github.cotide.dapper.query.Sql;
+import io.github.cotide.dapper.repository.inter.IRepository;
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class BaseTest {
 
@@ -32,4 +37,6 @@ public class BaseTest {
         dataSource.setPassword(pass);
         return new Database(dataSource);
     }
+
+
 }

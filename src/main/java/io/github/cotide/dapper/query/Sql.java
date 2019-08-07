@@ -1,460 +1,541 @@
 package io.github.cotide.dapper.query;
-
-import com.alibaba.druid.sql.builder.SQLBuilder;
+import io.github.cotide.dapper.core.dialect.Dialect;
+import io.github.cotide.dapper.core.dialect.MySQLDialect;
 import io.github.cotide.dapper.core.functions.TypeFunction;
 import io.github.cotide.dapper.core.unit.Sql2oCache;
 import io.github.cotide.dapper.core.unit.Sql2oUtils;
 import io.github.cotide.dapper.core.utility.Guard;
+import io.github.cotide.dapper.core.utility.StringUtils;
 import io.github.cotide.dapper.exceptions.SqlBuildException;
 import io.github.cotide.dapper.basic.domain.Entity;
 import io.github.cotide.dapper.query.enums.OrderBy;
-import io.github.cotide.dapper.query.map.ResultMap;
+import io.github.cotide.dapper.query.parm.SQLParams;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import static io.github.cotide.dapper.core.utility.Functions.ifThen;
 
 /**
  * SQL
  */
 public class Sql {
 
-    private String _sql;
-    private Object[] _args;
-    private Sql _rhs;
-    private String _sqlFinal;
-    private Object[] _argsFinal;
 
-    private final static Pattern SQL_BRACKET = Pattern.compile("(?<!\\?)\\?+");
+    private String _sql;
+
+
+    private String selectColumns;
+
+    /**
+     * 查询条件
+     */
+    protected StringBuilder conditionSQL = new StringBuilder();
+
+
+    /**
+     * 查询条件值
+     */
+    protected List<Object> paramValues = new ArrayList<>(8);
+
+    /**
+     * Join Sql
+     */
+    protected StringBuilder joinSQL = new StringBuilder();
+
+    /**
+     * 排序
+     */
+    protected StringBuilder orderBySQL = new StringBuilder();
+
+    /**
+     * 表名
+     */
+    protected String tableName;
+
+    private Dialect dialect = new MySQLDialect();
 
     public Sql() {
 
     }
 
-
-    public Sql(String sql, Object... params) {
-        _sql = sql;
-        _args = params;
+    public Dialect dialect() {
+        return this.dialect;
     }
 
 
-    public Sql append(Sql sql) {
-        if (_rhs != null) {
-            _rhs.append(sql);
-        } else {
-            _rhs = sql;
+    public Sql(String str , Object... obj) {
+        _sql = str;
+        if(obj!=null && obj.length>0)
+        {
+            Arrays.stream(obj).forEach(x-> this.paramValues.add(x));
         }
-
-        return this;
     }
 
+    public String getFinalSql() {
+        build();
+        return _sql;
+    }
+
+    public List<Object> getFinalArgs() {
+        return paramValues;
+    }
 
     public static Sql builder(){  return  new Sql(); }
 
-    public Sql append(String sql, Object... params) {
-        return append(new Sql(sql, params));
-    }
-
-
-    public SqlWhereClause or()
-    {
-        return whereClause(where("or"));
-    }
-
-    public  <T extends Entity,R> Sql whereGt(TypeFunction<T, R> function,Object param) {
-        return where(Sql2oUtils.getLambdaColumnName(function)+"  > ? ",param);
-    }
-
-    public  <T extends Entity,R> Sql whereLt(TypeFunction<T, R> function,Object param) {
-        return where(Sql2oUtils.getLambdaColumnName(function)+"  < ? ",param);
-    }
-
-
-    public  <T extends Entity,R> Sql whereGte(TypeFunction<T, R> function,Object param) {
-        return where(Sql2oUtils.getLambdaColumnName(function)+"  >= ? ",param);
-    }
-
-    public  <T extends Entity,R> Sql whereLte(TypeFunction<T, R> function,Object param) {
-        return where(Sql2oUtils.getLambdaColumnName(function)+"  <= ? ",param);
-    }
-
-
-    public Sql where(String sql, Object... params) {
-        Guard.isNotNullOrEmpty(sql,"where sql");
-        return whereClause().where(sql,params);
-    }
-
-
-
-    public  <T extends Entity,R> Sql where(String asName,TypeFunction<T, R> function,Object param) {
-        return where((asName!=null&&!asName.isEmpty()?asName+".":"")+Sql2oUtils.getLambdaColumnName(function)+"  = ? ",param);
-    }
-
-    public  <T extends Entity,R> Sql where(TypeFunction<T, R> function,Object param) {
-        return where(Sql2oUtils.getLambdaColumnName(function)+"  = ? ",param);
-    }
-
-    public  <T extends Entity,R>  Sql whereIn(String asName,TypeFunction<T, R> function, Object... paras) throws SqlBuildException {
-
-        return whereIn((asName!=null&&!asName.isEmpty()?asName+".":"")+Sql2oUtils.getLambdaColumnName(function),paras);
-    }
-
-    public  <T extends Entity,R>  Sql whereIn(TypeFunction<T, R> function, Object... paras) throws SqlBuildException {
-
-        return whereIn(Sql2oUtils.getLambdaColumnName(function),paras);
-    }
-
-    public Sql whereIn(String column, Object... paras) throws SqlBuildException {
-        if (column == null || column.length() == 0){
-            throw new SqlBuildException("query error: must have 'in' word");
-        }
-        if (paras == null || paras.length == 0)
-        {
-            throw new SqlBuildException("paras error");
-        }
-        if(paras.getClass().isArray())
-        {
-            StringBuffer appendValue =  new StringBuffer();
-
-            for (int i=0 ;i<paras.length;i++)
-            {
-                appendValue.append("@"+i);
-                if(i != paras.length-1)
-                {
-                    appendValue.append(",");
-                }
-            }
-
-            String appendSql =  String.format("%s in (%s)",column,appendValue);
-            where(appendSql,paras);
-        }else{
-            where(String.format("%s in (?)",column,paras));
-        }
-
-        return this;
-    }
-
-
-    public  <T extends Entity,R>  Sql whereLike(String asName,TypeFunction<T, R> function, String parm) throws SqlBuildException {
-
-        return whereLike((asName!=null&&!asName.isEmpty()?asName+".":"")+Sql2oUtils.getLambdaColumnName(function),parm);
-    }
-
-    public  <T extends Entity,R>  Sql whereLike(TypeFunction<T, R> function, String parm) throws SqlBuildException {
-
-        return whereLike(Sql2oUtils.getLambdaColumnName(function),parm);
-    }
-
-    public Sql whereLike(String column, String parm) throws SqlBuildException {
-       return whereClause().whereLike(column,parm);
-    }
-
     public SelectClause select(String columns) {
         Guard.isNotNullOrEmpty(columns,"select columns");
-        return new SelectClause(append(new Sql("select " + columns+" ")));
+        this.selectColumns = columns;
+        return new SelectClause(this);
     }
 
-
-    public  SelectClause select(
-            ResultMap map)
-    {
-        String selectColumn =  map.getSelectColumn().trim();
-        if(selectColumn == null || "".equals(selectColumn.trim())){
-            return select();
-        }
-        selectColumn = selectColumn.substring(0, selectColumn.length() - 1);
-        return select(selectColumn);
-    }
-
-    public   <T extends Entity,R> SelectClause select(TypeFunction<T, R>... function)
+    public <T extends Entity,R> SelectClause select(TypeFunction<T,R>... functions)
     {
         String columnNames = "";
-        for (int j = 0; j<function.length; j++){
-            columnNames += Sql2oUtils.getLambdaColumnName(function[j]);
-            if(j !=function.length-1)
+        for (int j = 0;j<functions.length;j++)
+        {
+            columnNames += Sql2oUtils.getLambdaColumnName(functions[j]);
+            if(j != functions.length -1 )
             {
-                columnNames+=',';
+                columnNames += ',';
             }
         }
         return select(columnNames);
     }
 
-
-
-
     public SelectClause select() {
         return select("*");
     }
 
+    public SqlWhereClause where(String statement) {
+        conditionSQL.append(" \nAND ").append(statement);
+        return new SqlWhereClause(this);
+    }
 
-    public <T> SelectClause selectTo(Class<T> modelClass){
-        StringBuffer cols = new StringBuffer();
-        Map<String, String> colums =  Sql2oCache.computeModelColumnMappings(modelClass);
-        for (Map.Entry<String, String> entry : colums.entrySet()) {
-            cols.append(
-                    (entry.getKey().equals(entry.getValue()))?entry.getKey():
-                     String.format("%s as %s",entry.getKey(),entry.getValue()))
-                    .append(",\n");
+    public <T extends Entity,R> SqlWhereClause where(TypeFunction<T, R> function) {
+        return where(Sql2oUtils.getLambdaColumnName(function));
+    }
+
+    public Sql where(String statement,Object value) {
+        conditionSQL.append(" \nAND ").append(statement);
+        if (!statement.contains("?")) {
+            conditionSQL.append(" = ?");
         }
-        String sqlColumn =cols.toString().trim();
-        return select(sqlColumn.substring(0, sqlColumn.length() - 1));
+        paramValues.add(value);
+        return this;
     }
 
-    public Sql as(String asName)
+    public <T extends Entity,R>  Sql where(String asName, TypeFunction<T, R> function,Object value) {
+        return where(asName +"."+ Sql2oUtils.getLambdaColumnName(function),value);
+    }
+
+
+    public <T extends Entity,R>  Sql where(TypeFunction<T, R> function,Object value) {
+        return where(Sql2oUtils.getLambdaColumnName(function),value);
+    }
+
+    public Sql whereBetween(String columnName,Object a, Object b) {
+        conditionSQL.append(" \nAND ").append(columnName).append(" BETWEEN ? and ?");
+        paramValues.add(a);
+        paramValues.add(b);
+        return this;
+    }
+
+    public <T extends Entity,R> Sql whereBetween(String asName,TypeFunction<T, R> function,Object a,Object b) {
+        return this.whereBetween(asName +"."+Sql2oUtils.getLambdaColumnName(function),a,b);
+    }
+
+    public <T extends Entity,R> Sql whereBetween(TypeFunction<T, R> function,Object a,Object b) {
+        return this.whereBetween(Sql2oUtils.getLambdaColumnName(function),a,b);
+    }
+
+    public Sql whereIn(String column,Object... values) {
+        if (null == values || values.length == 0) {
+            throw new SqlBuildException("Column query params is not null");
+        }
+        return this.where(column).in(values);
+    }
+
+    public <T extends Entity,R> Sql whereIn(String asName,TypeFunction<T, R> function,Object... values) {
+        return this.whereIn(asName+"." + Sql2oUtils.getLambdaColumnName(function),values);
+    }
+
+    public <T extends Entity,R> Sql whereIn(TypeFunction<T, R> function,Object... values) {
+        return this.whereIn(Sql2oUtils.getLambdaColumnName(function),values);
+    }
+
+    public <S,T extends Entity,R> Sql whereIn(String asName,TypeFunction<T, R> function,List<S> values) {
+        return this.whereIn(asName+"." +Sql2oUtils.getLambdaColumnName(function),values);
+    }
+
+    public <S,T extends Entity,R> Sql whereIn(TypeFunction<T, R> function,List<S> values) {
+        return this.whereIn(Sql2oUtils.getLambdaColumnName(function),values);
+    }
+
+
+    public Sql whereNotEq(String columnName, Object value) {
+        conditionSQL.append(" AND ").append(columnName).append(" != ?");
+        paramValues.add(value);
+        return this;
+    }
+
+    public  <T extends Entity,R> Sql whereNotEq(String asName,TypeFunction<T, R> function,Object value) {
+        return this.whereNotEq(asName+"." +Sql2oUtils.getLambdaColumnName(function),value);
+    }
+
+    public  <T extends Entity,R> Sql whereNotEq(TypeFunction<T, R> function,Object value) {
+        return this.whereNotEq(Sql2oUtils.getLambdaColumnName(function),value);
+    }
+
+    public Sql whereLike(String columnName, Object value) {
+        conditionSQL.append(" AND ").append(columnName).append(" LIKE ?");
+        paramValues.add(value);
+        return this;
+    }
+
+    public <T extends Entity,R> Sql whereLike(String asName,TypeFunction<T, R> function,Object value) {
+        return this.whereLike(asName+"." +Sql2oUtils.getLambdaColumnName(function),value);
+    }
+
+    public <T extends Entity,R> Sql whereLike(TypeFunction<T, R> function,Object value) {
+        return this.whereLike(Sql2oUtils.getLambdaColumnName(function),value);
+    }
+
+    public Sql whereGt(String columnName,Object value) {
+        conditionSQL.append(" AND ").append(columnName).append(" > ?");
+        paramValues.add(value);
+        return this;
+    }
+
+    public <T extends Entity,R> Sql whereGt(String asName,TypeFunction<T, R> function,Object value) {
+        return whereGt(asName+"."+Sql2oUtils.getLambdaColumnName(function),value);
+    }
+
+    public <T extends Entity,R> Sql whereGt(TypeFunction<T, R> function,Object value) {
+        return whereGt(Sql2oUtils.getLambdaColumnName(function),value);
+    }
+
+    public Sql whereGte(String columnName,Object value) {
+        conditionSQL.append(" AND ").append(columnName).append(" >= ?");
+        paramValues.add(value);
+        return this;
+    }
+
+    public <S extends Entity, R> Sql whereGte(String asName,TypeFunction<S, R> function,Object value) {
+        return this.whereGte(asName+"."+Sql2oUtils.getLambdaColumnName(function),value);
+    }
+
+    public <S extends Entity, R> Sql whereGte(TypeFunction<S, R> function,Object value) {
+        return this.whereGte(Sql2oUtils.getLambdaColumnName(function),value);
+    }
+
+    public Sql whereLt(String columnName, Object value) {
+        conditionSQL.append(" AND ").append(columnName).append(" < ?");
+        paramValues.add(value);
+        return this;
+    }
+
+    public <S extends Entity, R> Sql whereLt(String asName,TypeFunction<S, R> function,Object value) {
+        return this.whereLt(asName+"."+Sql2oUtils.getLambdaColumnName(function),value);
+    }
+
+    public <S extends Entity, R> Sql whereLt(TypeFunction<S, R> function,Object value) {
+        return this.whereLt(Sql2oUtils.getLambdaColumnName(function),value);
+    }
+
+    public Sql whereLte(String columnName,Object value) {
+        conditionSQL.append(" AND ").append(columnName).append(" <= ?");
+        paramValues.add(value);
+        return this;
+    }
+
+    public <S extends Entity, R> Sql whereLte(TypeFunction<S, R> function,Object value) {
+        return whereLte(Sql2oUtils.getLambdaColumnName(function),value);
+    }
+
+    public <S extends Entity, R> Sql whereLte(String asName,TypeFunction<S, R> function,Object value) {
+        return whereLte(asName+"."+Sql2oUtils.getLambdaColumnName(function),value);
+    }
+
+    public Sql or(Ors orParam)
     {
-        return append(new Sql(asName!=null?(asName+" "):""));
-    }
-
-    public Sql orderBy(String columns) {
-        Guard.isNotNullOrEmpty(columns,"orderBy columns");
-        return append(new Sql("order by " + columns));
-    }
-
-    public Sql orderBy(String columns, OrderBy orderBy) {
-        Guard.isNotNullOrEmpty(columns,"orderBy columns");
-        return append(new Sql("order by " + columns + " "+ orderBy.toString().toLowerCase()));
-    }
-
-    public  <T extends Entity,R> Sql orderBy(String asName,TypeFunction<T, R> function) {
-        return orderBy(asName,function,OrderBy.ASC);
-    }
-
-    public  <T extends Entity,R> Sql orderBy(String asName,TypeFunction<T, R> function,OrderBy orderBy) {
-        String columnName = Sql2oUtils.getLambdaColumnName(function);
-        return orderBy((asName!=null&&!asName.isEmpty()?asName+".":"") + columnName,orderBy);
+        if(this.conditionSQL == null || this.conditionSQL.length()<=0){
+            throw new SqlBuildException("Or query is error");
+        }
+        if(orParam==null)
+        {
+            throw new SqlBuildException("Or param not null");
+        }
+        String orWhereSql = orParam.getFinalSql();
+        if(StringUtils.isNullOrEmpty(orWhereSql))
+        {
+            throw new SqlBuildException("Or param not null");
+        }
+        conditionSQL.append("      \nOR (");
+        conditionSQL.append(orWhereSql);
+        addParamValues(orParam.getFinalArgs());
+        conditionSQL.append(" \n)");
+        return this;
     }
 
 
-    public  <T extends Entity,R> Sql orderBy(TypeFunction<T, R> function) {
-        return orderBy(function,OrderBy.ASC);
+    public Sql and(Ands ands)
+    {
+        if(this.conditionSQL == null || this.conditionSQL.length()<=0){
+            throw new SqlBuildException("And query is error");
+        }
+        if(ands==null)
+        {
+            throw new SqlBuildException("And param not null");
+        }
+        String orWhereSql = ands.getFinalSql();
+        if(StringUtils.isNullOrEmpty(orWhereSql))
+        {
+            throw new SqlBuildException("And param not null");
+        }
+        conditionSQL.append("      \nAND (");
+        conditionSQL.append(orWhereSql);
+        addParamValues(ands.getFinalArgs());
+        conditionSQL.append(" \n)");
+        return this;
     }
 
-    public  <T extends Entity,R> Sql orderBy(TypeFunction<T, R> function,OrderBy orderBy) {
-        String columnName = Sql2oUtils.getLambdaColumnName(function);
-        return orderBy(columnName,orderBy);
+
+    public Sql order(String order) {
+        if (this.orderBySQL.length() > 0) {
+            this.orderBySQL.append(',');
+        }
+        this.orderBySQL.append(' ').append(order);
+        return this;
+    }
+
+    public Sql order(String columnName,OrderBy orderBy) {
+        if (this.orderBySQL.length() > 0) {
+            this.orderBySQL.append(',');
+        }
+        this.orderBySQL.append(' ')
+                .append(columnName)
+                .append(' ')
+                .append(orderBy.toString());
+        return this;
+    }
+
+    public <T extends Entity,R>  Sql order(TypeFunction<T, R> function,OrderBy orderBy) {
+        return order(Sql2oUtils.getLambdaColumnName(function),orderBy);
     }
 
 
-    public String getFinalSql() {
-        build();
-        return buildSql();
+    public <T extends Entity,R>  Sql order(TypeFunction<T, R> function) {
+        return order(Sql2oUtils.getLambdaColumnName(function),OrderBy.ASC);
     }
 
-    public Object[] getFinalArgs() {
-        build();
-        return _argsFinal;
+    // region innerJoin
+
+    public SqlJoinClause innerJoin(String tableName,String asName)
+    {
+        return  joinClause("INNER JOIN",tableName + " " + asName);
     }
 
-    public SqlJoinClause innerJoin(String table){
-        return innerJoin(table,null);
-    }
-    public SqlJoinClause innerJoin(String table,String asName){
-        Guard.isNotNullOrEmpty(table,"innerJoin table name");
-        return joinClause("inner join ",table + " " + (asName!=null?asName+" ":""));
+    public SqlJoinClause innerJoin(String tableName)
+    {
+        return  innerJoin(tableName,"");
     }
 
-    public <T extends Entity> SqlJoinClause innerJoinDb(String dbName,Class<T> modelClass){
-        Guard.isNotNullOrEmpty(dbName,"innerJoin dbName");
-        return innerJoin(dbName+"."+Sql2oCache.getTableName(modelClass));
+     public <T extends Entity> SqlJoinClause innerJoin(Class<T> modelClass)
+    {
+        return innerJoin(modelClass,"");
     }
 
-    public <T extends Entity> SqlJoinClause innerJoinDb(String dbName,Class<T> modelClass,String asName){
-        Guard.isNotNullOrEmpty(dbName,"innerJoin dbName");
-        return innerJoin(dbName+"."+Sql2oCache.getTableName(modelClass),asName);
-    }
-
-    public <T extends Entity> SqlJoinClause innerJoin(Class<T> modelClass){
-        return innerJoin(Sql2oCache.getTableName(modelClass));
-    }
-
-    public <T extends Entity> SqlJoinClause innerJoin(Class<T> modelClass,String asName){
+    public <T extends Entity> SqlJoinClause innerJoin(Class<T> modelClass,String asName)
+    {
         return innerJoin(Sql2oCache.getTableName(modelClass),asName);
     }
 
-
-    public SqlJoinClause rightJoin(String table,String asName)
+    public <T extends Entity> SqlJoinClause innerJoinDb(String dbName,Class<T> modelClass)
     {
-        Guard.isNotNullOrEmpty(table,"rightJoin table name");
-        return joinClause("right join ",table + " " + (asName!=null?asName+" ":""));
+        Guard.isNotNullOrEmpty(dbName,"dbName");
+        return innerJoin(dbName+"."+Sql2oCache.getTableName(modelClass));
     }
 
-    public SqlJoinClause rightJoin(String table)
+    public <T extends Entity> SqlJoinClause innerJoinDb(String dbName,Class<T> modelClass,String asName)
     {
-        return rightJoin(table,null);
+        Guard.isNotNullOrEmpty(dbName,"dbName");
+        return innerJoin(dbName+"."+Sql2oCache.getTableName(modelClass),asName);
     }
 
-    public <T extends Entity> SqlJoinClause rightJoin(Class<T> modelClass){
-        return rightJoin(Sql2oCache.getTableName(modelClass));
+    // endregion
+
+    // region rightJoin
+
+    public SqlJoinClause rightJoin(String tableName,String asName)
+    {
+        return  joinClause("RIGHT JOIN",tableName + " " + asName);
     }
 
-    public <T extends Entity> SqlJoinClause rightJoin(Class<T> modelClass,String asName){
+    public SqlJoinClause rightJoin(String tableName)
+    {
+        return  rightJoin(tableName,"");
+    }
+
+    public <T extends Entity> SqlJoinClause rightJoin(Class<T> modelClass)
+    {
+        return rightJoin(modelClass,"");
+    }
+
+    public <T extends Entity> SqlJoinClause rightJoin(Class<T> modelClass,String asName)
+    {
         return rightJoin(Sql2oCache.getTableName(modelClass),asName);
     }
 
-    public <T extends Entity> SqlJoinClause rightJoinDb(String dbName,Class<T> modelClass){
-        Guard.isNotNullOrEmpty(dbName,"rightJoin dbName");
+
+    public <T extends Entity> SqlJoinClause rightJoinDb(String dbName,Class<T> modelClass)
+    {
+        Guard.isNotNullOrEmpty(dbName,"dbName");
         return rightJoin(dbName+"."+Sql2oCache.getTableName(modelClass));
     }
 
-    public <T extends Entity> SqlJoinClause rightJoinDb(String dbName,Class<T> modelClass,String asName){
-        Guard.isNotNullOrEmpty(dbName,"rightJoin dbName");
+    public <T extends Entity> SqlJoinClause rightJoinDb(String dbName,Class<T> modelClass,String asName)
+    {
+        Guard.isNotNullOrEmpty(dbName,"dbName");
         return rightJoin(dbName+"."+Sql2oCache.getTableName(modelClass),asName);
     }
 
 
+    // endregion
 
+    // region leftJoin
 
-    public SqlJoinClause leftJoin(String table,String asName)
+    public SqlJoinClause leftJoin(String tableName,String asName)
     {
-        Guard.isNotNullOrEmpty(table,"leftJoin table name");
-        return joinClause("left join ",table + " " + (asName!=null?asName+" ":""));
+        return  joinClause("LEFT JOIN",tableName + " " + asName);
     }
 
-    public SqlJoinClause leftJoin(String table)
+    public SqlJoinClause leftJoin(String tableName)
     {
-       return leftJoin(table,null);
+        return  leftJoin(tableName,"");
     }
 
-    public <T extends Entity> SqlJoinClause leftJoin(Class<T> modelClass){
-        return leftJoin(Sql2oCache.getTableName(modelClass));
+    public <T extends Entity> SqlJoinClause leftJoin(Class<T> modelClass)
+    {
+        return leftJoin(modelClass,"");
     }
 
-    public <T extends Entity> SqlJoinClause leftJoin(Class<T> modelClass,String asName){
+    public <T extends Entity> SqlJoinClause leftJoin(Class<T> modelClass,String asName)
+    {
         return leftJoin(Sql2oCache.getTableName(modelClass),asName);
     }
 
-    public <T extends Entity> SqlJoinClause leftJoinDb(String dbName,Class<T> modelClass){
-        Guard.isNotNullOrEmpty(dbName,"leftJoin dbName");
+
+    public <T extends Entity> SqlJoinClause leftJoinDb(String dbName,Class<T> modelClass)
+    {
+        Guard.isNotNullOrEmpty(dbName,"dbName");
         return leftJoin(dbName+"."+Sql2oCache.getTableName(modelClass));
     }
 
-    public <T extends Entity> SqlJoinClause leftJoinDb(String dbName,Class<T> modelClass,String asName){
-        Guard.isNotNullOrEmpty(dbName,"leftJoin dbName");
+    public <T extends Entity> SqlJoinClause leftJoinDb(String dbName,Class<T> modelClass,String asName)
+    {
+        Guard.isNotNullOrEmpty(dbName,"dbName");
         return leftJoin(dbName+"."+Sql2oCache.getTableName(modelClass),asName);
     }
 
 
-    public SqlJoinClause join(String table,String asName)
+    // endregion
+
+    // region join
+
+
+    public SqlJoinClause join(String tableName,String asName)
     {
-        return joinClause("left join ",table+ " " + (asName!=null?asName+" ":""));
+        return  joinClause("JOIN",tableName + " " + asName);
     }
 
-    public SqlJoinClause join(String table)
+    public SqlJoinClause join(String tableName)
     {
-        return join(table,null);
-    }
-    public <T extends Entity> SqlJoinClause join(Class<T> modelClass){
-        return join(Sql2oCache.getTableName(modelClass));
+        return  leftJoin(tableName,"");
     }
 
-    public <T extends Entity> SqlJoinClause join(Class<T> modelClass,String asName){
+    public <T extends Entity> SqlJoinClause join(Class<T> modelClass)
+    {
+        return join(modelClass,"");
+    }
+
+    public <T extends Entity> SqlJoinClause join(Class<T> modelClass,String asName)
+    {
         return join(Sql2oCache.getTableName(modelClass),asName);
     }
 
 
-
-    public <T extends Entity> SqlJoinClause joinDb(String dbName,Class<T> modelClass){
-        Guard.isNotNullOrEmpty(dbName,"join dbName");
+    public <T extends Entity> SqlJoinClause joinDb(String dbName,Class<T> modelClass)
+    {
+        Guard.isNotNullOrEmpty(dbName,"dbName");
         return join(dbName+"."+Sql2oCache.getTableName(modelClass));
     }
 
-    public <T extends Entity> SqlJoinClause joinDb(String dbName,Class<T> modelClass,String asName){
-        Guard.isNotNullOrEmpty(dbName,"join dbName");
+    public <T extends Entity> SqlJoinClause joinDb(String dbName,Class<T> modelClass,String asName)
+    {
+        Guard.isNotNullOrEmpty(dbName,"dbName");
         return join(dbName+"."+Sql2oCache.getTableName(modelClass),asName);
     }
 
+    // endregion
 
-    //#region  Helper
 
-    private SqlWhereClause whereClause()
+    // region Protected Method
+
+    protected void addParamValue(Object value)
     {
-        return new SqlWhereClause(this);
+        this.paramValues.add(value);
     }
 
-
-    private SqlWhereClause whereClause(Sql sql)
+    protected void addParamValues(List<Object> values)
     {
-        return new SqlWhereClause(sql);
+        values.stream().forEach(x-> addParamValue(x));
     }
+
+    /**
+     * 设置In 参数值
+     * @param args
+     */
+    protected void setInArguments(Object[] args) {
+        for (int i = 0; i < args.length; i++) {
+            ifThen(i == args.length - 1,
+                    () -> conditionSQL.append("?"),
+                    () -> conditionSQL.append("?, "));
+            paramValues.add(args[i]);
+        }
+    }
+
+    // endregion
+
+
+    // region Helper
+
+    private void build() {
+        if(StringUtils.isNullOrEmpty(_sql)){
+            SQLParams sqlParams = SQLParams.builder()
+                    .selectColumns(this.selectColumns)
+                    .tableName(this.tableName)
+                    .joinSQL(this.joinSQL)
+                    .conditionSQL(this.conditionSQL)
+                    .orderBy(this.orderBySQL.toString())
+                    .build();
+
+            // 生成SQL
+            _sql = dialect().select(sqlParams);
+        }else{
+
+        }
+    }
+
 
     private SqlJoinClause joinClause(String joinType,String table)
     {
-        return new SqlJoinClause(append(new Sql(joinType+table)));
+        this.joinSQL.append(joinType+ " " + table);
+        return new SqlJoinClause(this);
     }
 
-    private String buildSql() {
-        Matcher m = SQL_BRACKET.matcher(_sqlFinal);
-        StringBuffer sb = new StringBuffer();
-        int i = 0;
-        while(m.find()){
-            m.appendReplacement(sb,":p"+i);
-            ++i;
-        }
-        m.appendTail(sb);
-        return sb.toString();
-    }
+    // endregion
 
-    private void build() {
-        if (_sqlFinal != null && _sqlFinal.length() > 0)
-        {
-           return;
-        }
-
-        StringBuilder sb = new StringBuilder();
-        List<Object> args = new ArrayList<Object>();
-
-        build(sb, args, null);
-
-        _sqlFinal = sb.toString();
-        _argsFinal = args.toArray();
-    }
-
-    private void build(StringBuilder sb, List<Object> args, Sql lhs) {
-        if (_sql != null && _sql.length() > 0) {
-            if (sb.length() > 0) {
-                sb.append("\n");
-            }
-
-            String sql = _sql;
-            if (is(lhs, "where ") && is(this, "where "))
-            {
-                if(is(this, "where or"))
-                {
-                    sql = "or " + sql.substring(8);
-
-                }else if(is(lhs,"where or"))
-                {
-                    sql = sql.substring(6);
-                }
-                else {
-                    sql = "and " + sql.substring(6);
-                }
-            }
-            if (is(lhs, "order by ") && is(this, "order by "))
-            {
-                sql = ", " + sql.substring(9);
-            }
-
-            for (Object arg : _args) {
-                args.add(arg);
-            }
-            sb.append(sql);
-        }
-
-        if (_rhs != null)
-        {
-            _rhs.build(sb, args, this);
-        }
-    }
-
-    private static boolean is(Sql sql, String sqlType) {
-        return sql != null
-                && sql._sql != null
-                && sql._sql.toLowerCase().startsWith(sqlType.toLowerCase());
-    }
-
-    //#endregion
 
 }

@@ -5,14 +5,11 @@ import com.sqltest.model.enums.EnumUserStatus;
 import com.sqltest.model.enums.EnumVipLevel;
 import io.github.cotide.dapper.core.attr.Column;
 import io.github.cotide.dapper.core.attr.Ignore;
-import io.github.cotide.dapper.core.attr.PrimaryKey;
 import lombok.Data;
-
 import java.util.Date;
 
 @Data
 public class UserInfoDto {
-
 
     @Column("user_id")
     private int id;

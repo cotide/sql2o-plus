@@ -2,7 +2,6 @@ package com.sqltest.db;
 
 import com.sqltest.base.BaseTest;
 import com.sqltest.dto.UserInfoDetailDto;
-import com.sqltest.dto.UserInfoDto;
 import com.sqltest.model.UserInfo;
 import com.sqltest.model.UserType;
 import com.sqltest.model.enums.EnumGroup;
@@ -14,7 +13,6 @@ import io.github.cotide.dapper.query.Sql;
 import io.github.cotide.dapper.repository.inter.IRepository;
 import org.junit.Test;
 
-import java.lang.reflect.Array;
 import java.util.Date;
 import java.util.List;
 
@@ -131,8 +129,8 @@ public class JoinTest  extends BaseTest {
                 .rightJoin("g_main_test.user_type f")
                 .on("a.user_type_id = f.id")
                 .where("a",UserInfo::getId,1)
-                .append("WHERE 1=1 ")
-                .append("where 2-2");
+                .where("1","1")
+                .where("2","2");
 
 
         System.out.println(sql.getFinalSql());
@@ -158,42 +156,4 @@ public class JoinTest  extends BaseTest {
     }
 
 
-    @Test
-    public void  getPageListTest(){
-
-        Database db = getDatabase();
-        Sql sql = Sql.builder()
-                .select("a.user_id as id," +
-                        "a.user_Name as name,"+
-                        "b.id as typeId,"+
-                        "b.name as typeName,"+
-                        "a.login,"+
-                        "a.status,"+
-                        "a.group,"+
-                        "a.level,"+
-                        "a.create_time as createTime")
-                .from(UserInfo.class,"a")
-                .join(UserType.class,"b")
-                .on("a.user_type_id = b.id");
-        PageList<UserInfoDetailDto> result =  db.getSqlQuery()
-                .getPageDtoList(UserInfoDetailDto.class,1,10,sql);
-
-        assert (result.getTotalCount() > 0);
-        assert (result.getItems().size()>0);
-
-        System.out.println(">>>>>>>>>> Result <<<<<<<<<<");
-
-        System.out.println("totalCount:"+result.getTotalCount());
-        for (UserInfoDetailDto item : result.getItems()) {
-            System.out.println("user_info.id:" + item.getId());
-            System.out.println("user_info.user_Name:" + item.getName());
-            System.out.println("user_type.id:" + item.getTypeId());
-            System.out.println("user_type.typeName:" + item.getTypeName());
-            System.out.println("user_info.login:" + item.getLogin());
-            System.out.println("user_info.status:" + item.getStatus());
-            System.out.println("user_info.group:" + item.getGroup());
-            System.out.println("user_info.level:" + item.getLevel());
-            System.out.println("user_info.create_time:" + item.getCreateTime());
-        }
-    }
 }

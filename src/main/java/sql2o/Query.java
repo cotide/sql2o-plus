@@ -82,7 +82,8 @@ public class Query implements AutoCloseable {
         paramNameToIdxMap = new HashMap<>();
         parameters = new HashMap<>();
 
-        parsedQuery = connection.getSql2o().getQuirks().getSqlParameterParsingStrategy().parseSql(queryText, paramNameToIdxMap);
+        //parsedQuery =  connection.getSql2o().getQuirks().getSqlParameterParsingStrategy().parseSql(queryText, paramNameToIdxMap);
+        parsedQuery = queryText;
     }
 
     // ------------------------------------------------

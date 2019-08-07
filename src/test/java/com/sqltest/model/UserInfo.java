@@ -8,17 +8,13 @@ import io.github.cotide.dapper.core.attr.Column;
 import io.github.cotide.dapper.core.attr.Ignore;
 import io.github.cotide.dapper.core.attr.PrimaryKey;
 import io.github.cotide.dapper.core.attr.Table;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
 /**
  * 用户信息
  */
-
 @Data
 @Table(value = "user_info")
 public class UserInfo extends Entity {

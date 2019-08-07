@@ -138,7 +138,7 @@ public class SqlQueryBase  extends SqlBase {
 
 
     public <TDto> PageList<TDto> getPageDtoList(Class<TDto> returnType, int pageIndex, int pageSize, Sql sql) {
-        return getPageDtoList(returnType,pageIndex,pageSize,sql.getFinalSql(),sql.getFinalArgs());
+        return getPageDtoList(returnType,pageIndex,pageSize,sql.getFinalSql());
     }
 
     public <TDto> PageList<TDto> getPageDtoList(Class<TDto> returnType, int pageIndex, int pageSize, String sql, Object... param) {
@@ -287,12 +287,12 @@ public class SqlQueryBase  extends SqlBase {
         String countSql = "";
         Matcher matcherDistinct = PATTERN_DISTINCT.matcher(sqlSelectCols);
         if (matcherDistinct.find()) {
-            countSql = String.format("%s COUNT(%s) %s", sql.substring(0, colsStartIndex), sqlSelectCols, sql.substring(colsEndIndex));
+            countSql = String.format("%s COUNT(%s) \n%s", sql.substring(0, colsStartIndex), sqlSelectCols, sql.substring(colsEndIndex));
         } else {
-            countSql = String.format("%s COUNT(1) %s", sql.substring(0, colsStartIndex), sql.substring(colsEndIndex));
+            countSql = String.format("%s COUNT(1) \n%s", sql.substring(0, colsStartIndex), sql.substring(colsEndIndex));
         }
 
-        String pageSql = String.format("%s LIMIT %s OFFSET %s", sql, take, skip);
+        String pageSql = String.format("%s \nLIMIT %s OFFSET %s", sql, take, skip);
 
         PageQueryInfo queryInfo = new PageQueryInfo();
         queryInfo.setPageSql(pageSql);
