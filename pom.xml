@@ -6,7 +6,7 @@
 
     <groupId>io.github.cotide</groupId>
     <artifactId>sql2o-plus</artifactId>
-    <version>1.0.3-SNAPSHOT</version>
+    <version>1.0.3</version>
     <packaging>jar</packaging>
 
     <name>sql2o-plus</name>
@@ -157,31 +157,6 @@
                     <target>1.8</target>
                     <skip>true</skip>
                     <encoding>UTF-8</encoding>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>cobertura-maven-plugin</artifactId>
-                <version>2.7</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.ow2.asm</groupId>
-                        <artifactId>asm</artifactId>
-                        <version>5.0.4</version>
-                    </dependency>
-                </dependencies>
-                <configuration>
-                    <formats>
-                        <format>html</format>
-                        <format>xml</format>
-                    </formats>
-                    <instrumentation>
-                        <excludes>
-                            <exclude>org/sql2o/**.class</exclude>
-                            <exclude>org/sql2o/**.java</exclude>
-                        </excludes>
-                    </instrumentation>
-                    <check/>
                 </configuration>
             </plugin>
         </plugins>
