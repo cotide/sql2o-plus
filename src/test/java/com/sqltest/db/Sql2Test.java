@@ -86,6 +86,7 @@ public class Sql2Test {
                 .or(
                         Ors.sql()
                                 .where(UserInfo::getLevel,EnumVipLevel.VIP1)
+                                .where(UserInfo::getLevel,EnumVipLevel.VIP1)
                                 .where(UserInfo::getStatus,EnumUserStatus.NORMAL)
                 );
         System.out.println("SQL语句:");
@@ -93,6 +94,22 @@ public class Sql2Test {
         System.out.println("SQL参数值:");
         sql.getFinalArgs().forEach(System.out::println);
     }
+
+    @Test
+    public void or2(){
+        Sql sql  = Sql.builder()
+                .select()
+                .from(UserInfo.class)
+                .where(UserInfo::getName,"apple")
+                .or(
+                        Ors.sql().where(UserInfo::getStatus,EnumUserStatus.NORMAL)
+                );
+        System.out.println("SQL语句:");
+        System.out.println(sql.getFinalSql());
+        System.out.println("SQL参数值:");
+        sql.getFinalArgs().forEach(System.out::println);
+    }
+
 
 
     @Test

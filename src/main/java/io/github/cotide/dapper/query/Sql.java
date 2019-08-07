@@ -84,6 +84,7 @@ public class Sql {
 
     public static Sql builder(){  return  new Sql(); }
 
+
     public SelectClause select(String columns) {
         Guard.isNotNullOrEmpty(columns,"select columns");
         this.selectColumns = columns;
@@ -117,6 +118,7 @@ public class Sql {
         return where(Sql2oUtils.getLambdaColumnName(function));
     }
 
+
     public Sql where(String statement,Object value) {
         conditionSQL.append(" \nAND ").append(statement);
         if (!statement.contains("?")) {
@@ -127,6 +129,7 @@ public class Sql {
     }
 
     public <T extends Entity,R>  Sql where(String asName, TypeFunction<T, R> function,Object value) {
+        Guard.isNotNullOrEmpty(asName,"asName");
         return where(asName +"."+ Sql2oUtils.getLambdaColumnName(function),value);
     }
 
@@ -272,10 +275,20 @@ public class Sql {
         {
             throw new SqlBuildException("Or param not null");
         }
-        conditionSQL.append("      \nOR (");
-        conditionSQL.append(orWhereSql);
+        boolean isAddBracket = orParam.getFinalArgs().size()>1;
+
+        if(isAddBracket)
+        {
+            conditionSQL.append("      \nOR ( \n");
+        }else{
+            conditionSQL.append("      \nOR \n");
+        }
+        conditionSQL.append(orWhereSql.substring(6));
         addParamValues(orParam.getFinalArgs());
-        conditionSQL.append(" \n)");
+        if(isAddBracket)
+        {
+            conditionSQL.append(" )");
+        }
         return this;
     }
 
