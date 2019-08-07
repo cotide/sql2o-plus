@@ -11,7 +11,7 @@ sudo: false
 before_install:
     - export TZ='Asia/Shanghai'
 
-script: "mvn cobertura:cobertura"
+script: "mvn clean cobertura:cobertura"
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
