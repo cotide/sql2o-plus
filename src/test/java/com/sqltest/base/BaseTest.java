@@ -11,9 +11,9 @@ import org.junit.Test;
 
 public class BaseTest {
 
-    String url = "jdbc:mysql://192.168.11.101:3306/g_main_test?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8&useSSL=false";
-    String user ="root";
-    String pass ="123456";
+    protected String url = "jdbc:mysql://10.10.10.101:3306/g_main_test?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8&useSSL=false";
+    protected String user ="root";
+    protected  String pass ="123456";
 
     @BeforeClass
     public static void init() {

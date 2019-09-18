@@ -26,7 +26,6 @@ public class EnumTest extends BaseTest {
                 Sql.builder().select().from(UserInfo.class)
                 .where("`group` = ? ",EnumGroup.GROUP1)
                 .where("`status` = ?",EnumUserStatus.NORMAL)
-                .where(UserInfo::getStatus,EnumUserStatus.NORMAL)
                 .where(UserInfo::getGroup,EnumGroup.GROUP1));
         System.out.println(userInfos.size());
     }
@@ -58,7 +57,7 @@ public class EnumTest extends BaseTest {
     }
 
     @Test
-    public void GetList(){
+    public void getList(){
 
         Database db = getDatabase();
 
@@ -92,7 +91,7 @@ public class EnumTest extends BaseTest {
 
 
     @Test
-    public void GetDtoList(){
+    public void getDtoList(){
 
         Database db = getDatabase();
         UserInfoDto user = db.getSqlQuery().getDto(

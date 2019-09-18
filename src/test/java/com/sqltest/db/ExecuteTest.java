@@ -12,7 +12,7 @@ import java.util.Date;
 public class ExecuteTest extends BaseTest {
 
     @Test
-    public void  Execute(){
+    public void  execute(){
 
        try(Database db = getDatabase()){
            db.beginTransaction();
@@ -46,7 +46,7 @@ public class ExecuteTest extends BaseTest {
 
 
     @Test
-    public void  Execute2(){
+    public void  execute2(){
 
         try(Database db = getDatabase()){
             db.beginTransaction();

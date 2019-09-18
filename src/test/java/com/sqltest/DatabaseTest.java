@@ -1,5 +1,6 @@
 package com.sqltest;
 
+import com.sqltest.base.BaseTest;
 import com.sqltest.model.UserInfo;
 import org.junit.Test;
 import sql2o.Connection;
@@ -9,11 +10,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class DatabaseTest {
+public class DatabaseTest  extends BaseTest {
 
-    final String url = "jdbc:mysql://192.168.1.100:3307/g_main?cachePrepStmts=true&useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8&useSSL=false";
-    final String user ="root";
-    final String pass ="123456";
+
 
 
     @Test

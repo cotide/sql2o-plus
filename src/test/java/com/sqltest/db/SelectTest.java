@@ -60,7 +60,7 @@ public class SelectTest extends BaseTest {
     {
         Database db = getDatabase();
         IRepository<UserInfo> userInfoIRepository =  db.getRepository(UserInfo.class);
-        UserInfo UserInfo =   userInfoIRepository.getById(29);
+        UserInfo userInfo =   userInfoIRepository.getById(1);
     }
 
 
