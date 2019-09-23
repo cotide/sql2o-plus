@@ -1,8 +1,10 @@
 package sql2o.extensions.postgres.converters;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import io.github.cotide.dapper.core.gson.EnumAdapterFactory;
 import sql2o.converters.Converter;
 import sql2o.converters.ConverterException;
 import sql2o.converters.ConvertersProvider;
@@ -17,6 +19,19 @@ import java.util.Map;
  * Time: 12:08 AM
  */
 public class JSONConverter implements Converter<JsonElement>, ConvertersProvider {
+
+    static class writerHolder {
+        static final Gson gson =  new GsonBuilder()
+                .registerTypeAdapterFactory(new EnumAdapterFactory())
+                .setDateFormat("YYYY-MM-dd HH:mm:ss")
+                .create();
+    }
+
+    public static Gson createGson(){
+        return writerHolder.gson;
+    }
+
+
     public void fill(Map<Class<?>, Converter<?>> mapToFill) {
         mapToFill.put(JsonElement.class, this);
     }
@@ -49,9 +64,6 @@ public class JSONConverter implements Converter<JsonElement>, ConvertersProvider
         static final JsonParser parser = new JsonParser();
     }
 
-    static class writerHolder {
-        static final Gson gson = new Gson();
-    }
 
     static class stringConverterHolder {
         static final StringConverter converter = new StringConverter();

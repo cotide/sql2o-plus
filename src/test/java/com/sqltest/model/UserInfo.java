@@ -37,6 +37,7 @@ public class UserInfo extends Entity {
     @Column("user_name")
     private String name;
 
+
     /**
      * 用户类型Id
      */
