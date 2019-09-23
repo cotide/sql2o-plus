@@ -138,12 +138,9 @@ public class SqlQueryBase  extends SqlBase {
 
 
     public <TDto> PageList<TDto> getPageDtoList(Class<TDto> returnType, int pageIndex, int pageSize, Sql sql) {
-        return getPageDtoList(returnType,pageIndex,pageSize,sql.getFinalSql());
-    }
-
-    public <TDto> PageList<TDto> getPageDtoList(Class<TDto> returnType, int pageIndex, int pageSize, String sql, Object... param) {
-        sql = addSelectClause(returnType, sql);
-        PageQueryInfo queryInfo = buildPagingQueris((pageIndex - 1) * pageSize, pageSize, sql);
+        String runSql = addSelectClause(returnType, sql.getFinalSql());
+        Object[] param =  sql.getFinalArgs().stream().toArray(Object[]::new);
+        PageQueryInfo queryInfo = buildPagingQueris((pageIndex - 1) * pageSize, pageSize, runSql);
         Integer count =  getDto(Integer.class,queryInfo.getCountSql(),param);
         if(count==null||count<=0)
         {
@@ -153,6 +150,10 @@ public class SqlQueryBase  extends SqlBase {
             PageList<TDto> result = new PageList<>(list, pageIndex, pageSize, count);
             return result;
         }
+    }
+
+    public <TDto> PageList<TDto> getPageDtoList(Class<TDto> returnType, int pageIndex, int pageSize, String sql, Object... param) {
+        return getPageDtoList(returnType,pageIndex,pageSize,new Sql(sql,param));
     }
 
     //#endregion

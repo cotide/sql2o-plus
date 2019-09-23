@@ -296,7 +296,7 @@ public class Sql {
         }else{
             conditionSQL.append(beginSql+" \n");
         }
-        conditionSQL.append(orWhereSql.substring(6));
+        conditionSQL.append(orWhereSql.substring(5));
         addParamValues(orParam.getFinalArgs());
         if(isAddBracket)
         {
