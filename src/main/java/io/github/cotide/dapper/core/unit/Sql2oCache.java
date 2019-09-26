@@ -239,7 +239,7 @@ public final class Sql2oCache {
 
 
     private static String methodToFieldName(String methodName) {
-        return capitalize(methodName.replace("get", ""));
+        return capitalize(methodName.replaceFirst("get", ""));
     }
 
     private static String capitalize(String input) {
