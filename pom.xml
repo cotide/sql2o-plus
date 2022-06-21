@@ -35,7 +35,7 @@
         <tag>v${project.version}</tag>
     </scm>
     <properties>
-        <mysql.version>8.0.11</mysql.version>
+        <mysql.version>8.0.28</mysql.version>
         <joda-time.version>2.0</joda-time.version>
         <persistence-api.version>1.0.2</persistence-api.version>
         <slf4j.version>1.7.25</slf4j.version>
